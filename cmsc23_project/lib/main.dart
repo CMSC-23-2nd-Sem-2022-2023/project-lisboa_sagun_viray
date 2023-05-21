@@ -10,6 +10,7 @@ import '../screens/user_details.dart';
 import '../screens/login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import '../screens/entryform.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
         'admin_login': (context) => const AdminLoginPage(),
         '/todo': (context) => const LoginPage(),
         '/user_details': (context) => const UserDetailsPage(),
+        '/entryform': (context) => const EntryForm(),
       },
     );
   }
