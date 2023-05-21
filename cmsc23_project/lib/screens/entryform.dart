@@ -10,31 +10,91 @@ class EntryForm extends StatefulWidget {
 class _EntryFormState extends State<EntryForm> {
   final _formkey = GlobalKey<FormState>;
 
-  Map<String, bool> illnessList = {
-    'Hypertension': false,
-    'Diabetes': false,
-    'Tuberculosis': false,
-    'Cancer': false,
-    'Kidney Disease': false,
-    'Cardiac Disease': false,
-    'Autoimmune Disease': false,
-    'Asthma': false,
-    'Allergies': false
-  };
+  bool hyperIsChecked = false;
+  bool diabetesIsChecked = false;
+  bool tbIsChecked = false;
+  bool cancerIsChecked = false;
+  bool kidneyIsChecked = false;
+  bool cardiacIsChecked = false;
+  bool autoIsChecked = false;
+  bool asthmaIsChecked = false;
+  bool allergyIsChecked = false;
 
   Widget preExistingIllness() {
     return Column(
       children: [
-        ListView.builder(
-            scrollDirection: Axis.vertical,
-            itemCount: illnessList.length,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (BuildContext context, int index) {
-              return CheckboxListTile(
-                  title: Text(illnessList[illnessList[index]]),
-                  value: illnessList[index],
-                  onChanged: () {});
-            })
+        CheckboxListTile(
+          value: hyperIsChecked,
+          onChanged: (value) {
+            setState(() {
+              hyperIsChecked = !hyperIsChecked;
+            });
+          },
+          title: Text('Hypertension'),
+        ),
+        CheckboxListTile(
+          value: diabetesIsChecked,
+          onChanged: (value) {
+            setState(() {
+              diabetesIsChecked = !diabetesIsChecked;
+            });
+          },
+          title: Text('Diabetes'),
+        ),
+        CheckboxListTile(
+          value: tbIsChecked,
+          onChanged: (value) {
+            setState(() {
+              tbIsChecked = !tbIsChecked;
+            });
+          },
+          title: Text('Tuberculosis'),
+        ),
+        CheckboxListTile(
+          value: cancerIsChecked,
+          onChanged: (value) {
+            setState(() {
+              cancerIsChecked = !cancerIsChecked;
+            });
+          },
+          title: Text('Cancer'),
+        ),
+        CheckboxListTile(
+          value: kidneyIsChecked,
+          onChanged: (value) {
+            setState(() {
+              kidneyIsChecked = !kidneyIsChecked;
+            });
+          },
+          title: Text('Kidney Disease'),
+        ),
+        CheckboxListTile(
+          value: autoIsChecked,
+          onChanged: (value) {
+            setState(() {
+              autoIsChecked = !autoIsChecked;
+            });
+          },
+          title: Text('Autoimmune Disease'),
+        ),
+        CheckboxListTile(
+          value: asthmaIsChecked,
+          onChanged: (value) {
+            setState(() {
+              asthmaIsChecked = !asthmaIsChecked;
+            });
+          },
+          title: Text('Asthma'),
+        ),
+        CheckboxListTile(
+          value: allergyIsChecked,
+          onChanged: (value) {
+            setState(() {
+              allergyIsChecked = !allergyIsChecked;
+            });
+          },
+          title: Text('Allergies'),
+        ),
       ],
     );
   }
@@ -52,7 +112,7 @@ class _EntryFormState extends State<EntryForm> {
           children: [
             Form(
               child: Column(
-                children: [],
+                children: [preExistingIllness()],
               ),
             ),
           ],
