@@ -1,5 +1,6 @@
 import 'package:cmsc23_project/screens/admin_login.dart';
 import 'package:cmsc23_project/screens/main_menu.dart';
+import 'package:cmsc23_project/screens/user_homepage.dart';
 import 'package:cmsc23_project/screens/user_login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
         'admin_login': (context) => const AdminLoginPage(),
         '/todo': (context) => const LoginPage(),
         '/user_details': (context) => const UserDetailsPage(),
+        '/homepage': (context) => const HomePage(),
         '/entryform': (context) => const EntryForm(),
       },
     );

@@ -8,92 +8,128 @@ class EntryForm extends StatefulWidget {
 }
 
 class _EntryFormState extends State<EntryForm> {
-  final _formkey = GlobalKey<FormState>;
+  final _formkey = GlobalKey<FormState>();
 
-  bool hyperIsChecked = false;
-  bool diabetesIsChecked = false;
-  bool tbIsChecked = false;
-  bool cancerIsChecked = false;
-  bool kidneyIsChecked = false;
+  bool feverIsChecked = false;
+  bool feverishIsChecked = false;
+  bool painsIsChecked = false;
+  bool coldsIsChecked = false;
+  bool coughIsChecked = false;
   bool cardiacIsChecked = false;
-  bool autoIsChecked = false;
-  bool asthmaIsChecked = false;
-  bool allergyIsChecked = false;
+  bool soreIsChecked = false;
+  bool diffofbreathIsChecked = false;
+  bool diarrheaIsChecked = false;
+  bool tasteIsChecked = false;
+  bool smellIsChecked = false;
+  bool contact = false;
+
+  static final List<String> choices = ["Yes", "No"];
+  String isInContact = choices[0];
+
+  bool contactCheck = true;
 
   Widget preExistingIllness() {
     return Column(
       children: [
         CheckboxListTile(
-          value: hyperIsChecked,
+          controlAffinity: ListTileControlAffinity.leading,
+          value: feverIsChecked,
           onChanged: (value) {
             setState(() {
-              hyperIsChecked = !hyperIsChecked;
+              feverIsChecked = !feverIsChecked;
             });
           },
-          title: Text('Hypertension'),
+          title: Text('Fever'),
         ),
         CheckboxListTile(
-          value: diabetesIsChecked,
+          controlAffinity: ListTileControlAffinity.leading,
+          value: feverishIsChecked,
           onChanged: (value) {
             setState(() {
-              diabetesIsChecked = !diabetesIsChecked;
+              feverishIsChecked = !feverishIsChecked;
             });
           },
-          title: Text('Diabetes'),
+          title: Text('Feeling feverish'),
         ),
         CheckboxListTile(
-          value: tbIsChecked,
+          controlAffinity: ListTileControlAffinity.leading,
+          value: painsIsChecked,
           onChanged: (value) {
             setState(() {
-              tbIsChecked = !tbIsChecked;
+              painsIsChecked = !painsIsChecked;
             });
           },
-          title: Text('Tuberculosis'),
+          title: Text('Muscle or joint pains'),
         ),
         CheckboxListTile(
-          value: cancerIsChecked,
+          controlAffinity: ListTileControlAffinity.leading,
+          value: coldsIsChecked,
           onChanged: (value) {
             setState(() {
-              cancerIsChecked = !cancerIsChecked;
+              coldsIsChecked = !coldsIsChecked;
             });
           },
-          title: Text('Cancer'),
+          title: Text('Colds'),
         ),
         CheckboxListTile(
-          value: kidneyIsChecked,
+          controlAffinity: ListTileControlAffinity.leading,
+          value: coughIsChecked,
           onChanged: (value) {
             setState(() {
-              kidneyIsChecked = !kidneyIsChecked;
+              coughIsChecked = !coughIsChecked;
             });
           },
-          title: Text('Kidney Disease'),
+          title: Text('Cough'),
         ),
         CheckboxListTile(
-          value: autoIsChecked,
+          controlAffinity: ListTileControlAffinity.leading,
+          value: soreIsChecked,
           onChanged: (value) {
             setState(() {
-              autoIsChecked = !autoIsChecked;
+              soreIsChecked = !soreIsChecked;
             });
           },
-          title: Text('Autoimmune Disease'),
+          title: Text('Sore throat'),
         ),
         CheckboxListTile(
-          value: asthmaIsChecked,
+          controlAffinity: ListTileControlAffinity.leading,
+          value: diffofbreathIsChecked,
           onChanged: (value) {
             setState(() {
-              asthmaIsChecked = !asthmaIsChecked;
+              diffofbreathIsChecked = !diffofbreathIsChecked;
             });
           },
-          title: Text('Asthma'),
+          title: Text('Difficulty of breathing'),
         ),
         CheckboxListTile(
-          value: allergyIsChecked,
+          controlAffinity: ListTileControlAffinity.leading,
+          value: diarrheaIsChecked,
           onChanged: (value) {
             setState(() {
-              allergyIsChecked = !allergyIsChecked;
+              diarrheaIsChecked = !diarrheaIsChecked;
             });
           },
-          title: Text('Allergies'),
+          title: Text('Diarrhea'),
+        ),
+        CheckboxListTile(
+          controlAffinity: ListTileControlAffinity.leading,
+          value: tasteIsChecked,
+          onChanged: (value) {
+            setState(() {
+              tasteIsChecked = !tasteIsChecked;
+            });
+          },
+          title: Text('Loss of taste'),
+        ),
+        CheckboxListTile(
+          controlAffinity: ListTileControlAffinity.leading,
+          value: smellIsChecked,
+          onChanged: (value) {
+            setState(() {
+              smellIsChecked = !smellIsChecked;
+            });
+          },
+          title: Text('Loss of smell'),
         ),
       ],
     );
@@ -111,8 +147,50 @@ class _EntryFormState extends State<EntryForm> {
           padding: const EdgeInsets.all(20),
           children: [
             Form(
+              key: _formkey,
               child: Column(
-                children: [preExistingIllness()],
+                children: [
+                  Text(
+                      "Do you have any pre-exisiting illness? Check all that applies."),
+                  preExistingIllness(),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    "Have you come in contact with a confirmed COVID-19 case?",
+                    style: TextStyle(
+                        //TODO add style
+                        ),
+                  ),
+                  ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemCount: choices.length,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemExtent: 40,
+                      itemBuilder: (BuildContext context, int index) {
+                        // all mottos and their radio buttons
+                        return RadioListTile(
+                          title: Text(
+                            choices[index],
+                            style: const TextStyle(
+                              color: Color.fromARGB(255, 66, 43, 110),
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          value: choices[index],
+                          groupValue: isInContact,
+                          // saves currently selected radio button
+                          onChanged: (value) {
+                            setState(() {
+                              //print(value.toString());
+                              isInContact = value.toString();
+                            });
+                          },
+                        );
+                      })
+                ],
               ),
             ),
           ],
