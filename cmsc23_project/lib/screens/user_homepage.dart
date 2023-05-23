@@ -11,7 +11,7 @@ class _HomePageState extends State<HomePage> {
   List<dynamic> entries = [];
 
   Widget entryList(int index) {
-    if (entries.isEmpty) {
+    if (index == 0 && entries.isEmpty) {
       return Center(
         child: Text("No entries yet"),
       );
@@ -25,16 +25,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget profileBuilder() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(Icons.person),
-        Text("FULL NAME"),
-        ElevatedButton(
-          onPressed: () {},
-          child: Text("Generate Building Pass"),
-        ),
-      ],
+    return Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.person),
+          Text("FULL NAME"),
+          ElevatedButton(
+            onPressed: () {},
+            child: Text("Generate Building Pass"),
+          ),
+        ],
+      ),
     );
   }
 
