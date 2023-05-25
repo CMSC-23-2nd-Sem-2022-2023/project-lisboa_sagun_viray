@@ -1,8 +1,15 @@
+import 'dart:core';
+
 import 'package:cmsc23_project/screens/admin_login.dart';
 import 'package:cmsc23_project/screens/monitor_login.dart';
 import 'package:cmsc23_project/screens/user_login.dart';
 import 'package:flutter/material.dart';
-import 'dart:core';
+
+// 0xffe8e9e8 off-white ish
+// 0xff1b5c74 bluegreen ish
+// 0xfff09819 yellow/gold ish
+// 0xff929292 gray
+// 0xff93541b brown ish
 
 class MainMenu extends StatefulWidget {
   const MainMenu({super.key});

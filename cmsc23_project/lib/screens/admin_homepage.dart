@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../models/entry_model.dart';
+
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
 
@@ -8,34 +10,149 @@ class AdminPage extends StatefulWidget {
 }
 
 class _AdminPageState extends State<AdminPage> {
-  List<dynamic> entries = [];
+  List<Entry> entries = [];
   int _selectedIndex = 0;
 
   //builds the four buttons that will be used to view students
   Widget students_buttons() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          ElevatedButton(
-            onPressed: () {},
-            child: Text("Requests"),
-          ),
-          ElevatedButton(
-            onPressed: () {},
-            child: Text("All students"),
-          ),
-          ElevatedButton(
-            onPressed: () {},
-            child: Text("Quarantined"),
-          ),
-          ElevatedButton(
-            onPressed: () {},
-            child: Text("Monitoring"),
-          ),
-        ],
-      ),
+    return Flex(
+      direction: Axis.vertical,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(
+              width: 20,
+            ),
+            //1st column of buttons
+            Column(
+              children: [
+                Card(
+                  color: Color.fromARGB(255, 185, 105, 36),
+                  clipBehavior: Clip.hardEdge,
+                  child: InkWell(
+                    splashColor:
+                        Color.fromARGB(255, 227, 130, 44).withAlpha(20),
+                    onTap: () {
+                      //TODO functionality of this card
+                      //Navigator.push emerut
+                    },
+                    child: const SizedBox(
+                      width: 150,
+                      height: 200,
+                      child: Center(
+                        child: Text(
+                          "Requests",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(25),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Card(
+                  clipBehavior: Clip.hardEdge,
+                  color: Color.fromARGB(255, 245, 247, 245),
+                  child: InkWell(
+                    splashColor: Colors.blue.withAlpha(30),
+                    onTap: () {
+                      //TODO functionality of this card
+                    },
+                    child: const SizedBox(
+                      width: 150,
+                      height: 200,
+                      child: Center(
+                        child: Text("All Students"),
+                      ),
+                    ),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(25),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            //sizedbox as pading
+            SizedBox(
+              width: 20,
+            ),
+            //2nd column of buttons
+            Column(
+              children: [
+                SizedBox(
+                  height: 50,
+                ),
+                Card(
+                  clipBehavior: Clip.hardEdge,
+                  color: Color.fromARGB(255, 245, 247, 245),
+                  child: InkWell(
+                    splashColor: Colors.blue.withAlpha(30),
+                    onTap: () {
+                      //TODO functionality of this card
+                    },
+                    child: const SizedBox(
+                      width: 150,
+                      height: 200,
+                      child: Center(
+                        child: Text(
+                          "Quarantined Students",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(25),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Card(
+                  color: Color.fromARGB(255, 46, 160, 201),
+                  clipBehavior: Clip.hardEdge,
+                  child: InkWell(
+                    splashColor:
+                        Color.fromARGB(255, 46, 160, 201).withAlpha(20),
+                    onTap: () {
+                      //TODO functionality of this card
+                    },
+                    child: const SizedBox(
+                      width: 150,
+                      height: 200,
+                      child: Center(
+                        child: Text(
+                          "Under Monitoring",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(25),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              width: 20,
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -93,21 +210,21 @@ class _AdminPageState extends State<AdminPage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.person_4),
             label: "Students",
-            backgroundColor: Colors.pink,
+            backgroundColor: Color.fromARGB(255, 201, 115, 39),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.list_alt),
             label: "Entries",
-            backgroundColor: Colors.blue,
+            backgroundColor: Color.fromARGB(255, 46, 160, 201),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: "Profile",
-            backgroundColor: Colors.green,
+            backgroundColor: Color(0xfff09819),
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: Colors.black,
         onTap: _itemOnTapped,
       ),
     );
