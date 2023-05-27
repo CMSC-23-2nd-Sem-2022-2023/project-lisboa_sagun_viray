@@ -17,12 +17,12 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
   @override
   Widget build(BuildContext context) {
     // text field controllers
-    TextEditingController emailController = TextEditingController();
+    TextEditingController empnoController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
 
     // text form field for email with validator if valid email
     final empno = TextFormField(
-      controller: emailController,
+      controller: empnoController,
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
         hintText: "Enter your employee number",
@@ -67,7 +67,6 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
         if (!((passwordController.text).length >= 6)) {
           return "Password should be at least 6 characters.";
         }
-
         return null;
       },
     );
@@ -90,7 +89,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 await context.read<AuthProvider>().signIn(
-                      emailController.text.trim(),
+                      empnoController.text.trim(),
                       passwordController.text.trim(),
                     );
               }

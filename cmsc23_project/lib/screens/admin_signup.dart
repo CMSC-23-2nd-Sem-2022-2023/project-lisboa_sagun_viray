@@ -38,6 +38,8 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter your last name';
+        }else if(value.contains(RegExp("[0-9]"))){
+          return 'Name has numbers';
         }
         return null;
       },
