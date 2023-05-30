@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../screens/user_details.dart';
 import '../models/user_model.dart';
+import '../models/admin_model.dart';
 
 class FirebaseAuthAPI {
   // allows access to the firestore database
@@ -17,11 +18,23 @@ class FirebaseAuthAPI {
 
   // adds a new document to the firestore collection "users"
   // then updates the newly added document's field id with the generated id
-  Future<String> addUser(Map<String, dynamic> todo) async {
+  Future<String> addUser(Map<String, dynamic> user) async {
     try {
-      final docRef = await db.collection("users").add(todo);
+      final docRef = await db.collection("users").add(user);
       await db.collection("users").doc(docRef.id).update({'id': docRef.id});
       return "Successfully added user!";
+    } on FirebaseException catch (e) {
+      return "Failed with error '${e.code}: ${e.message}";
+    }
+  }
+
+  //adds a new document to firestore collection "admin"
+  Future<String> addAdmin(Map<String, dynamic> admin) async {
+    try {
+      await db.collection("admin").doc(admin["id"]).set(admin);
+      // final docRef = await db.collection("admin").add(admin);
+      // await db.collection("admin").doc(docRef.id).update({'id': docRef.id});
+      return "Successfully added admin!";
     } on FirebaseException catch (e) {
       return "Failed with error '${e.code}: ${e.message}";
     }
@@ -69,6 +82,44 @@ class FirebaseAuthAPI {
       //let's print the object returned by signInWithEmailAndPassword
       //you can use this object to get the user's id, email, etc.\
       print(credential);
+    } on FirebaseAuthException catch (e) {
+      //possible to return something more useful
+      //than just print an error message to improve UI/UX
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  //Admin sign up
+  Future<void> adminSignUp(String email, String password, AdminRecord admin) async {
+    UserCredential credential;
+    try {
+      // creating a new user account with an email and password
+      credential = await auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // sets the credentials of the user
+      AdminRecord temp = AdminRecord(
+        id: credential.user?.uid,
+        name: admin.name,
+        empno: admin.empno,
+        unit: admin.unit,
+        position: admin.position,
+        email: admin.email
+      );
+
+      addAdmin(temp.toJson(temp));
+
+      //let's print the object returned by signInWithEmailAndPassword
+      //you can use this object to get the user's id, email, etc.\
+      // print(credential);
     } on FirebaseAuthException catch (e) {
       //possible to return something more useful
       //than just print an error message to improve UI/UX

@@ -5,6 +5,7 @@ import '../models/todo_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../api/firebase_todo_api.dart';
 import '../models/user_model.dart';
+import '../models/admin_model.dart';
 
 class AuthProvider with ChangeNotifier {
   late FirebaseAuthAPI authService;
@@ -36,6 +37,12 @@ class AuthProvider with ChangeNotifier {
   // authenticating a user with firebase authentication
   Future<void> signIn(String email, String password) async {
     await authService.signIn(email, password);
+    notifyListeners();
+  }
+
+  //registering an admin with firebase authentication
+  Future<void> adminSignUp(String email, String password, AdminRecord admin) async {
+    await authService.adminSignUp(email, password, admin);
     notifyListeners();
   }
 

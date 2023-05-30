@@ -2,26 +2,33 @@ import 'dart:convert';
 
 class AdminRecord {
   // Admin properties
-  String id;
-  String fname;
-  String lname;
+  String? id;
+  String name;
+  String empno;
+  String position;
+  String unit;
   String email;
 
   // constructor
   AdminRecord({
     required this.id,
-    required this.fname,
-    required this.lname,
-    required this.email,
+    required this.name,
+    required this.empno,
+    required this.position,
+    required this.unit,
+    required this.email
   });
 
   // creates new instance of Admin record using data stored in json
   factory AdminRecord.fromJson(Map<String, dynamic> json) {
     return AdminRecord(
         id: json['id'],
-        fname: json['fname'],
-        lname: json['lname'],
-        email: json['email']);
+        name: json['name'],
+        empno: json['empno'],
+        position: json['position'],
+        unit: json['unit'],
+        email: json['email']
+        );
   }
 
   static List<AdminRecord> fromJsonArray(String jsonData) {
@@ -31,9 +38,12 @@ class AdminRecord {
 
   Map<String, dynamic> toJson(AdminRecord Admin) {
     return {
-      'fname': Admin.fname,
-      'lname': Admin.lname,
-      'email': Admin.email,
+      'id': Admin.id,
+      'name': Admin.name,
+      'empno': Admin.empno,
+      'position': Admin.position,
+      'unit': Admin.unit,
+      'email': Admin.email
     };
   }
 }

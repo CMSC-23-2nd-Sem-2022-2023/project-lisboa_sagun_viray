@@ -17,15 +17,15 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
   @override
   Widget build(BuildContext context) {
     // text field controllers
-    TextEditingController empnoController = TextEditingController();
+    TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
 
     // text form field for email with validator if valid email
     final empno = TextFormField(
-      controller: empnoController,
+      controller: emailController,
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
-        hintText: "Enter your employee number",
+        hintText: "Enter your email",
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(
@@ -39,7 +39,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter your employee number';
+          return 'Please enter your email';
         }
         return null;
       },
@@ -89,7 +89,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 await context.read<AuthProvider>().signIn(
-                      empnoController.text.trim(),
+                      emailController.text.trim(),
                       passwordController.text.trim(),
                     );
               }

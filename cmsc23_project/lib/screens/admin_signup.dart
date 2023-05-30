@@ -1,3 +1,4 @@
+import 'package:cmsc23_project/models/admin_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/user_model.dart';
@@ -19,6 +20,7 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
     TextEditingController empnoController = TextEditingController();
     TextEditingController positionController = TextEditingController();
     TextEditingController homeUnitController = TextEditingController();
+    TextEditingController emailController = TextEditingController();
 
     final name = TextFormField(
       controller: nameController,
@@ -38,7 +40,7 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter your last name';
-        }else if(value.contains(RegExp("[0-9]"))){
+        }else if(value.contains(RegExp(r'[0-9]'))){
           return 'Name has numbers';
         }
         return null;
@@ -63,6 +65,8 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter your employee number';
+        }else if(RegExp(r'[A-Z][a-z]').hasMatch(value)){
+          return 'Contains letters';
         }
         return null;
       },
@@ -116,6 +120,33 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
       },
     );
 
+    //textformfield that will get the email
+    final email = TextFormField(
+      controller: emailController,
+      keyboardType: TextInputType.number,
+      decoration: InputDecoration(
+        hintText: 'Email',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            width: 0,
+            style: BorderStyle.none,
+          ),
+        ),
+        filled: true,
+        contentPadding: EdgeInsets.all(16),
+        fillColor: Colors.white,
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your email';
+        } else if(!(RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value))){
+          return 'Invalid email format';
+        }
+        return null;
+      },
+    );
+
     // text form field for password with validator if at least 6 characters
     final password = TextFormField(
       controller: passwordController,
@@ -159,18 +190,26 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
               ),
             ),
             onPressed: () async {
-              // if (_formKey.currentState!.validate()) {
-              //   UserRecord tempUser = UserRecord(
-              //       id: "123",
-              //       fname: firstNameController.text,
-              //       lname: lastNameController.text,
-              //       email: emailController.text);
+              if (_formKey.currentState!.validate()) {
+                AdminRecord admin = AdminRecord(
+                  id: '',
+                  name: nameController.text,
+                  empno: empnoController.text,
+                  position: positionController.text,
+                  unit: homeUnitController.text,
+                  email: emailController.text
+                  );
+                // UserRecord tempUser = UserRecord(
+                //     id: "123",
+                //     fname: firstNameController.text,
+                //     lname: lastNameController.text,
+                //     email: emailController.text);
 
-              //   context.read<AuthProvider>().signUp(
-              //       emailController.text, passwordController.text, tempUser);
+                context.read<AuthProvider>().adminSignUp(
+                    emailController.text, passwordController.text, admin);
 
-              //   if (context.mounted) Navigator.pop(context);
-              // }
+                if (context.mounted) Navigator.pop(context);
+              }
             },
             child: const Text('SIGN UP AS ADMIN',
                 style: TextStyle(color: Colors.white)),
@@ -236,6 +275,10 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
                       height: 15,
                     ),
                     homeUnit,
+                    SizedBox(
+                      height: 15,
+                    ),
+                    email,
                     SizedBox(
                       height: 15,
                     ),
