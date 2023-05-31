@@ -116,7 +116,8 @@ class FirebaseAuthAPI {
         empno: admin.empno,
         unit: admin.unit,
         position: admin.position,
-        email: admin.email
+        email: admin.email,
+        entries: admin.entries
       );
 
       addAdmin(temp.toJson(temp));

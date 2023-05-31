@@ -211,7 +211,8 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
                   empno: empnoController.text,
                   position: positionController.text,
                   unit: homeUnitController.text,
-                  email: emailController.text
+                  email: emailController.text,
+                  entries: []
                   );
                 // UserRecord tempUser = UserRecord(
                 //     id: "123",

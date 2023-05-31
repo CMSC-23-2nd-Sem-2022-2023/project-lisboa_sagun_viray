@@ -94,10 +94,15 @@ class _UserLoginPageState extends State<UserLoginPage> {
             ),
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                await context.read<AuthProvider>().signIn(
+                String err = await context.read<AuthProvider>().signIn(
                       emailController.text.trim(),
                       passwordController.text.trim(),
                     );
+                if(err == 'success'){
+                  Navigator.pushNamed(context, '/homepage');
+                }else{
+                  print(err);
+                }
               }
             },
             child:
