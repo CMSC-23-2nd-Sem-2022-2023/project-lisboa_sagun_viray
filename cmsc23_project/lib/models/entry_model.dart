@@ -33,8 +33,8 @@ class Entry {
     return {
       'UID': entry.UID,
       'date': entry.date,
-      'hasContact': entry.hasContact,
       'symptoms': entry.symptoms,
+      'hasContact': entry.hasContact,
     };
   }
 }
