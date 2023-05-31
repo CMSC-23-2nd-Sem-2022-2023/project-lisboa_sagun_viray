@@ -3,8 +3,7 @@ import 'dart:convert';
 class Entry {
   final String date;
   final String UID;
-  // List<bool> symptoms;
-  final String symptoms;
+  List<bool> symptoms;
   bool hasContact;
 
   Entry({
@@ -33,8 +32,8 @@ class Entry {
     return {
       'UID': entry.UID,
       'date': entry.date,
-      'hasContact': entry.hasContact,
       'symptoms': entry.symptoms,
+      'hasContact': entry.hasContact,
     };
   }
 }

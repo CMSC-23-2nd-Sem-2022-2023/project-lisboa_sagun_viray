@@ -17,6 +17,7 @@ class _UserSignupPageState extends State<UserSignupPage> {
     TextEditingController passwordController = TextEditingController();
     TextEditingController nameController = TextEditingController();
     TextEditingController usernameController = TextEditingController();
+    TextEditingController emailController = TextEditingController();
     TextEditingController collegeController = TextEditingController();
     TextEditingController studnoController = TextEditingController();
     TextEditingController courseController = TextEditingController();
@@ -168,6 +169,50 @@ class _UserSignupPageState extends State<UserSignupPage> {
       },
     );
 
+    final email = TextFormField(
+      controller: emailController,
+      decoration: InputDecoration(
+        hintText: 'Email',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            width: 0,
+            style: BorderStyle.none,
+          ),
+        ),
+        filled: true,
+        contentPadding: EdgeInsets.all(16),
+        fillColor: Colors.white,
+      ),
+      validator: (value) {
+        // FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+        // Future<bool> isEmailAlreadyInUse(String email) async {
+        //   try {
+        //     final result =
+        //         await _firebaseAuth.fetchSignInMethodsForEmail(email);
+        //     return result.isNotEmpty;
+        //   } catch (e) {
+        //     // Handle any errors that occur during the process
+        //     print('Error checking email usage: $e');
+        //     return false;
+        //   }
+        // }
+
+        // bool emailExists =
+        //           await isEmailAlreadyInUse(emailController.text);
+
+        if (value == null || value.isEmpty) {
+          return 'Please enter your email';
+        } else if (!(RegExp(
+                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+            .hasMatch(value))) {
+          return 'Invalid email format';
+        }
+        return null;
+      },
+    );
+
     // sign up button will direct you to sign up page
     final SignupButton = Padding(
         padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -186,6 +231,11 @@ class _UserSignupPageState extends State<UserSignupPage> {
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState?.save();
+                UserRecord user = UserRecord(id: '', fname: nameController.text, lname: nameController.text, email: emailController.text, entries: []);
+                await context
+                      .read<AuthProvider>()
+                      .signUp(emailController.text,
+                          passwordController.text, user);
 
                 // bool emailExists = await isEmailAlreadyInUse(email);
                 // if (emailExists) {
@@ -288,6 +338,10 @@ class _UserSignupPageState extends State<UserSignupPage> {
                       height: 15,
                     ),
                     course,
+                    SizedBox(
+                      height: 15,
+                    ),
+                    email,
                     SizedBox(
                       height: 15,
                     ),

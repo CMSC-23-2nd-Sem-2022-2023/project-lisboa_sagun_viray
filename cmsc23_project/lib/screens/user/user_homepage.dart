@@ -14,9 +14,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<dynamic> entries = [];
+  List<dynamic> entries = [1, 2, 3];
 
-  Widget entryList(int index) {
+  Widget entryList(
+    BuildContext context,
+    int index,
+  ) {
+    Stream<User?> userStream = context.watch<AuthProvider>().uStream;
     if (index == 0 && entries.isEmpty) {
       return Center(
         child: Text("No entries yet"),
@@ -24,10 +28,61 @@ class _HomePageState extends State<HomePage> {
     } else if (index == 1) {
       return profileBuilder();
     } else {
-      return Center(
-        child: Text("ENTRIES WOOSH"),
-      );
+      return displayUserEntries(userStream);
     }
+  }
+
+  Widget displayUserEntries(Stream<User?> userStream) {
+    return StreamBuilder<User?>(
+      stream: userStream,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          User? user = snapshot.data;
+          String? userId = user?.uid;
+          // Query the Firestore collection to get the documents associated with the user
+          Stream<QuerySnapshot<Map<String, dynamic>>> userEntriesStream =
+              FirebaseFirestore.instance
+                  .collection('entries')
+                  .where('UID', isEqualTo: userId)
+                  .snapshots();
+          return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+            stream: userEntriesStream,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                QuerySnapshot<Map<String, dynamic>> entriesSnapshot =
+                    snapshot.data!;
+                List<QueryDocumentSnapshot<Map<String, dynamic>>> entries =
+                    entriesSnapshot.docs;
+
+                // Access and work with the documents in the 'entries' list
+                // ...
+
+                // Example: Display the titles of the entries
+                return ListView.builder(
+                  itemCount: entries.length,
+                  itemBuilder: (context, index) {
+                    QueryDocumentSnapshot<Map<String, dynamic>> entry =
+                        entries[index];
+                    String title = entry.data()['title'];
+                    return ListTile(
+                      title: Text(title),
+                    );
+                  },
+                );
+              } else if (snapshot.hasError) {
+                return Text('Error retrieving entries');
+              } else {
+                return CircularProgressIndicator();
+              }
+            },
+          );
+        } else if (snapshot.hasError) {
+          return Text('Error retrieving user');
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
+    );
   }
 
   Widget profileBuilder() {
@@ -97,7 +152,7 @@ class _HomePageState extends State<HomePage> {
         ],
         title: Text("Monitor View"),
       ),
-      body: entryList(_selectedIndex),
+      body: entryList(context, _selectedIndex),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Color.fromARGB(255, 0, 37, 67),
         onPressed: () {

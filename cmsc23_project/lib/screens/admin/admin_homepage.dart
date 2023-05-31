@@ -413,28 +413,25 @@ class _AdminPageState extends State<AdminPage> {
 
   //builds entries from stream
   Widget entriesBuilder(Stream<QuerySnapshot> entriesStream) {
-    return const Center();
+    return StreamBuilder(
+        stream: entriesStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text("Error encountered! ${snapshot.error}"),
+            );
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (!snapshot.hasData) {
+            return const Center(
+              child: Text("No Entries Found"),
+            );
+          }
 
-    // return StreamBuilder(
-    //   stream: entriesStream,
-    //     builder: (context, snapshot) {
-    //       if (snapshot.hasError) {
-    //         return Center(
-    //           child: Text("Error encountered! ${snapshot.error}"),
-    //         );
-    //       } else if (snapshot.connectionState == ConnectionState.waiting) {
-    //         return const Center(
-    //           child: CircularProgressIndicator(),
-    //         );
-    //       } else if (!snapshot.hasData) {
-    //         return const Center(
-    //           child: Text("No Entries Found"),
-    //         );
-    //       }
-
-    //       return ListView.builder(itemBuilder: itemBuilder);
-    //     }
-    //   );
+          return displayScaffold(context, entriesStream);
+        });
   }
 
   //this function returns a different widget depending on the index of the
@@ -500,7 +497,7 @@ class _AdminPageState extends State<AdminPage> {
         actions: [
           TextButton(
             onPressed: () {
-              print('pessed logout');
+              print('pressed logout');
               context.read<AuthProvider>().signOut();
               Navigator.pop(context);
             },
@@ -538,7 +535,6 @@ class _AdminPageState extends State<AdminPage> {
         onTap: _itemOnTapped,
       ),
       floatingActionButton: FloatingActionButton(
-          backgroundColor: Color.fromARGB(255, 0, 37, 67),
           child: Icon(Icons.add),
           onPressed: () {
             Navigator.pushNamed(context, '/entryform');

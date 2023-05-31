@@ -9,6 +9,7 @@ import '../../providers/entry_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../models/entry_model.dart';
 
 class EntryForm extends StatefulWidget {
   const EntryForm({super.key});
@@ -46,6 +47,9 @@ class _EntryFormState extends State<EntryForm> {
   Widget formHeader() {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+    setState(() {
+      dateController.text = formattedDate;
+    });
     return Column(children: [
       const SizedBox(
         height: 20,
@@ -180,69 +184,89 @@ class _EntryFormState extends State<EntryForm> {
     );
   }
 
-  Widget submitAndResetButtons() {
-    return Column(
-      children: [
-        const Divider(
-          thickness: 5,
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        ElevatedButton(
-          style: ButtonStyle(
-            minimumSize: MaterialStateProperty.all<Size>(
-              const Size(double.infinity, 50), // Adjust the width here
-            ),
-            backgroundColor: MaterialStateProperty.all<Color>(
-                const Color.fromARGB(255, 0, 67, 27)),
-            foregroundColor: MaterialStateProperty.all<Color>(
-                const Color.fromARGB(255, 0, 67, 27)),
-            shape: MaterialStateProperty.all<StadiumBorder>(
-              const StadiumBorder(),
-            ),
-          ),
-          onPressed: () async {
-            // if (_formKey.currentState!.validate()) {
-            //   await context.read<AuthProvider>().signIn(
-            //         emailController.text.trim(),
-            //         passwordController.text.trim(),
-            //       );
-            // }
-          },
-          child: const Text('SUBMIT ENTRY', style: TextStyle(color: Colors.white)),
-        ),
-        const SizedBox(
-          height: 5,
-        ),
-        ElevatedButton(
-            style: ButtonStyle(
-              minimumSize: MaterialStateProperty.all<Size>(
-                const Size(double.infinity, 50), // Adjust the width here
-              ),
-              backgroundColor: MaterialStateProperty.all<Color>(
-                  const Color.fromARGB(255, 67, 0, 0)),
-              foregroundColor: MaterialStateProperty.all<Color>(
-                  const Color.fromARGB(255, 67, 0, 0)),
-              shape: MaterialStateProperty.all<StadiumBorder>(
-                const StadiumBorder(),
-              ),
-            ),
-            onPressed: () {
-              setState(() {
-                for (var i = 0; i < isCheckedList.length; i++) {
-                  isCheckedList[i] = false;
-                }
-                isInContact = choices[0];
-              });
-            },
-            child: const Text('RESET', style: TextStyle(color: Colors.white))),
-      ],
-    );
+  Widget submitAndResetButtons(Stream<User?> userStream) {
+    return StreamBuilder(
+        stream: userStream,
+        builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
+          print(snapshot.connectionState);
+          if (snapshot.connectionState == ConnectionState.active) {
+            User? user = snapshot.data;
+            String? userId = user?.uid;
+            return Column(
+              children: [
+                const Divider(
+                  thickness: 5,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    minimumSize: MaterialStateProperty.all<Size>(
+                      const Size(double.infinity, 50), // Adjust the width here
+                    ),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color.fromARGB(255, 0, 67, 27)),
+                    foregroundColor: MaterialStateProperty.all<Color>(
+                        const Color.fromARGB(255, 0, 67, 27)),
+                    shape: MaterialStateProperty.all<StadiumBorder>(
+                      const StadiumBorder(),
+                    ),
+                  ),
+                  onPressed: () async {
+                    print('button pressed');
+                    print(dateController.text);
+                    Entry entry = Entry(
+                        UID: userId!,
+                        date: dateController.text,
+                        symptoms: isCheckedList,
+                        hasContact: contactCheck);
+                    context.read<EntryListProvider>().addEntry(entry);
+                    Navigator.pop(context);
+                  },
+                  child: const Text('SUBMIT ENTRY',
+                      style: TextStyle(color: Colors.white)),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                ElevatedButton(
+                    style: ButtonStyle(
+                      minimumSize: MaterialStateProperty.all<Size>(
+                        const Size(
+                            double.infinity, 50), // Adjust the width here
+                      ),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color.fromARGB(255, 67, 0, 0)),
+                      foregroundColor: MaterialStateProperty.all<Color>(
+                          const Color.fromARGB(255, 67, 0, 0)),
+                      shape: MaterialStateProperty.all<StadiumBorder>(
+                        const StadiumBorder(),
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        for (var i = 0; i < isCheckedList.length; i++) {
+                          isCheckedList[i] = false;
+                        }
+                        isInContact = choices[0];
+                      });
+                    },
+                    child: const Text('RESET',
+                        style: TextStyle(color: Colors.white))),
+              ],
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        });
   }
 
   @override
   Widget build(BuildContext context) {
+    Stream<User?> userStream = context.watch<AuthProvider>().uStream;
     return Scaffold(
         appBar: AppBar(
           backgroundColor: const Color.fromARGB(255, 0, 37, 67),
@@ -262,7 +286,7 @@ class _EntryFormState extends State<EntryForm> {
                     height: 15,
                   ),
                   covidContact(),
-                  submitAndResetButtons(),
+                  submitAndResetButtons(userStream),
                 ],
               ),
             ),
