@@ -175,6 +175,10 @@ class _AdminPageState extends State<AdminPage> {
             onPressed: () {},
             child: const Text("Generate Building Pass"),
           ),
+          // ElevatedButton(onPressed: (){
+          //   context.read<AuthProvider>().signOut();
+          //   // Navigator.pop(context);
+          // }, child: const Text("Log out"))
         ],
       ),
     );
@@ -248,12 +252,13 @@ class _AdminPageState extends State<AdminPage> {
           child: CircularProgressIndicator(),
         );
       }else if (!snapshot.hasData){
-        Navigator.pop(context);
+        // Navigator.pop(context);
+        // print("no data");
       }
-      print("user currently logged in: ${snapshot.data!.uid}");
+      // print("user currently logged in: ${snapshot.data!.uid}");
       //get the uid of current logged in user, then kunin sa admin collection yung data nya
       //then store to an instance of AdminRecord?
-      String crrntlogged = snapshot.data!.uid; 
+      // String crrntlogged = snapshot.data!.uid; 
       return displayScaffold(context, entriesStream);
     },);
   }
