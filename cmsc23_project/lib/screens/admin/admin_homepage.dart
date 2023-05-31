@@ -250,7 +250,10 @@ class _AdminPageState extends State<AdminPage> {
       }else if (!snapshot.hasData){
         Navigator.pop(context);
       }
-
+      print("user currently logged in: ${snapshot.data!.uid}");
+      //get the uid of current logged in user, then kunin sa admin collection yung data nya
+      //then store to an instance of AdminRecord?
+      String crrntlogged = snapshot.data!.uid; 
       return displayScaffold(context, entriesStream);
     },);
   }
@@ -285,6 +288,11 @@ class _AdminPageState extends State<AdminPage> {
         selectedItemColor: Colors.black,
         onTap: _itemOnTapped,
       ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: (){
+        Navigator.pushNamed(context, '/entryform');
+      }),
     );
     }
 }
