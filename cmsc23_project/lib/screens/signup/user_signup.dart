@@ -39,6 +39,8 @@ class _UserSignupPageState extends State<UserSignupPage> {
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter your last name';
+        } else if (value.contains(RegExp(r'[0-9]'))) {
+          return 'Name has numbers';
         }
         return null;
       },
@@ -182,18 +184,45 @@ class _UserSignupPageState extends State<UserSignupPage> {
               ),
             ),
             onPressed: () async {
-              // if (_formKey.currentState!.validate()) {
-              //   UserRecord tempUser = UserRecord(
-              //       id: "123",
-              //       fname: firstNameController.text,
-              //       lname: lastNameController.text,
-              //       email: emailController.text);
+              if (_formKey.currentState!.validate()) {
+                _formKey.currentState?.save();
 
-              //   context.read<AuthProvider>().signUp(
-              //       emailController.text, passwordController.text, tempUser);
+                // bool emailExists = await isEmailAlreadyInUse(email);
+                // if (emailExists) {
+                //   // Prompt the user that the email is already in use
+                //   showDialog(
+                //     context: context,
+                //     builder: (BuildContext context) {
+                //       return AlertDialog(
+                //         title: Text('Email Already in Use'),
+                //         content: Text(
+                //             'The email address is already registered. Please use a different email.'),
+                //         actions: [
+                //           TextButton(
+                //             child: Text('OK'),
+                //             onPressed: () {
+                //               Navigator.of(context).pop();
+                //             },
+                //           ),
+                //         ],
+                //       );
+                //     },
+                //   );
+                // } else {
+                //   // Proceed with the registration process
+                //   // ...
+                // }
+                // UserRecord tempUser = UserRecord(
+                //     id: "123",
+                //     fname: firstNameController.text,
+                //     lname: lastNameController.text,
+                //     email: emailController.text);
 
-              //   if (context.mounted) Navigator.pop(context);
-              // }
+                // context.read<AuthProvider>().signUp(
+                //     emailController.text, passwordController.text, tempUser);
+
+                // if (context.mounted) Navigator.pop(context);
+              }
             },
             child: const Text('SIGN UP AS USER',
                 style: TextStyle(color: Colors.white)),
