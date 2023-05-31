@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../api/firebase_todo_api.dart';
 import '../models/user_model.dart';
 import '../models/admin_model.dart';
+import '../models/health_monitor_model.dart';
 
 class AuthProvider with ChangeNotifier {
   late FirebaseAuthAPI authService;
@@ -42,14 +43,23 @@ class AuthProvider with ChangeNotifier {
   }
 
   //registering an admin with firebase authentication
-  Future<String> adminSignUp(String email, String password, AdminRecord admin) async {
+  Future<String> adminSignUp(
+      String email, String password, AdminRecord admin) async {
     String err = await authService.adminSignUp(email, password, admin);
+    notifyListeners();
+    return err;
+  }
+
+  Future<String> healthMonitorSignUp(
+      String email, String password, Health_Monitor_Record hm) async {
+    String err = await authService.healthMonitorSignUp(email, password, hm);
     notifyListeners();
     return err;
   }
 
   // signing out the currently authenticated user from firebase authentication
   Future<void> signOut() async {
+    print('going to API');
     await authService.signOut();
     notifyListeners();
   }

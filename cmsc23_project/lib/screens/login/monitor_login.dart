@@ -26,7 +26,7 @@ class _MonitorLoginPageState extends State<MonitorLoginPage> {
       controller: emailController,
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
-        hintText: "Enter your employee number",
+        hintText: "Enter your E-mail",
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(
@@ -40,7 +40,7 @@ class _MonitorLoginPageState extends State<MonitorLoginPage> {
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter your employee number';
+          return 'Please enter your E-mail';
         }
         return null;
       },
@@ -89,11 +89,18 @@ class _MonitorLoginPageState extends State<MonitorLoginPage> {
               ),
             ),
             onPressed: () async {
+              print(_formKey.currentState!.validate());
               if (_formKey.currentState!.validate()) {
-                await context.read<AuthProvider>().signIn(
+                String err = await context.read<AuthProvider>().signIn(
                       emailController.text.trim(),
                       passwordController.text.trim(),
                     );
+                print(err);
+                if (err == 'success') {
+                  Navigator.pushNamed(context, '/entrance-monitor_homepage');
+                } else {
+                  print(err);
+                }
               }
             },
             child: Text('LOG IN AS ENTRANCE MONITOR',

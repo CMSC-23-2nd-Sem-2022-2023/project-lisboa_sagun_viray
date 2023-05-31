@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../models/entry_model.dart';
 import '../../providers/entry_provider.dart';
 import '../../providers/auth_provider.dart';
@@ -181,7 +180,7 @@ class _AdminPageState extends State<AdminPage> {
   }
 
   //builds entries from stream
-  Widget entriesBuilder(){
+  Widget entriesBuilder() {
     return Center();
     // return ListView.builder(itemBuilder: itemBuilder);
   }
@@ -212,10 +211,26 @@ class _AdminPageState extends State<AdminPage> {
 
   @override
   Widget build(BuildContext context) {
-    Stream<QuerySnapshot> entriesStream = context.watch<EntryListProvider>().entries;
+    Stream<QuerySnapshot> entriesStream =
+        context.watch<EntryListProvider>().entries;
     Stream<User?> userStream = context.watch<AuthProvider>().uStream;
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        actions: [
+          TextButton(
+            onPressed: () {
+              print('pessed logout');
+              context.read<AuthProvider>().signOut();
+              Navigator.pop(context);
+            },
+            child: Text('Logout'),
+            style: TextButton.styleFrom(
+              primary: Colors.white,
+              textStyle: TextStyle(fontSize: 16),
+            ),
+          ),
+        ],
         title: Text("Admin View"),
       ),
       body: body(_selectedIndex),

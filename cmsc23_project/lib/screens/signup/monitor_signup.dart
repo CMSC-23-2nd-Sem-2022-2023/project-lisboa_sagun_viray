@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../models/user_model.dart';
+import '../../models/health_monitor_model.dart';
 import '../../providers/auth_provider.dart';
 
 class MonitorSignupPage extends StatefulWidget {
@@ -19,6 +19,7 @@ class _MonitorSignupPageState extends State<MonitorSignupPage> {
     TextEditingController empnoController = TextEditingController();
     TextEditingController positionController = TextEditingController();
     TextEditingController homeUnitController = TextEditingController();
+    TextEditingController emailController = TextEditingController();
 
     final name = TextFormField(
       controller: nameController,
@@ -114,6 +115,33 @@ class _MonitorSignupPageState extends State<MonitorSignupPage> {
       },
     );
 
+    final email = TextFormField(
+      controller: emailController,
+      keyboardType: TextInputType.number,
+      decoration: InputDecoration(
+        hintText: 'Email',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            width: 0,
+            style: BorderStyle.none,
+          ),
+        ),
+        filled: true,
+        contentPadding: EdgeInsets.all(16),
+        fillColor: Colors.white,
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your email';
+        } else if (!(RegExp(
+                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+            .hasMatch(value))) {
+          return 'Invalid email format';
+        }
+        return null;
+      },
+    );
     // text form field for password with validator if at least 6 characters
     final password = TextFormField(
       controller: passwordController,
@@ -157,18 +185,39 @@ class _MonitorSignupPageState extends State<MonitorSignupPage> {
               ),
             ),
             onPressed: () async {
-              // if (_formKey.currentState!.validate()) {
-              //   UserRecord tempUser = UserRecord(
-              //       id: "123",
-              //       fname: firstNameController.text,
-              //       lname: lastNameController.text,
-              //       email: emailController.text);
+              if (_formKey.currentState!.validate()) {
+                _formKey.currentState?.save();
+                Health_Monitor_Record health_monitor = Health_Monitor_Record(
+                    id: '',
+                    name: nameController.text,
+                    empno: empnoController.text,
+                    position: positionController.text,
+                    unit: homeUnitController.text,
+                    email: emailController.text);
+                // UserRecord tempUser = UserRecord(
+                //     id: "123",
+                //     fname: firstNameController.text,
+                //     lname: lastNameController.text,
+                //     email: emailController.text);
 
-              //   context.read<AuthProvider>().signUp(
-              //       emailController.text, passwordController.text, tempUser);
+                String err = await context
+                    .read<AuthProvider>()
+                    .healthMonitorSignUp(emailController.text,
+                        passwordController.text, health_monitor);
 
-              //   if (context.mounted) Navigator.pop(context);
-              // }
+                //if (context.mounted) Navigator.pop(context);
+                if (err == 'success') {
+                  // setState(() {
+                  //   _isVisible = false;
+                  // });
+                  Navigator.pop(context);
+                } else {
+                  // setState(() {
+                  //   _isVisible = true;
+                  // });
+                  // print("isvisible is $_isVisible");
+                }
+              }
             },
             child: const Text('SIGN UP AS ENTRANCE MONITOR',
                 style: TextStyle(color: Colors.white)),
@@ -234,6 +283,10 @@ class _MonitorSignupPageState extends State<MonitorSignupPage> {
                       height: 15,
                     ),
                     homeUnit,
+                    SizedBox(
+                      height: 15,
+                    ),
+                    email,
                     SizedBox(
                       height: 15,
                     ),
