@@ -40,7 +40,7 @@ class FirebaseAuthAPI {
     }
   }
 
-  Future<void> signIn(String email, String password) async {
+  Future<String> signIn(String email, String password) async {
     UserCredential credential;
     try {
       final credential = await auth.signInWithEmailAndPassword(
@@ -49,15 +49,19 @@ class FirebaseAuthAPI {
       //let's print the object returned by signInWithEmailAndPassword
       //you can use this object to get the user's id, email, etc.
       print(credential);
+      return 'success';
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         //possible to return something more useful
         //than just print an error message to improve UI/UX
         print('No user found for that email.');
+        return 'No user found with that email';
       } else if (e.code == 'wrong-password') {
         print('Wrong password provided for that user.');
+        return 'Wrong password';
       }
     }
+    return '';
   }
 
   Future<void> signUp(String email, String password, UserRecord u) async {
@@ -96,7 +100,7 @@ class FirebaseAuthAPI {
   }
 
   //Admin sign up
-  Future<void> adminSignUp(String email, String password, AdminRecord admin) async {
+  Future<String> adminSignUp(String email, String password, AdminRecord admin) async {
     UserCredential credential;
     try {
       // creating a new user account with an email and password
@@ -116,6 +120,7 @@ class FirebaseAuthAPI {
       );
 
       addAdmin(temp.toJson(temp));
+      return 'success';
 
       //let's print the object returned by signInWithEmailAndPassword
       //you can use this object to get the user's id, email, etc.\
@@ -125,12 +130,15 @@ class FirebaseAuthAPI {
       //than just print an error message to improve UI/UX
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
+        return 'The password provided is too weak.';
       } else if (e.code == 'email-already-in-use') {
         print('The account already exists for that email.');
+        return 'Email already in use';
       }
     } catch (e) {
       print(e);
     }
+    return '';
   }
 
   Future<void> signOut() async {

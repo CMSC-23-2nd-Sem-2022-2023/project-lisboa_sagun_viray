@@ -22,6 +22,19 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
     TextEditingController homeUnitController = TextEditingController();
     TextEditingController emailController = TextEditingController();
 
+    //this visibility widget will show up if an the email is already in use
+
+    bool _isVisible = false;
+
+    // setState(() {
+    //   _isVisible = !_isVisible;
+    // });
+
+    Widget emailInUse = Visibility(
+      visible: _isVisible,
+      child: Text("Password already in use", style: TextStyle(color: Colors.red),),
+      );
+
     final name = TextFormField(
       controller: nameController,
       decoration: InputDecoration(
@@ -65,7 +78,7 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter your employee number';
-        }else if(RegExp(r'[A-Z][a-z]').hasMatch(value)){
+        }else if(RegExp(r'[A-Za-z]').hasMatch(value)){
           return 'Contains letters';
         }
         return null;
@@ -191,6 +204,7 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
             ),
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
+                _formKey.currentState?.save();
                 AdminRecord admin = AdminRecord(
                   id: '',
                   name: nameController.text,
@@ -205,10 +219,21 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
                 //     lname: lastNameController.text,
                 //     email: emailController.text);
 
-                context.read<AuthProvider>().adminSignUp(
+                String err = await context.read<AuthProvider>().adminSignUp(
                     emailController.text, passwordController.text, admin);
 
-                if (context.mounted) Navigator.pop(context);
+                //if (context.mounted) Navigator.pop(context);
+                if(err == 'success'){
+                  // setState(() {
+                  //   _isVisible = false;
+                  // });
+                  Navigator.pop(context);
+                }else{
+                  setState(() {
+                    _isVisible = true;
+                  });
+                  print("isvisible is $_isVisible");
+                }
               }
             },
             child: const Text('SIGN UP AS ADMIN',
@@ -286,6 +311,7 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
                     SizedBox(
                       height: 15,
                     ),
+                    emailInUse,
                     SignupButton,
                     backButton
                   ],

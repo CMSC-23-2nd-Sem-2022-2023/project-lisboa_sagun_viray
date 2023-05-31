@@ -15,8 +15,9 @@ class _AdminPageState extends State<AdminPage> {
 
   //builds the four buttons that will be used to view students
   Widget students_buttons() {
-    return Flex(
-      direction: Axis.vertical,
+    return ListView(
+      scrollDirection: Axis.vertical,
+      //direction: Axis.vertical,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
