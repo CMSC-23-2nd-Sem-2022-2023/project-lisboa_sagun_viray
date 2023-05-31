@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../models/entry_model.dart';
+import '../../providers/entry_provider.dart';
+import '../../providers/auth_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class EntranceMonitor extends StatefulWidget {
   const EntranceMonitor({super.key});
@@ -8,43 +14,44 @@ class EntranceMonitor extends StatefulWidget {
 }
 
 class _EntranceMonitorState extends State<EntranceMonitor> {
-  List<dynamic> student_logs = ["maria","Jason","louie"];
+  List<dynamic> student_logs = ["maria", "Jason", "louie"];
   int _selectedIndex = 0;
   TextEditingController _searchController = TextEditingController();
-  performSearch(){
+  performSearch() {
     //handle search
     //mas maganda if mag generate ako ng material page to the searched student
   }
 
   //builds the four buttons that will be used to view students
   Widget students_cards() {
-  return Column(
-    children: [
-      searchBar(),
-      Expanded(
-        child: ListView.builder(
-          itemCount: student_logs.length, // Replace with the desired number of cards
-          itemBuilder: (BuildContext context, int index) {
-            return Card(
-              child: ListTile(
-                leading: Icon(Icons.image), // Replace with your desired card image
-                title: Text('Card $index'), // Replace with your card title
-                subtitle: Text('${student_logs[index]}'), // Replace with your card description
-                onTap: () {
-                  // Action to perform when the card is tapped
-                },
-              ),
-            );
-          },
+    return Column(
+      children: [
+        searchBar(),
+        Expanded(
+          child: ListView.builder(
+            itemCount:
+                student_logs.length, // Replace with the desired number of cards
+            itemBuilder: (BuildContext context, int index) {
+              return Card(
+                child: ListTile(
+                  leading:
+                      Icon(Icons.image), // Replace with your desired card image
+                  title: Text('Card $index'), // Replace with your card title
+                  subtitle: Text(
+                      '${student_logs[index]}'), // Replace with your card description
+                  onTap: () {
+                    // Action to perform when the card is tapped
+                  },
+                ),
+              );
+            },
+          ),
         ),
-      ),
-     
-    ],
-  );
-}
+      ],
+    );
+  }
 
-
-  Widget searchBar(){
+  Widget searchBar() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -85,13 +92,12 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
 
   body(int index) {
     if (index == 0) {
-      if(student_logs.isEmpty){
+      if (student_logs.isEmpty) {
         return Center(
           child: Text("No entries yet"),
         );
-      }
-      else{
-         return students_cards();
+      } else {
+        return students_cards();
       }
     } else if (index == 1) {
       if (student_logs.isEmpty) {
@@ -118,7 +124,22 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Entrance Monitor View"),
+        automaticallyImplyLeading: false,
+        actions: [
+          TextButton(
+            onPressed: () {
+              print('pessed logout');
+              context.read<AuthProvider>().signOut();
+              Navigator.pop(context);
+            },
+            child: Text('Logout'),
+            style: TextButton.styleFrom(
+              primary: Colors.white,
+              textStyle: TextStyle(fontSize: 16),
+            ),
+          ),
+        ],
+        title: Text("Monitor View"),
       ),
       body: body(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(

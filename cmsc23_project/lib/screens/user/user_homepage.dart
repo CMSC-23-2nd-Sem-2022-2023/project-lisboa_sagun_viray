@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../models/entry_model.dart';
+import '../../providers/entry_provider.dart';
+import '../../providers/auth_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -74,8 +80,22 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       drawer: Drawer(child: Text('Drawer')),
       appBar: AppBar(
-        title: Text("HOME PAGE"),
-        backgroundColor: Color.fromARGB(255, 0, 37, 67),
+        automaticallyImplyLeading: false,
+        actions: [
+          TextButton(
+            onPressed: () {
+              print('pessed logout');
+              context.read<AuthProvider>().signOut();
+              Navigator.pop(context);
+            },
+            child: Text('Logout'),
+            style: TextButton.styleFrom(
+              primary: Colors.white,
+              textStyle: TextStyle(fontSize: 16),
+            ),
+          ),
+        ],
+        title: Text("Monitor View"),
       ),
       body: entryList(_selectedIndex),
       floatingActionButton: FloatingActionButton(

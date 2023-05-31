@@ -7,9 +7,9 @@ import 'package:cmsc23_project/screens/login/user_login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../providers/auth_provider.dart';
 import '../providers/todo_provider.dart';
+import '../providers/entry_provider.dart';
 import 'screens/admin/admin_homepage.dart';
 import 'screens/entrance_monitor/entrance_monitor.dart';
 import 'screens/user/entryform.dart';
@@ -29,7 +29,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: ((context) => TodoListProvider())),
         ChangeNotifierProvider(create: ((context) => AuthProvider())),
-        ChangeNotifierProvider(create: ((context) => EntryListProvider()))
+        ChangeNotifierProvider(create: ((context) => EntryListProvider())),
       ],
       child: const MyApp(),
     ),
@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
         '/homepage': (context) => const HomePage(),
         '/entryform': (context) => const EntryForm(),
         '/admin_homepage': (context) => const AdminPage(),
-        '/entrance-monitor': (context) => const EntranceMonitor(),
+        '/entrance-monitor_homepage': (context) => const EntranceMonitor(),
       },
     );
   }
