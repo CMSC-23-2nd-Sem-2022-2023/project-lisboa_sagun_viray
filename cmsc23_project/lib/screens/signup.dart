@@ -94,10 +94,12 @@ class _SignupPageState extends State<SignupPage> {
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 UserRecord tempUser = UserRecord(
-                    id: "123",
-                    fname: firstNameController.text,
-                    lname: lastNameController.text,
-                    email: emailController.text);
+                  id: "123",
+                  fname: firstNameController.text,
+                  lname: lastNameController.text,
+                  email: emailController.text,
+                  entries: [],
+                );
 
                 context.read<AuthProvider>().signUp(
                     emailController.text, passwordController.text, tempUser);

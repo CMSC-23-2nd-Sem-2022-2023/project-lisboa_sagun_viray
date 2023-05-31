@@ -185,29 +185,26 @@ class _AdminPageState extends State<AdminPage> {
   }
 
   //builds entries from stream
-  Widget entriesBuilder(Stream<QuerySnapshot> entriesStream){
-    return const Center();
+  Widget entriesBuilder(Stream<QuerySnapshot> entriesStream) {
+    return StreamBuilder(
+        stream: entriesStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text("Error encountered! ${snapshot.error}"),
+            );
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (!snapshot.hasData) {
+            return const Center(
+              child: Text("No Entries Found"),
+            );
+          }
 
-    // return StreamBuilder(
-    //   stream: entriesStream,
-    //     builder: (context, snapshot) {
-    //       if (snapshot.hasError) {
-    //         return Center(
-    //           child: Text("Error encountered! ${snapshot.error}"),
-    //         );
-    //       } else if (snapshot.connectionState == ConnectionState.waiting) {
-    //         return const Center(
-    //           child: CircularProgressIndicator(),
-    //         );
-    //       } else if (!snapshot.hasData) {
-    //         return const Center(
-    //           child: Text("No Entries Found"),
-    //         );
-    //       }
-
-    //       return ListView.builder(itemBuilder: itemBuilder);
-    //     }
-    //   );
+          return displayScaffold(context, entriesStream);
+        });
   }
 
   //this function returns a different widget depending on the index of the
@@ -243,34 +240,36 @@ class _AdminPageState extends State<AdminPage> {
     return StreamBuilder(
       stream: userStream,
       builder: (context, snapshot) {
-      if (snapshot.hasError) {
-        return Center(
-          child: Text("Error encountered! ${snapshot.error}"),
-        );
-      } else if (snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      }else if (!snapshot.hasData){
-        // Navigator.pop(context);
-        // print("no data");
-      }
-      // print("user currently logged in: ${snapshot.data!.uid}");
-      //get the uid of current logged in user, then kunin sa admin collection yung data nya
-      //then store to an instance of AdminRecord?
-      // String crrntlogged = snapshot.data!.uid; 
-      return displayScaffold(context, entriesStream);
-    },);
+        if (snapshot.hasError) {
+          return Center(
+            child: Text("Error encountered! ${snapshot.error}"),
+          );
+        } else if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (!snapshot.hasData) {
+          // Navigator.pop(context);
+          // print("no data");
+        }
+        // print("user currently logged in: ${snapshot.data!.uid}");
+        //get the uid of current logged in user, then kunin sa admin collection yung data nya
+        //then store to an instance of AdminRecord?
+        // String crrntlogged = snapshot.data!.uid;
+        return displayScaffold(context, entriesStream);
+      },
+    );
   }
 
-  Scaffold displayScaffold(BuildContext context, Stream<QuerySnapshot<Object?>> entriesStream){
-      return Scaffold(
+  Scaffold displayScaffold(
+      BuildContext context, Stream<QuerySnapshot<Object?>> entriesStream) {
+    return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         actions: [
           TextButton(
             onPressed: () {
-              print('pessed logout');
+              print('pressed logout');
               context.read<AuthProvider>().signOut();
               Navigator.pop(context);
             },
@@ -308,10 +307,10 @@ class _AdminPageState extends State<AdminPage> {
         onTap: _itemOnTapped,
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: (){
-        Navigator.pushNamed(context, '/entryform');
-      }),
+          child: Icon(Icons.add),
+          onPressed: () {
+            Navigator.pushNamed(context, '/entryform');
+          }),
     );
-    }
+  }
 }

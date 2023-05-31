@@ -91,6 +91,7 @@ class FirebaseAuthAPI {
         fname: u.fname,
         lname: u.lname,
         email: u.email,
+        entries: u.entries,
       );
 
       addUser(temp.toJson(temp));
@@ -124,14 +125,13 @@ class FirebaseAuthAPI {
 
       // sets the credentials of the user
       AdminRecord temp = AdminRecord(
-        id: credential.user?.uid,
-        name: admin.name,
-        empno: admin.empno,
-        unit: admin.unit,
-        position: admin.position,
-        email: admin.email,
-        entries: admin.entries
-      );
+          id: credential.user?.uid,
+          name: admin.name,
+          empno: admin.empno,
+          unit: admin.unit,
+          position: admin.position,
+          email: admin.email,
+          entries: admin.entries);
 
       addAdmin(temp.toJson(temp));
       return 'success';
