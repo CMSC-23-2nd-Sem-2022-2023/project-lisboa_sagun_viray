@@ -1,10 +1,14 @@
+import 'package:cmsc23_project/screens/entrance_monitor/QR_scanner.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/entry_model.dart';
+import '../../models/user_model.dart';
 import '../../providers/entry_provider.dart';
 import '../../providers/auth_provider.dart';
+import 'QR_scanner.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class EntranceMonitor extends StatefulWidget {
   const EntranceMonitor({super.key});
@@ -73,6 +77,9 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
     );
   }
 
+  bool _isVisible = false;
+  Entry entry = Entry(date: "2023-05-01", UID: "3T30G7rbGxOnhHhzDff0Vnb06i82", symptoms: "", hasContact: false);
+
   Widget profileBuilder() {
     return Center(
       child: Column(
@@ -81,9 +88,23 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
         children: [
           Icon(Icons.person),
           Text("FULL NAME"),
+          Visibility(
+            visible: _isVisible,
+            child: QrImage(
+              // TODO change the data to an instance of entry, but for that to work
+              // need to implement getting of entries from stream first
+              data: entry.toJson(entry).toString(),
+              version: QrVersions.auto,
+              size: 200.0,
+            ),
+          ),
           ElevatedButton(
-            onPressed: () {},
-            child: Text("Generate Building Pass"),
+            onPressed: () {
+              setState(() {
+                _isVisible = !_isVisible;
+              });
+            },
+            child: Text("View Building Pass"),
           ),
         ],
       ),
@@ -100,7 +121,8 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
         return students_cards();
       }
     } else if (index == 1) {
-      Navigator.pushNamed(context, '/QR_scanner_page');
+      // Navigator.pushNamed(context, '/QR_scanner_page');
+      return QRViewExample();
     } else if (index == 2) {
       return profileBuilder();
     }

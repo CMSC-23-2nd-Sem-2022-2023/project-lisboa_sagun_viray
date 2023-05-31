@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/health_monitor_model.dart';
@@ -39,6 +40,8 @@ class _MonitorSignupPageState extends State<MonitorSignupPage> {
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter your last name';
+        } else if (value.contains(RegExp(r'[0-9]'))) {
+          return 'Name has numbers';
         }
         return null;
       },
@@ -62,6 +65,8 @@ class _MonitorSignupPageState extends State<MonitorSignupPage> {
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter your employee number';
+        } else if (RegExp(r'[A-Za-z]').hasMatch(value)) {
+          return 'Contains letters';
         }
         return null;
       },
@@ -117,7 +122,6 @@ class _MonitorSignupPageState extends State<MonitorSignupPage> {
 
     final email = TextFormField(
       controller: emailController,
-      keyboardType: TextInputType.number,
       decoration: InputDecoration(
         hintText: 'Email',
         border: OutlineInputBorder(
@@ -132,6 +136,23 @@ class _MonitorSignupPageState extends State<MonitorSignupPage> {
         fillColor: Colors.white,
       ),
       validator: (value) {
+        // FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+        // Future<bool> isEmailAlreadyInUse(String email) async {
+        //   try {
+        //     final result =
+        //         await _firebaseAuth.fetchSignInMethodsForEmail(email);
+        //     return result.isNotEmpty;
+        //   } catch (e) {
+        //     // Handle any errors that occur during the process
+        //     print('Error checking email usage: $e');
+        //     return false;
+        //   }
+        // }
+
+        // bool emailExists =
+        //           await isEmailAlreadyInUse(emailController.text);
+
         if (value == null || value.isEmpty) {
           return 'Please enter your email';
         } else if (!(RegExp(
@@ -185,37 +206,78 @@ class _MonitorSignupPageState extends State<MonitorSignupPage> {
               ),
             ),
             onPressed: () async {
-              if (_formKey.currentState!.validate()) {
-                _formKey.currentState?.save();
-                Health_Monitor_Record health_monitor = Health_Monitor_Record(
-                    id: '',
-                    name: nameController.text,
-                    empno: empnoController.text,
-                    position: positionController.text,
-                    unit: homeUnitController.text,
-                    email: emailController.text);
-                // UserRecord tempUser = UserRecord(
-                //     id: "123",
-                //     fname: firstNameController.text,
-                //     lname: lastNameController.text,
-                //     email: emailController.text);
+              FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-                String err = await context
-                    .read<AuthProvider>()
-                    .healthMonitorSignUp(emailController.text,
-                        passwordController.text, health_monitor);
+              Future<bool> isEmailAlreadyInUse(String email) async {
+                try {
+                  final result =
+                      await _firebaseAuth.fetchSignInMethodsForEmail(email);
+                  return result.isNotEmpty;
+                } catch (e) {
+                  // Handle any errors that occur during the process
+                  print('Error checking email usage: $e');
+                  return false;
+                }
+              }
 
-                //if (context.mounted) Navigator.pop(context);
-                if (err == 'success') {
-                  // setState(() {
-                  //   _isVisible = false;
-                  // });
-                  Navigator.pop(context);
-                } else {
-                  // setState(() {
-                  //   _isVisible = true;
-                  // });
-                  // print("isvisible is $_isVisible");
+              bool emailExists =
+                  await isEmailAlreadyInUse(emailController.text);
+              if (emailExists) {
+                print("dito siya pumasok");
+                // Prompt the user that the email is already in use
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Email Already in Use'),
+                      content: Text(
+                          'The email address is already registered. Please use a different email.'),
+                      actions: [
+                        TextButton(
+                          child: Text('OK'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              } else {
+                print("nagproceed siya");
+                if (_formKey.currentState!.validate()) {
+                  _formKey.currentState?.save();
+
+                  Health_Monitor_Record health_monitor = Health_Monitor_Record(
+                      id: '',
+                      name: nameController.text,
+                      empno: empnoController.text,
+                      position: positionController.text,
+                      unit: homeUnitController.text,
+                      email: emailController.text);
+                  // UserRecord tempUser = UserRecord(
+                  //     id: "123",
+                  //     fname: firstNameController.text,
+                  //     lname: lastNameController.text,
+                  //     email: emailController.text);
+
+                  String err = await context
+                      .read<AuthProvider>()
+                      .healthMonitorSignUp(emailController.text,
+                          passwordController.text, health_monitor);
+
+                  //if (context.mounted) Navigator.pop(context);
+                  if (err == 'success') {
+                    // setState(() {
+                    //   _isVisible = false;
+                    // });
+                    Navigator.pop(context);
+                  } else {
+                    // setState(() {
+                    //   _isVisible = true;
+                    // });
+                    // print("isvisible is $_isVisible");
+                  }
                 }
               }
             },

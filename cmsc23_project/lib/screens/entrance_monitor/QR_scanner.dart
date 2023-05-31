@@ -4,6 +4,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
+import '../../providers/auth_provider.dart';
+import '../../providers/entry_provider.dart';
+import '../../models/entry_model.dart';
+import '../../models/user_model.dart';
+
 class QRViewExample extends StatefulWidget {
   const QRViewExample({Key? key}) : super(key: key);
 
