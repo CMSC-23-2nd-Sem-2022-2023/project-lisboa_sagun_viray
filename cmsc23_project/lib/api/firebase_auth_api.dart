@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../screens/user_details.dart';
+import '../screens/user/user_details.dart';
 import '../models/user_model.dart';
 import '../models/admin_model.dart';
 

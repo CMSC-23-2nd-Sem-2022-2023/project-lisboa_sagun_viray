@@ -1,18 +1,18 @@
-import 'package:cmsc23_project/screens/admin_login.dart';
-import 'package:cmsc23_project/screens/user_homepage.dart';
-import 'package:cmsc23_project/screens/user_login.dart';
+import 'package:cmsc23_project/screens/login/admin_login.dart';
+import 'package:cmsc23_project/screens/user/user_homepage.dart';
+import 'package:cmsc23_project/screens/login/user_login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
 import '../providers/todo_provider.dart';
-import '../screens/admin_homepage.dart';
-import '../screens/entrance_monitor.dart';
-import '../screens/entryform.dart';
+import 'screens/admin/admin_homepage.dart';
+import 'screens/entrance_monitor/entrance_monitor.dart';
+import 'screens/user/entryform.dart';
 import '../screens/login.dart';
 import '../screens/main_menu.dart';
-import '../screens/user_details.dart';
+import 'screens/user/user_details.dart';
 import 'firebase_options.dart';
 
 void main() async {

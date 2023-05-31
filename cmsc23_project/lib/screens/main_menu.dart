@@ -1,8 +1,8 @@
 import 'dart:core';
 
-import 'package:cmsc23_project/screens/admin_login.dart';
-import 'package:cmsc23_project/screens/monitor_login.dart';
-import 'package:cmsc23_project/screens/user_login.dart';
+import 'package:cmsc23_project/screens/login/admin_login.dart';
+import 'package:cmsc23_project/screens/login/monitor_login.dart';
+import 'package:cmsc23_project/screens/login/user_login.dart';
 import 'package:flutter/material.dart';
 
 // 0xffe8e9e8 off-white ish
