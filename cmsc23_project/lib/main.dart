@@ -1,6 +1,9 @@
 // import 'dart:js';
 
 import 'package:cmsc23_project/providers/entry_provider.dart';
+import 'package:cmsc23_project/screens/admin/admin_quarantined.dart';
+import 'package:cmsc23_project/screens/admin/admin_requests.dart';
+import 'package:cmsc23_project/screens/admin/admin_students.dart';
 import 'package:cmsc23_project/screens/entrance_monitor/QR_scanner.dart';
 import 'package:cmsc23_project/screens/login/admin_login.dart';
 import 'package:cmsc23_project/screens/user/user_homepage.dart';
@@ -54,16 +57,19 @@ class MyApp extends StatelessWidget {
         // '/': (context) => const AdminPage(),
         // '/': (context) => const HomePage(),
         // '/': (context) => const EntranceMonitor(),
-        '/login': (context) => const LoginPage(),
+        // '/login': (context) => const LoginPage(),
         'user_login': (context) => const UserLoginPage(),
         'admin_login': (context) => const AdminLoginPage(),
-        '/todo': (context) => const LoginPage(),
+        // '/todo': (context) => const LoginPage(),
         '/user_details': (context) => const UserDetailsPage(),
         '/homepage': (context) => const HomePage(),
         '/entryform': (context) => const EntryForm(),
         '/admin_homepage': (context) => const AdminPage(),
         '/entrance-monitor_homepage': (context) => const EntranceMonitor(),
         '/QR_scanner_page': (context) => const QRViewExample(),
+        '/monitor_requests': (context) => AdminRequests(),
+        '/monitor_students': (context) => ViewStudents(),
+        '/monitor_quarantined': (context) => QuarantinedStudents()
       },
     );
   }

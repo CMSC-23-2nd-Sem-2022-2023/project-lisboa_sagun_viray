@@ -19,147 +19,374 @@ class _AdminPageState extends State<AdminPage> {
 
   //builds the four buttons that will be used to view students
   Widget students_buttons() {
-    return ListView(
-      scrollDirection: Axis.vertical,
-      //direction: Axis.vertical,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const SizedBox(
-              width: 20,
-            ),
-            //1st column of buttons
-            Column(
-              children: [
-                Card(
-                  color: const Color.fromARGB(255, 185, 105, 36),
-                  clipBehavior: Clip.hardEdge,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(25),
-                    ),
-                  ),
-                  child: InkWell(
-                    splashColor:
-                        const Color.fromARGB(255, 227, 130, 44).withAlpha(20),
-                    onTap: () {
-                      //TODO functionality of this card
-                      //Navigator.push emerut
-                    },
-                    child: const SizedBox(
-                      width: 150,
-                      height: 200,
-                      child: Center(
-                        child: Text(
-                          "Requests",
-                          style: TextStyle(color: Colors.white),
+    return Center(
+      child: Wrap(
+        spacing: 20,
+        runSpacing: 20,
+        children: [
+          GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, '/monitor_requests');
+            },
+            child: SizedBox(
+              width: 160,
+              height: 200,
+              child: Card(
+                shadowColor: Color.fromRGBO(214, 214, 214, 1),
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+                child: Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.circle_notifications,
+                          size: 50,
+                          color: Color.fromARGB(255, 0, 37, 67),
                         ),
-                      ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          "All Requests",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Color.fromARGB(255, 0, 37, 67)),
+                        )
+                      ],
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Card(
-                  clipBehavior: Clip.hardEdge,
-                  color: const Color.fromARGB(255, 245, 247, 245),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(25),
-                    ),
-                  ),
-                  child: InkWell(
-                    splashColor: Colors.blue.withAlpha(30),
-                    onTap: () {
-                      //TODO functionality of this card
-                    },
-                    child: const SizedBox(
-                      width: 150,
-                      height: 200,
-                      child: Center(
-                        child: Text("All Students"),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-            //sizedbox as pading
-            const SizedBox(
-              width: 20,
-            ),
-            //2nd column of buttons
-            Column(
-              children: [
-                const SizedBox(
-                  height: 50,
-                ),
-                Card(
-                  shadowColor: Colors.black54,
-                  clipBehavior: Clip.hardEdge,
-                  color: const Color.fromARGB(255, 245, 247, 245),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(25),
+          ),
+          GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, '/monitor_students');
+            },
+            child: SizedBox(
+              width: 160,
+              height: 200,
+              child: Card(
+                shadowColor: Color.fromRGBO(214, 214, 214, 1),
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+                child: Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.groups_2_sharp,
+                          size: 50,
+                          color: Color.fromARGB(255, 0, 37, 67),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          "All Students",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Color.fromARGB(255, 0, 37, 67)),
+                        )
+                      ],
                     ),
                   ),
-                  child: InkWell(
-                    splashColor: Colors.blue.withAlpha(30),
-                    onTap: () {
-                      //TODO functionality of this card
-                    },
-                    child: const SizedBox(
-                      width: 150,
-                      height: 200,
-                      child: Center(
-                        child: Text(
+                ),
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, '/monitor_students');
+            },
+            child: SizedBox(
+              width: 160,
+              height: 200,
+              child: Card(
+                shadowColor: Color.fromRGBO(214, 214, 214, 1),
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+                child: Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.groups_2_sharp,
+                          size: 50,
+                          color: Color.fromARGB(255, 0, 37, 67),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          "Quarantined",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Color.fromARGB(255, 0, 37, 67)),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, '/monitor_quarantined');
+            },
+            child: SizedBox(
+              width: 160,
+              height: 200,
+              child: Card(
+                shadowColor: Color.fromRGBO(214, 214, 214, 1),
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+                child: Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(
+                          Icons.device_thermostat,
+                          size: 50,
+                          color: Color.fromARGB(255, 0, 37, 67),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Center(
+                            child: Text(
                           "Quarantined Students",
-                          style: TextStyle(color: Colors.black),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                              color: Color.fromARGB(255, 0, 37, 67)),
+                        ))
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, '/monitor_students');
+            },
+            child: SizedBox(
+              width: 160,
+              height: 200,
+              child: Card(
+                shadowColor: Color.fromRGBO(214, 214, 214, 1),
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+                child: Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Column(
+                      children: const [
+                        Icon(
+                          Icons.remove_red_eye,
+                          size: 50,
+                          color: Color.fromARGB(255, 0, 37, 67),
                         ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Card(
-                  color: const Color.fromARGB(255, 46, 160, 201),
-                  clipBehavior: Clip.hardEdge,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(25),
-                    ),
-                  ),
-                  child: InkWell(
-                    splashColor:
-                        const Color.fromARGB(255, 46, 160, 201).withAlpha(20),
-                    onTap: () {
-                      //TODO functionality of this card
-                    },
-                    child: const SizedBox(
-                      width: 150,
-                      height: 200,
-                      child: Center(
-                        child: Text(
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
                           "Under Monitoring",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Color.fromARGB(255, 0, 37, 67)),
+                        )
+                      ],
                     ),
                   ),
                 ),
-              ],
+              ),
             ),
-            const SizedBox(
-              width: 20,
-            ),
-          ],
-        ),
-      ],
+          ),
+        ],
+      ),
     );
+
+    // return ListView(
+    //   scrollDirection: Axis.vertical,
+    //   //direction: Axis.vertical,
+    //   children: [
+    //     Row(
+    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //       children: [
+    //         const SizedBox(
+    //           width: 20,
+    //         ),
+    //         //1st column of buttons
+    //         Column(
+    //           children: [
+
+    //             // GridView.count(
+    //             //   crossAxisCount: 2,
+    //             //   children: [
+    //             //     Card(
+    //             //       child: Center(child: Text('Item 1')),
+    //             //     ),
+    //             //     Card(
+    //             //       child: Center(child: Text('Item 2')),
+    //             //     ),
+    //             //     Card(
+    //             //       child: Center(child: Text('Item 3')),
+    //             //     ),
+    //             //     Card(
+    //             //       child: Center(child: Text('Item 4')),
+    //             //     ),
+    //             //   ],
+    //             // ),
+    //             Card(
+    //               color: const Color.fromARGB(255, 185, 105, 36),
+    //               clipBehavior: Clip.hardEdge,
+    //               shape: const RoundedRectangleBorder(
+    //                 borderRadius: BorderRadius.all(
+    //                   Radius.circular(25),
+    //                 ),
+    //               ),
+    //               child: InkWell(
+    //                 splashColor:
+    //                     const Color.fromARGB(255, 227, 130, 44).withAlpha(20),
+    //                 onTap: () {
+    //                   //TODO functionality of this card
+    //                   //Navigator.push emerut
+    //                 },
+    //                 child: const SizedBox(
+    //                   width: 150,
+    //                   height: 200,
+    //                   child: Center(
+    //                     child: Text(
+    //                       "Requests",
+    //                       style: TextStyle(color: Colors.white),
+    //                     ),
+    //                   ),
+    //                 ),
+    //               ),
+    //             ),
+    //             const SizedBox(
+    //               height: 20,
+    //             ),
+    //             Card(
+    //               clipBehavior: Clip.hardEdge,
+    //               color: const Color.fromARGB(255, 245, 247, 245),
+    //               shape: const RoundedRectangleBorder(
+    //                 borderRadius: BorderRadius.all(
+    //                   Radius.circular(25),
+    //                 ),
+    //               ),
+    //               child: InkWell(
+    //                 splashColor: Colors.blue.withAlpha(30),
+    //                 onTap: () {
+    //                   //TODO functionality of this card
+    //                 },
+    //                 child: const SizedBox(
+    //                   width: 150,
+    //                   height: 200,
+    //                   child: Center(
+    //                     child: Text("All Students"),
+    //                   ),
+    //                 ),
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //         //sizedbox as pading
+    //         const SizedBox(
+    //           width: 20,
+    //         ),
+    //         //2nd column of buttons
+    //         Column(
+    //           children: [
+    //             const SizedBox(
+    //               height: 50,
+    //             ),
+    //             Card(
+    //               shadowColor: Colors.black54,
+    //               clipBehavior: Clip.hardEdge,
+    //               color: const Color.fromARGB(255, 245, 247, 245),
+    //               shape: const RoundedRectangleBorder(
+    //                 borderRadius: BorderRadius.all(
+    //                   Radius.circular(25),
+    //                 ),
+    //               ),
+    //               child: InkWell(
+    //                 splashColor: Colors.blue.withAlpha(30),
+    //                 onTap: () {
+    //                   //TODO functionality of this card
+    //                 },
+    //                 child: const SizedBox(
+    //                   width: 150,
+    //                   height: 200,
+    //                   child: Center(
+    //                     child: Text(
+    //                       "Quarantined Students",
+    //                       style: TextStyle(color: Colors.black),
+    //                     ),
+    //                   ),
+    //                 ),
+    //               ),
+    //             ),
+    //             const SizedBox(
+    //               height: 20,
+    //             ),
+    //             Card(
+    //               color: const Color.fromARGB(255, 46, 160, 201),
+    //               clipBehavior: Clip.hardEdge,
+    //               shape: const RoundedRectangleBorder(
+    //                 borderRadius: BorderRadius.all(
+    //                   Radius.circular(25),
+    //                 ),
+    //               ),
+    //               child: InkWell(
+    //                 splashColor:
+    //                     const Color.fromARGB(255, 46, 160, 201).withAlpha(20),
+    //                 onTap: () {
+    //                   //TODO functionality of this card
+    //                 },
+    //                 child: const SizedBox(
+    //                   width: 150,
+    //                   height: 200,
+    //                   child: Center(
+    //                     child: Text(
+    //                       "Under Monitoring",
+    //                       style: TextStyle(color: Colors.white),
+    //                     ),
+    //                   ),
+    //                 ),
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //         const SizedBox(
+    //           width: 20,
+    //         ),
+    //       ],
+    //     ),
+    //   ],
+    // );
   }
 
   //builds the profile of the admin
@@ -185,7 +412,7 @@ class _AdminPageState extends State<AdminPage> {
   }
 
   //builds entries from stream
-  Widget entriesBuilder(Stream<QuerySnapshot> entriesStream){
+  Widget entriesBuilder(Stream<QuerySnapshot> entriesStream) {
     return const Center();
 
     // return StreamBuilder(
@@ -243,29 +470,32 @@ class _AdminPageState extends State<AdminPage> {
     return StreamBuilder(
       stream: userStream,
       builder: (context, snapshot) {
-      if (snapshot.hasError) {
-        return Center(
-          child: Text("Error encountered! ${snapshot.error}"),
-        );
-      } else if (snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      }else if (!snapshot.hasData){
-        // Navigator.pop(context);
-        // print("no data");
-      }
-      // print("user currently logged in: ${snapshot.data!.uid}");
-      //get the uid of current logged in user, then kunin sa admin collection yung data nya
-      //then store to an instance of AdminRecord?
-      // String crrntlogged = snapshot.data!.uid; 
-      return displayScaffold(context, entriesStream);
-    },);
+        if (snapshot.hasError) {
+          return Center(
+            child: Text("Error encountered! ${snapshot.error}"),
+          );
+        } else if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (!snapshot.hasData) {
+          // Navigator.pop(context);
+          // print("no data");
+        }
+        // print("user currently logged in: ${snapshot.data!.uid}");
+        //get the uid of current logged in user, then kunin sa admin collection yung data nya
+        //then store to an instance of AdminRecord?
+        // String crrntlogged = snapshot.data!.uid;
+        return displayScaffold(context, entriesStream);
+      },
+    );
   }
 
-  Scaffold displayScaffold(BuildContext context, Stream<QuerySnapshot<Object?>> entriesStream){
-      return Scaffold(
+  Scaffold displayScaffold(
+      BuildContext context, Stream<QuerySnapshot<Object?>> entriesStream) {
+    return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 0, 37, 67),
         automaticallyImplyLeading: false,
         actions: [
           TextButton(
@@ -288,9 +518,9 @@ class _AdminPageState extends State<AdminPage> {
         type: BottomNavigationBarType.shifting,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_4),
+            icon: Icon(Icons.group),
             label: "Students",
-            backgroundColor: Color.fromARGB(255, 201, 115, 39),
+            backgroundColor: Color.fromARGB(255, 128, 150, 209),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.list_alt),
@@ -300,18 +530,19 @@ class _AdminPageState extends State<AdminPage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: "Profile",
-            backgroundColor: Color(0xfff09819),
+            backgroundColor: Color.fromARGB(255, 105, 194, 173),
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.black,
+        selectedItemColor: Color.fromARGB(255, 0, 37, 67),
         onTap: _itemOnTapped,
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: (){
-        Navigator.pushNamed(context, '/entryform');
-      }),
+          backgroundColor: Color.fromARGB(255, 0, 37, 67),
+          child: Icon(Icons.add),
+          onPressed: () {
+            Navigator.pushNamed(context, '/entryform');
+          }),
     );
-    }
+  }
 }
