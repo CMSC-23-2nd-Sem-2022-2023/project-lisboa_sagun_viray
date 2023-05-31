@@ -8,6 +8,7 @@ class AdminRecord {
   String position;
   String unit;
   String email;
+  List<String>? entries;
 
   // constructor
   AdminRecord({
@@ -16,7 +17,8 @@ class AdminRecord {
     required this.empno,
     required this.position,
     required this.unit,
-    required this.email
+    required this.email,
+    this.entries
   });
 
   // creates new instance of Admin record using data stored in json
@@ -27,7 +29,8 @@ class AdminRecord {
         empno: json['empno'],
         position: json['position'],
         unit: json['unit'],
-        email: json['email']
+        email: json['email'],
+        entries: json['entries']
         );
   }
 
@@ -43,7 +46,8 @@ class AdminRecord {
       'empno': Admin.empno,
       'position': Admin.position,
       'unit': Admin.unit,
-      'email': Admin.email
+      'email': Admin.email,
+      'entries': Admin.entries
     };
   }
 }

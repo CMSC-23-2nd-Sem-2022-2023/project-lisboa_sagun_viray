@@ -27,18 +27,23 @@ class _AdminPageState extends State<AdminPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(
+            const SizedBox(
               width: 20,
             ),
             //1st column of buttons
             Column(
               children: [
                 Card(
-                  color: Color.fromARGB(255, 185, 105, 36),
+                  color: const Color.fromARGB(255, 185, 105, 36),
                   clipBehavior: Clip.hardEdge,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(25),
+                    ),
+                  ),
                   child: InkWell(
                     splashColor:
-                        Color.fromARGB(255, 227, 130, 44).withAlpha(20),
+                        const Color.fromARGB(255, 227, 130, 44).withAlpha(20),
                     onTap: () {
                       //TODO functionality of this card
                       //Navigator.push emerut
@@ -54,18 +59,18 @@ class _AdminPageState extends State<AdminPage> {
                       ),
                     ),
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(25),
-                    ),
-                  ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Card(
                   clipBehavior: Clip.hardEdge,
-                  color: Color.fromARGB(255, 245, 247, 245),
+                  color: const Color.fromARGB(255, 245, 247, 245),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(25),
+                    ),
+                  ),
                   child: InkWell(
                     splashColor: Colors.blue.withAlpha(30),
                     onTap: () {
@@ -79,27 +84,28 @@ class _AdminPageState extends State<AdminPage> {
                       ),
                     ),
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(25),
-                    ),
-                  ),
                 ),
               ],
             ),
             //sizedbox as pading
-            SizedBox(
+            const SizedBox(
               width: 20,
             ),
             //2nd column of buttons
             Column(
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 50,
                 ),
                 Card(
+                  shadowColor: Colors.black54,
                   clipBehavior: Clip.hardEdge,
-                  color: Color.fromARGB(255, 245, 247, 245),
+                  color: const Color.fromARGB(255, 245, 247, 245),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(25),
+                    ),
+                  ),
                   child: InkWell(
                     splashColor: Colors.blue.withAlpha(30),
                     onTap: () {
@@ -116,21 +122,21 @@ class _AdminPageState extends State<AdminPage> {
                       ),
                     ),
                   ),
-                  shape: RoundedRectangleBorder(
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Card(
+                  color: const Color.fromARGB(255, 46, 160, 201),
+                  clipBehavior: Clip.hardEdge,
+                  shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(
                       Radius.circular(25),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Card(
-                  color: Color.fromARGB(255, 46, 160, 201),
-                  clipBehavior: Clip.hardEdge,
                   child: InkWell(
                     splashColor:
-                        Color.fromARGB(255, 46, 160, 201).withAlpha(20),
+                        const Color.fromARGB(255, 46, 160, 201).withAlpha(20),
                     onTap: () {
                       //TODO functionality of this card
                     },
@@ -145,15 +151,10 @@ class _AdminPageState extends State<AdminPage> {
                       ),
                     ),
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(25),
-                    ),
-                  ),
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               width: 20,
             ),
           ],
@@ -169,11 +170,11 @@ class _AdminPageState extends State<AdminPage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.person),
-          Text("FULL NAME"),
+          const Icon(Icons.person),
+          const Text("FULL NAME"),
           ElevatedButton(
             onPressed: () {},
-            child: Text("Generate Building Pass"),
+            child: const Text("Generate Building Pass"),
           ),
         ],
       ),
@@ -181,23 +182,43 @@ class _AdminPageState extends State<AdminPage> {
   }
 
   //builds entries from stream
-  Widget entriesBuilder(){
-    return Center();
-    // return ListView.builder(itemBuilder: itemBuilder);
+  Widget entriesBuilder(Stream<QuerySnapshot> entriesStream){
+    return const Center();
+
+    // return StreamBuilder(
+    //   stream: entriesStream,
+    //     builder: (context, snapshot) {
+    //       if (snapshot.hasError) {
+    //         return Center(
+    //           child: Text("Error encountered! ${snapshot.error}"),
+    //         );
+    //       } else if (snapshot.connectionState == ConnectionState.waiting) {
+    //         return const Center(
+    //           child: CircularProgressIndicator(),
+    //         );
+    //       } else if (!snapshot.hasData) {
+    //         return const Center(
+    //           child: Text("No Entries Found"),
+    //         );
+    //       }
+
+    //       return ListView.builder(itemBuilder: itemBuilder);
+    //     }
+    //   );
   }
 
   //this function returns a different widget depending on the index of the
   //bottomnav bar
-  body(int index) {
+  body(int index, Stream<QuerySnapshot> entriesStream) {
     if (index == 0) {
       return students_buttons();
     } else if (index == 1) {
       if (entries.isEmpty) {
-        return Center(
+        return const Center(
           child: Text("No entries yet"),
         );
       } else {
-        return entriesBuilder();
+        return entriesBuilder(entriesStream);
       }
     } else if (index == 2) {
       return profileBuilder();
@@ -214,11 +235,33 @@ class _AdminPageState extends State<AdminPage> {
   Widget build(BuildContext context) {
     Stream<QuerySnapshot> entriesStream = context.watch<EntryListProvider>().entries;
     Stream<User?> userStream = context.watch<AuthProvider>().uStream;
-    return Scaffold(
+
+    return StreamBuilder(
+      stream: userStream,
+      builder: (context, snapshot) {
+      if (snapshot.hasError) {
+        return Center(
+          child: Text("Error encountered! ${snapshot.error}"),
+        );
+      } else if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      }else if (!snapshot.hasData){
+        Navigator.pop(context);
+      }
+
+      return displayScaffold(context, entriesStream);
+    },);
+  }
+
+  Scaffold displayScaffold(BuildContext context, Stream<QuerySnapshot<Object?>> entriesStream){
+      return Scaffold(
       appBar: AppBar(
-        title: Text("Admin View"),
+        automaticallyImplyLeading: false,
+        title: const Text("Admin View"),
       ),
-      body: body(_selectedIndex),
+      body: body(_selectedIndex, entriesStream),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.shifting,
         items: const <BottomNavigationBarItem>[
@@ -243,5 +286,5 @@ class _AdminPageState extends State<AdminPage> {
         onTap: _itemOnTapped,
       ),
     );
-  }
+    }
 }

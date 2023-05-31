@@ -1,3 +1,6 @@
+// import 'dart:js';
+
+import 'package:cmsc23_project/providers/entry_provider.dart';
 import 'package:cmsc23_project/screens/login/admin_login.dart';
 import 'package:cmsc23_project/screens/user/user_homepage.dart';
 import 'package:cmsc23_project/screens/login/user_login.dart';
@@ -26,8 +29,9 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: ((context) => TodoListProvider())),
         ChangeNotifierProvider(create: ((context) => AuthProvider())),
+        ChangeNotifierProvider(create: ((context) => EntryListProvider()))
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }

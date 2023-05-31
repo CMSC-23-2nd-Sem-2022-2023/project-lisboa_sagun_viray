@@ -2,6 +2,14 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+// import '../../api/firebase_entry_api.dart';
+// import '../../api/firebase_auth_api.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/entry_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 class EntryForm extends StatefulWidget {
   const EntryForm({super.key});
 
@@ -39,10 +47,10 @@ class _EntryFormState extends State<EntryForm> {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
     return Column(children: [
-      SizedBox(
+      const SizedBox(
         height: 20,
       ),
-      Text(
+      const Text(
         'ENTRY FORM',
         style: TextStyle(
             fontSize: 50,
@@ -51,12 +59,12 @@ class _EntryFormState extends State<EntryForm> {
       ),
       Text(
         'Date today: $formattedDate',
-        style: TextStyle(
+        style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: Color.fromARGB(255, 0, 37, 67)),
       ),
-      SizedBox(
+      const SizedBox(
         height: 20,
       )
     ]);
@@ -65,13 +73,13 @@ class _EntryFormState extends State<EntryForm> {
   Widget symptomsCheckbox() {
     return Column(
       children: [
-        Divider(
+        const Divider(
           thickness: 5,
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
-        Text(
+        const Text(
           "Do you have any pre-exisiting illness? Check all that applies.",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
@@ -105,7 +113,7 @@ class _EntryFormState extends State<EntryForm> {
             itemExtent: 40,
             itemBuilder: (BuildContext context, int index) {
               return CheckboxListTile(
-                activeColor: Color.fromARGB(255, 0, 37, 67),
+                activeColor: const Color.fromARGB(255, 0, 37, 67),
                 controlAffinity: ListTileControlAffinity.leading,
                 title: Text(
                   symptoms[index],
@@ -132,13 +140,13 @@ class _EntryFormState extends State<EntryForm> {
   Widget covidContact() {
     return Column(
       children: [
-        Divider(
+        const Divider(
           thickness: 5,
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
-        Text('Have you come in contact with a confirmed COVID-19 case?',
+        const Text('Have you come in contact with a confirmed COVID-19 case?',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
         ListView.builder(
             scrollDirection: Axis.vertical,
@@ -175,23 +183,23 @@ class _EntryFormState extends State<EntryForm> {
   Widget submitAndResetButtons() {
     return Column(
       children: [
-        Divider(
+        const Divider(
           thickness: 5,
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         ElevatedButton(
           style: ButtonStyle(
             minimumSize: MaterialStateProperty.all<Size>(
-              Size(double.infinity, 50), // Adjust the width here
+              const Size(double.infinity, 50), // Adjust the width here
             ),
             backgroundColor: MaterialStateProperty.all<Color>(
-                Color.fromARGB(255, 0, 67, 27)),
+                const Color.fromARGB(255, 0, 67, 27)),
             foregroundColor: MaterialStateProperty.all<Color>(
-                Color.fromARGB(255, 0, 67, 27)),
+                const Color.fromARGB(255, 0, 67, 27)),
             shape: MaterialStateProperty.all<StadiumBorder>(
-              StadiumBorder(),
+              const StadiumBorder(),
             ),
           ),
           onPressed: () async {
@@ -202,22 +210,22 @@ class _EntryFormState extends State<EntryForm> {
             //       );
             // }
           },
-          child: Text('SUBMIT ENTRY', style: TextStyle(color: Colors.white)),
+          child: const Text('SUBMIT ENTRY', style: TextStyle(color: Colors.white)),
         ),
-        SizedBox(
+        const SizedBox(
           height: 5,
         ),
         ElevatedButton(
             style: ButtonStyle(
               minimumSize: MaterialStateProperty.all<Size>(
-                Size(double.infinity, 50), // Adjust the width here
+                const Size(double.infinity, 50), // Adjust the width here
               ),
               backgroundColor: MaterialStateProperty.all<Color>(
-                  Color.fromARGB(255, 67, 0, 0)),
+                  const Color.fromARGB(255, 67, 0, 0)),
               foregroundColor: MaterialStateProperty.all<Color>(
-                  Color.fromARGB(255, 67, 0, 0)),
+                  const Color.fromARGB(255, 67, 0, 0)),
               shape: MaterialStateProperty.all<StadiumBorder>(
-                StadiumBorder(),
+                const StadiumBorder(),
               ),
             ),
             onPressed: () {
@@ -228,7 +236,7 @@ class _EntryFormState extends State<EntryForm> {
                 isInContact = choices[0];
               });
             },
-            child: Text('RESET', style: TextStyle(color: Colors.white))),
+            child: const Text('RESET', style: TextStyle(color: Colors.white))),
       ],
     );
   }
@@ -237,7 +245,7 @@ class _EntryFormState extends State<EntryForm> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 0, 37, 67),
+          backgroundColor: const Color.fromARGB(255, 0, 37, 67),
         ),
         //TODO make a form that accepts entries
         body: ListView(
@@ -250,7 +258,7 @@ class _EntryFormState extends State<EntryForm> {
               child: Column(
                 children: [
                   symptomsCheckbox(),
-                  SizedBox(
+                  const SizedBox(
                     height: 15,
                   ),
                   covidContact(),
