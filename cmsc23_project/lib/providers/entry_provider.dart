@@ -1,14 +1,15 @@
+// import '../models/todo_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+
 import '../api/firebase_entry_api.dart';
 // import '../api/firebase_todo_api.dart';
 import '../models/entry_model.dart';
-// import '../models/todo_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EntryListProvider with ChangeNotifier {
   late FirebaseEntryAPI firebaseService;
   late Stream<QuerySnapshot> _entriesStream;
-  Future<List<DocumentSnapshot>>? _userEntryStream;
+  late Stream<QuerySnapshot>? _userEntryStream;
 
   Entry? _selectedEntry;
 
@@ -19,7 +20,7 @@ class EntryListProvider with ChangeNotifier {
 
   // getter
   Stream<QuerySnapshot> get entries => _entriesStream;
-  Future<List<DocumentSnapshot>>? get userEntries => _userEntryStream;
+  Stream<QuerySnapshot>? get userEntries => _userEntryStream;
   Entry get selected => _selectedEntry!;
 
   changeSelectedEntry(Entry entry) {
@@ -57,6 +58,8 @@ class EntryListProvider with ChangeNotifier {
 
   void fetchUserEntries(String UserId) {
     _userEntryStream = firebaseService.getEntriesForUser(UserId);
+    print('print this');
+    print(_userEntryStream);
     notifyListeners();
   }
 }

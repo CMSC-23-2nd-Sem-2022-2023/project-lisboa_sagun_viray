@@ -1,15 +1,15 @@
 import 'dart:core';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
+import '../../models/entry_model.dart';
 // import '../../api/firebase_entry_api.dart';
 // import '../../api/firebase_auth_api.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/entry_provider.dart';
-import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../../models/entry_model.dart';
 
 class EntryForm extends StatefulWidget {
   const EntryForm({super.key});
@@ -184,11 +184,12 @@ class _EntryFormState extends State<EntryForm> {
     );
   }
 
-  Widget submitAndResetButtons(Stream<User?> userStream) {
+  Widget submitAndResetButtons(BuildContext context, Stream<User?> userStream) {
     return StreamBuilder(
         stream: userStream,
-        builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
+        builder: (context, AsyncSnapshot<User?> snapshot) {
           print(snapshot.connectionState);
+          print(snapshot.data);
           if (snapshot.connectionState == ConnectionState.active) {
             User? user = snapshot.data;
             String? userId = user?.uid;
@@ -286,7 +287,7 @@ class _EntryFormState extends State<EntryForm> {
                     height: 15,
                   ),
                   covidContact(),
-                  submitAndResetButtons(userStream),
+                  submitAndResetButtons(context, userStream),
                 ],
               ),
             ),

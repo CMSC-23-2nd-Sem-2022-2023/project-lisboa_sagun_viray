@@ -4,22 +4,20 @@ import 'package:cmsc23_project/screens/admin/admin_requests.dart';
 import 'package:cmsc23_project/screens/admin/admin_students.dart';
 import 'package:cmsc23_project/screens/entrance_monitor/QR_scanner.dart';
 import 'package:cmsc23_project/screens/login/admin_login.dart';
-import 'package:cmsc23_project/screens/signup/user_signup.dart';
-import 'package:cmsc23_project/screens/user/user_homepage.dart';
 import 'package:cmsc23_project/screens/login/user_login.dart';
+import 'package:cmsc23_project/screens/main_menu.dart';
+import 'package:cmsc23_project/screens/user/user_homepage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../providers/auth_provider.dart';
 import '../providers/todo_provider.dart';
-import '../providers/entry_provider.dart';
+import 'firebase_options.dart';
 import 'screens/admin/admin_homepage.dart';
 import 'screens/entrance_monitor/entrance_monitor.dart';
 import 'screens/user/entryform.dart';
-import '../screens/login.dart';
-import '../screens/main_menu.dart';
 import 'screens/user/user_details.dart';
-import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,7 +50,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       routes: {
-        '/': (context) => const UserSignupPage(),
+        '/': (context) => const MainMenu(),
+        // '/': (context) => const UserSignupPage(),
         // '/': (context) => const AdminPage(),
         // '/': (context) => const HomePage(),
         // '/': (context) => const EntranceMonitor(),

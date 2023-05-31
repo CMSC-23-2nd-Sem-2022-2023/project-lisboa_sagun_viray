@@ -1,9 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../screens/user/user_details.dart';
-import '../models/user_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import '../models/admin_model.dart';
 import '../models/health_monitor_model.dart';
+import '../models/user_model.dart';
 
 class FirebaseAuthAPI {
   // allows access to the firestore database
@@ -22,7 +22,7 @@ class FirebaseAuthAPI {
   Future<String> addUser(Map<String, dynamic> user) async {
     try {
       final docRef = await db.collection("users").add(user);
-      await db.collection("users").doc(docRef.id).update({'id': docRef.id});
+      await db.collection("admin").doc(user["id"]).set(user);
       return "Successfully added user!";
     } on FirebaseException catch (e) {
       return "Failed with error '${e.code}: ${e.message}";

@@ -27,18 +27,10 @@ class FirebaseEntryAPI {
     }
   }
 
-  Future<List<DocumentSnapshot>> getEntriesForUser(String userId) async {
-    try {
-      final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('entries')
-          .where('UID', isEqualTo: userId)
-          .get();
-
-      return querySnapshot.docs;
-    } catch (e) {
-      // Handle any errors that occur during the query
-      print('Error getting entries for user: $e');
-      return [];
-    }
+  Stream<QuerySnapshot> getEntriesForUser(String userId) {
+    return FirebaseFirestore.instance
+        .collection('entries')
+        .where('UID', isEqualTo: userId)
+        .snapshots();
   }
 }

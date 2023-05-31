@@ -1,10 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cmsc23_project/providers/entry_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../models/entry_model.dart';
-import '../../providers/entry_provider.dart';
 import '../../providers/auth_provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -39,43 +40,78 @@ class _HomePageState extends State<HomePage> {
         if (snapshot.hasData) {
           User? user = snapshot.data;
           String? userId = user?.uid;
-          // Query the Firestore collection to get the documents associated with the user
-          Stream<QuerySnapshot<Map<String, dynamic>>> userEntriesStream =
-              FirebaseFirestore.instance
-                  .collection('entries')
-                  .where('UID', isEqualTo: userId)
-                  .snapshots();
-          return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-            stream: userEntriesStream,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                QuerySnapshot<Map<String, dynamic>> entriesSnapshot =
-                    snapshot.data!;
-                List<QueryDocumentSnapshot<Map<String, dynamic>>> entries =
-                    entriesSnapshot.docs;
-
-                // Access and work with the documents in the 'entries' list
-                // ...
-
-                // Example: Display the titles of the entries
+          print('this is the userId: $userId');
+          context.read<EntryListProvider>().fetchUserEntries(userId!);
+          Stream<QuerySnapshot>? userEntriesStream =
+              context.read<EntryListProvider>().userEntries;
+          return StreamBuilder(
+              stream: userEntriesStream,
+              builder: (context, snapshot) {
+                print(snapshot.connectionState);
+                print(snapshot.data);
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text("Error encountered! ${snapshot.error}"),
+                  );
+                } else if (snapshot.connectionState ==
+                    ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (!snapshot.hasData) {
+                  return Center(
+                    child: Text("No Entries"),
+                  );
+                }
                 return ListView.builder(
-                  itemCount: entries.length,
-                  itemBuilder: (context, index) {
-                    QueryDocumentSnapshot<Map<String, dynamic>> entry =
-                        entries[index];
-                    String title = entry.data()['title'];
-                    return ListTile(
-                      title: Text(title),
+                  itemCount: snapshot.data?.docs.length,
+                  itemBuilder: ((context, index) {
+                    Entry entry = Entry.fromJson(snapshot.data?.docs[index]
+                        .data() as Map<String, dynamic>);
+                    return Dismissible(
+                      key: Key(entry.UID.toString()),
+                      background: Container(
+                        color: Colors.red,
+                        child: const Icon(Icons.delete),
+                      ),
+                      child: ListTile(
+                        title: Text(
+                          entry.date,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        leading: Checkbox(
+                          value: entry.hasContact,
+                          onChanged: (bool? value) {
+                            context
+                                .read<EntryListProvider>()
+                                .toggleStatus(index, value!);
+                          },
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                // showDialog(
+                                //   context: context,
+                                //   builder: (BuildContext context) => TodoModal(
+                                //     type: 'Edit',
+                                //     entryIndex: index,
+                                //   ),
+                                // );
+                              },
+                              icon: const Icon(Icons.create_outlined),
+                            ),
+                          ],
+                        ),
+                      ),
                     );
-                  },
+                  }),
                 );
-              } else if (snapshot.hasError) {
-                return Text('Error retrieving entries');
-              } else {
-                return CircularProgressIndicator();
-              }
-            },
-          );
+              });
+          // Query the Firestore collection to get the documents associated with the user
         } else if (snapshot.hasError) {
           return Text('Error retrieving user');
         } else {
@@ -150,7 +186,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ],
-        title: Text("Monitor View"),
+        title: Text("User View"),
       ),
       body: entryList(context, _selectedIndex),
       floatingActionButton: FloatingActionButton(
