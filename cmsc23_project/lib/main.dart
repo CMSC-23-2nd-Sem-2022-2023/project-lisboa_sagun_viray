@@ -1,6 +1,7 @@
 // import 'dart:js';
 
 import 'package:cmsc23_project/providers/entry_provider.dart';
+import 'package:cmsc23_project/screens/entrance_monitor/QR_scanner.dart';
 import 'package:cmsc23_project/screens/login/admin_login.dart';
 import 'package:cmsc23_project/screens/user/user_homepage.dart';
 import 'package:cmsc23_project/screens/login/user_login.dart';
@@ -62,6 +63,7 @@ class MyApp extends StatelessWidget {
         '/entryform': (context) => const EntryForm(),
         '/admin_homepage': (context) => const AdminPage(),
         '/entrance-monitor_homepage': (context) => const EntranceMonitor(),
+        '/QR_scanner_page': (context) => const QRViewExample(),
       },
     );
   }

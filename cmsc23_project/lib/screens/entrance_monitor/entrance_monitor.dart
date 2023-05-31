@@ -100,15 +100,7 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
         return students_cards();
       }
     } else if (index == 1) {
-      if (student_logs.isEmpty) {
-        return Center(
-          child: Text("No entries yet"),
-        );
-      } else {
-        return Center(
-          child: Text("NAg add kasi ako ng students"),
-        );
-      }
+      Navigator.pushNamed(context, '/QR_scanner_page');
     } else if (index == 2) {
       return profileBuilder();
     }
