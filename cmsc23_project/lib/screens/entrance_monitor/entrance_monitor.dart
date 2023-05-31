@@ -78,7 +78,7 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
   }
 
   bool _isVisible = false;
-  Entry entry = Entry(date: "2023-05-01", UID: "3T30G7rbGxOnhHhzDff0Vnb06i82", symptoms: "", hasContact: false);
+  Entry entry = Entry(date: "2023-05-01", UID: "3T30G7rbGxOnhHhzDff0Vnb06i82", symptoms: [], hasContact: false);
 
   Widget profileBuilder() {
     return Center(
