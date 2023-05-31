@@ -2,6 +2,7 @@ import 'package:cmsc23_project/screens/entrance_monitor/QR_scanner.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/entry_model.dart';
+import '../../models/user_model.dart';
 import '../../providers/entry_provider.dart';
 import '../../providers/auth_provider.dart';
 import 'QR_scanner.dart';
@@ -77,6 +78,7 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
   }
 
   bool _isVisible = false;
+  Entry entry = Entry(date: "2023-05-01", UID: "3T30G7rbGxOnhHhzDff0Vnb06i82", symptoms: "", hasContact: false);
 
   Widget profileBuilder() {
     return Center(
@@ -91,7 +93,7 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
             child: QrImage(
               // TODO change the data to an instance of entry, but for that to work
               // need to implement getting of entries from stream first
-              data: '1234567890',
+              data: entry.toJson(entry).toString(),
               version: QrVersions.auto,
               size: 200.0,
             ),
