@@ -88,14 +88,14 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
           Text("FULL NAME"),
           Visibility(
             visible: _isVisible,
-            child: QrImageView(
+            child: QrImage(
               // TODO change the data to an instance of entry, but for that to work
               // need to implement getting of entries from stream first
               data: '1234567890',
               version: QrVersions.auto,
               size: 200.0,
             ),
-            ),
+          ),
           ElevatedButton(
             onPressed: () {
               setState(() {
