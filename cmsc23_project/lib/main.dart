@@ -1,11 +1,10 @@
-// import 'dart:js';
-
 import 'package:cmsc23_project/providers/entry_provider.dart';
 import 'package:cmsc23_project/screens/admin/admin_quarantined.dart';
 import 'package:cmsc23_project/screens/admin/admin_requests.dart';
 import 'package:cmsc23_project/screens/admin/admin_students.dart';
 import 'package:cmsc23_project/screens/entrance_monitor/QR_scanner.dart';
 import 'package:cmsc23_project/screens/login/admin_login.dart';
+import 'package:cmsc23_project/screens/signup/user_signup.dart';
 import 'package:cmsc23_project/screens/user/user_homepage.dart';
 import 'package:cmsc23_project/screens/login/user_login.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -53,7 +52,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       routes: {
-        '/': (context) => const MainMenu(),
+        '/': (context) => const UserSignupPage(),
         // '/': (context) => const AdminPage(),
         // '/': (context) => const HomePage(),
         // '/': (context) => const EntranceMonitor(),

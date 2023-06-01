@@ -22,6 +22,118 @@ class _UserSignupPageState extends State<UserSignupPage> {
     TextEditingController studnoController = TextEditingController();
     TextEditingController courseController = TextEditingController();
 
+    List<String> allColleges = [
+      'College',
+      'CAS',
+      'CEAT',
+      'CHE',
+      'CEAT',
+      'CAFS',
+      'CVM',
+      'CFNR',
+      'CDC'
+    ];
+
+    String currentCollege = allColleges.first;
+
+    Map<String, List> allCourses = {
+      'College of Arts and Sciences': [
+        'BS Statistics',
+        'BS Sociology',
+        'BA Philosophy',
+        'BS Mathematics and Science Teaching',
+        'BS Mathematics',
+        'BS Computer Science',
+        'BA Communication Arts',
+        'BS Chemistry',
+        'BS Biology',
+        'BS Applied Physics',
+        'BS Applied Mathematics'
+      ],
+      'College of Agriculture and Food Science': [
+        'BS Agricultural Chemistry',
+        'BS Food Science and Technology',
+        'BS Agricultural Biotechnology',
+        'BS Agriculture'
+      ],
+      'College of Development Communication': ['BS Development Communication'],
+      'College of Economics and Management': [
+        'BS Agricultural and Applied Economics',
+        'BS Economics',
+        'BS Agribusiness Management and Entrepreneurship'
+      ],
+      'College of Engineering and Agro-industrial Technology': [
+        'BS Materials Engineering',
+        'BS Mechanical Engineering',
+        'BS Industrial Engineering',
+        'BS Electrical Engineering',
+        'BS Civil Engineering',
+        'BS Chemical Engineering',
+        'BS Agricultural and Biosystems Engineering'
+      ],
+      'College of Forestry and Natural Resources': ['BS Forestry'],
+      'College of Human Ecology': ['BS Nutrition', 'BS Human Ecology'],
+      'College of Veterinary Medicine': ['Doctor of Veterinary Medicine']
+    };
+
+    List<String> retrieveList(String collegeOption) {
+      switch (collegeOption) {
+        case "CAS":
+          return [
+            'Course',
+            'BS Statistics',
+            'BS Sociology',
+            'BA Philosophy',
+            'BS Mathematics and Science Teaching',
+            'BS Mathematics',
+            'BS Computer Science',
+            'BA Communication Arts',
+            'BS Chemistry',
+            'BS Biology',
+            'BS Applied Physics',
+            'BS Applied Mathematics'
+          ];
+        case "CAFS":
+          return [
+            'Course',
+            'BS Agricultural Chemistry',
+            'BS Food Science and Technology',
+            'BS Agricultural Biotechnology',
+            'BS Agriculture'
+          ];
+        case "CDC":
+          return ['Course', 'BS Development Communication'];
+        case "CEM":
+          return [
+            'Course',
+            'BS Agricultural and Applied Economics',
+            'BS Economics',
+            'BS Agribusiness Management and Entrepreneurship'
+          ];
+        case "CEAT":
+          return [
+            'Course',
+            'BS Materials Engineering',
+            'BS Mechanical Engineering',
+            'BS Industrial Engineering',
+            'BS Electrical Engineering',
+            'BS Civil Engineering',
+            'BS Chemical Engineering',
+            'BS Agricultural and Biosystems Engineering'
+          ];
+        case "CFNR":
+          return ['Course', 'BS Forestry'];
+        case "CHE":
+          return ['Course', 'BS Nutrition', 'BS Human Ecology'];
+        case "CVM":
+          return ['Course', 'Doctor of Veterinary Medicine'];
+        default:
+          return ['Course'];
+      }
+    }
+
+    String currentCourse = retrieveList(currentCollege).first;
+
     final name = TextFormField(
       controller: nameController,
       decoration: InputDecoration(
@@ -231,11 +343,14 @@ class _UserSignupPageState extends State<UserSignupPage> {
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState?.save();
-                UserRecord user = UserRecord(id: '', fname: nameController.text, lname: nameController.text, email: emailController.text, entries: []);
-                await context
-                      .read<AuthProvider>()
-                      .signUp(emailController.text,
-                          passwordController.text, user);
+                UserRecord user = UserRecord(
+                    id: '',
+                    fname: nameController.text,
+                    lname: nameController.text,
+                    email: emailController.text,
+                    entries: []);
+                await context.read<AuthProvider>().signUp(
+                    emailController.text, passwordController.text, user);
 
                 // bool emailExists = await isEmailAlreadyInUse(email);
                 // if (emailExists) {
@@ -325,6 +440,14 @@ class _UserSignupPageState extends State<UserSignupPage> {
                     SizedBox(
                       height: 20,
                     ),
+                    email,
+                    SizedBox(
+                      height: 15,
+                    ),
+                    password,
+                    SizedBox(
+                      height: 15,
+                    ),
                     name,
                     SizedBox(
                       height: 15,
@@ -341,13 +464,95 @@ class _UserSignupPageState extends State<UserSignupPage> {
                     SizedBox(
                       height: 15,
                     ),
-                    email,
+                    SizedBox(
+                      height: 65,
+                      width: 320,
+                      child: // Dropdown
+                          DropdownButtonFormField<String>(
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Color.fromARGB(255, 255, 255, 255),
+                        ),
+                        value: currentCollege,
+                        dropdownColor: Color.fromARGB(255, 231, 218, 255),
+                        onChanged: (value) {
+                          // This is called when the user selects an item.
+                          // saves the current selected superpower to formValues
+                          setState(() {
+                            currentCollege = value.toString();
+                            // formValues["superpower"] = value.toString();
+                          });
+                        },
+                        // gets the items from the dropdownoptions map
+                        items: allColleges.map<DropdownMenuItem<String>>(
+                          (String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(
+                                value,
+                                style: const TextStyle(
+                                  color: Color.fromARGB(255, 97, 97, 97),
+                                ),
+                              ),
+                            );
+                          },
+                        ).toList(),
+                        // saves it to formValues
+                        // onSaved: (newValue) {
+                        //   setState(() {
+                        //     formValues["superpower"] = newValue.toString();
+                        //   });
+
+                        //   //print("Dropdown onSaved method triggered");
+                        // },
+                      ),
+                    ),
                     SizedBox(
                       height: 15,
                     ),
-                    password,
                     SizedBox(
-                      height: 15,
+                      height: 65,
+                      width: 320,
+                      child: // Dropdown
+                          DropdownButtonFormField<String>(
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Color.fromARGB(255, 255, 255, 255),
+                        ),
+                        value: currentCourse,
+                        dropdownColor: Color.fromARGB(255, 231, 218, 255),
+                        onChanged: (value) {
+                          // This is called when the user selects an item.
+                          // saves the current selected superpower to formValues
+                          setState(() {
+                            currentCourse = value.toString();
+                            // formValues["superpower"] = value.toString();
+                          });
+                        },
+                        // gets the items from the dropdownoptions map
+                        items: (retrieveList(currentCollege))
+                            .map<DropdownMenuItem<String>>(
+                          (String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(
+                                value,
+                                style: const TextStyle(
+                                  color: Color.fromARGB(255, 97, 97, 97),
+                                ),
+                              ),
+                            );
+                          },
+                        ).toList(),
+                        // saves it to formValues
+                        // onSaved: (newValue) {
+                        //   setState(() {
+                        //     formValues["superpower"] = newValue.toString();
+                        //   });
+
+                        //   //print("Dropdown onSaved method triggered");
+                        // },
+                      ),
                     ),
                     SignupButton,
                     backButton

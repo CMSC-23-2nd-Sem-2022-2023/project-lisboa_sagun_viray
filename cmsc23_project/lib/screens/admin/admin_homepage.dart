@@ -146,47 +146,6 @@ class _AdminPageState extends State<AdminPage> {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, '/monitor_quarantined');
-            },
-            child: SizedBox(
-              width: 160,
-              height: 200,
-              child: Card(
-                shadowColor: Color.fromRGBO(214, 214, 214, 1),
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
-                child: Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Icon(
-                          Icons.device_thermostat,
-                          size: 50,
-                          color: Color.fromARGB(255, 0, 37, 67),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Center(
-                            child: Text(
-                          "Quarantined Students",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                              color: Color.fromARGB(255, 0, 37, 67)),
-                        ))
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
               Navigator.pushNamed(context, '/monitor_students');
             },
             child: SizedBox(
@@ -201,7 +160,8 @@ class _AdminPageState extends State<AdminPage> {
                   child: Padding(
                     padding: EdgeInsets.all(8),
                     child: Column(
-                      children: const [
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
                         Icon(
                           Icons.remove_red_eye,
                           size: 50,
@@ -211,7 +171,7 @@ class _AdminPageState extends State<AdminPage> {
                           height: 5,
                         ),
                         Text(
-                          "Under Monitoring",
+                          "Monitoring",
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 20,
@@ -227,166 +187,6 @@ class _AdminPageState extends State<AdminPage> {
         ],
       ),
     );
-
-    // return ListView(
-    //   scrollDirection: Axis.vertical,
-    //   //direction: Axis.vertical,
-    //   children: [
-    //     Row(
-    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //       children: [
-    //         const SizedBox(
-    //           width: 20,
-    //         ),
-    //         //1st column of buttons
-    //         Column(
-    //           children: [
-
-    //             // GridView.count(
-    //             //   crossAxisCount: 2,
-    //             //   children: [
-    //             //     Card(
-    //             //       child: Center(child: Text('Item 1')),
-    //             //     ),
-    //             //     Card(
-    //             //       child: Center(child: Text('Item 2')),
-    //             //     ),
-    //             //     Card(
-    //             //       child: Center(child: Text('Item 3')),
-    //             //     ),
-    //             //     Card(
-    //             //       child: Center(child: Text('Item 4')),
-    //             //     ),
-    //             //   ],
-    //             // ),
-    //             Card(
-    //               color: const Color.fromARGB(255, 185, 105, 36),
-    //               clipBehavior: Clip.hardEdge,
-    //               shape: const RoundedRectangleBorder(
-    //                 borderRadius: BorderRadius.all(
-    //                   Radius.circular(25),
-    //                 ),
-    //               ),
-    //               child: InkWell(
-    //                 splashColor:
-    //                     const Color.fromARGB(255, 227, 130, 44).withAlpha(20),
-    //                 onTap: () {
-    //                   //TODO functionality of this card
-    //                   //Navigator.push emerut
-    //                 },
-    //                 child: const SizedBox(
-    //                   width: 150,
-    //                   height: 200,
-    //                   child: Center(
-    //                     child: Text(
-    //                       "Requests",
-    //                       style: TextStyle(color: Colors.white),
-    //                     ),
-    //                   ),
-    //                 ),
-    //               ),
-    //             ),
-    //             const SizedBox(
-    //               height: 20,
-    //             ),
-    //             Card(
-    //               clipBehavior: Clip.hardEdge,
-    //               color: const Color.fromARGB(255, 245, 247, 245),
-    //               shape: const RoundedRectangleBorder(
-    //                 borderRadius: BorderRadius.all(
-    //                   Radius.circular(25),
-    //                 ),
-    //               ),
-    //               child: InkWell(
-    //                 splashColor: Colors.blue.withAlpha(30),
-    //                 onTap: () {
-    //                   //TODO functionality of this card
-    //                 },
-    //                 child: const SizedBox(
-    //                   width: 150,
-    //                   height: 200,
-    //                   child: Center(
-    //                     child: Text("All Students"),
-    //                   ),
-    //                 ),
-    //               ),
-    //             ),
-    //           ],
-    //         ),
-    //         //sizedbox as pading
-    //         const SizedBox(
-    //           width: 20,
-    //         ),
-    //         //2nd column of buttons
-    //         Column(
-    //           children: [
-    //             const SizedBox(
-    //               height: 50,
-    //             ),
-    //             Card(
-    //               shadowColor: Colors.black54,
-    //               clipBehavior: Clip.hardEdge,
-    //               color: const Color.fromARGB(255, 245, 247, 245),
-    //               shape: const RoundedRectangleBorder(
-    //                 borderRadius: BorderRadius.all(
-    //                   Radius.circular(25),
-    //                 ),
-    //               ),
-    //               child: InkWell(
-    //                 splashColor: Colors.blue.withAlpha(30),
-    //                 onTap: () {
-    //                   //TODO functionality of this card
-    //                 },
-    //                 child: const SizedBox(
-    //                   width: 150,
-    //                   height: 200,
-    //                   child: Center(
-    //                     child: Text(
-    //                       "Quarantined Students",
-    //                       style: TextStyle(color: Colors.black),
-    //                     ),
-    //                   ),
-    //                 ),
-    //               ),
-    //             ),
-    //             const SizedBox(
-    //               height: 20,
-    //             ),
-    //             Card(
-    //               color: const Color.fromARGB(255, 46, 160, 201),
-    //               clipBehavior: Clip.hardEdge,
-    //               shape: const RoundedRectangleBorder(
-    //                 borderRadius: BorderRadius.all(
-    //                   Radius.circular(25),
-    //                 ),
-    //               ),
-    //               child: InkWell(
-    //                 splashColor:
-    //                     const Color.fromARGB(255, 46, 160, 201).withAlpha(20),
-    //                 onTap: () {
-    //                   //TODO functionality of this card
-    //                 },
-    //                 child: const SizedBox(
-    //                   width: 150,
-    //                   height: 200,
-    //                   child: Center(
-    //                     child: Text(
-    //                       "Under Monitoring",
-    //                       style: TextStyle(color: Colors.white),
-    //                     ),
-    //                   ),
-    //                 ),
-    //               ),
-    //             ),
-    //           ],
-    //         ),
-    //         const SizedBox(
-    //           width: 20,
-    //         ),
-    //       ],
-    //     ),
-    //   ],
-    // );
   }
 
   //builds the profile of the admin
@@ -402,10 +202,6 @@ class _AdminPageState extends State<AdminPage> {
             onPressed: () {},
             child: const Text("Generate Building Pass"),
           ),
-          // ElevatedButton(onPressed: (){
-          //   context.read<AuthProvider>().signOut();
-          //   // Navigator.pop(context);
-          // }, child: const Text("Log out"))
         ],
       ),
     );
@@ -508,37 +304,51 @@ class _AdminPageState extends State<AdminPage> {
             ),
           ),
         ],
-        title: Text("Admin View"),
+        title: Text("Admin Dashboard"),
       ),
-      body: body(_selectedIndex, entriesStream),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color.fromARGB(255, 0, 37, 67), // First color
+              Color.fromARGB(255, 128, 150, 209), // Second color
+            ],
+          ),
+        ),
+        child: body(_selectedIndex, entriesStream),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.shifting,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.group),
             label: "Students",
-            backgroundColor: Color.fromARGB(255, 128, 150, 209),
+            backgroundColor: Color.fromARGB(255, 0, 13, 47),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.list_alt),
             label: "Entries",
-            backgroundColor: Color.fromARGB(255, 46, 160, 201),
+            backgroundColor: Color.fromARGB(255, 0, 42, 57),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: "Profile",
-            backgroundColor: Color.fromARGB(255, 105, 194, 173),
+            backgroundColor: Color.fromARGB(255, 0, 43, 33),
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Color.fromARGB(255, 0, 37, 67),
+        selectedItemColor: Color.fromARGB(255, 255, 255, 255),
         onTap: _itemOnTapped,
       ),
       floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () {
-            Navigator.pushNamed(context, '/entryform');
-          }),
+        backgroundColor: Color.fromARGB(255, 0, 37, 67),
+        child: Icon(Icons.add),
+        onPressed: () {
+          Navigator.pushNamed(context, '/entryform');
+        },
+      ),
     );
   }
 }
