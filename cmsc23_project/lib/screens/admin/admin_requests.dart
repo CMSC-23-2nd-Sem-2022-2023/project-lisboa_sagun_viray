@@ -11,6 +11,15 @@ class AdminRequests extends StatefulWidget {
 class _AdminRequestsState extends State<AdminRequests> {
   @override
   Widget build(BuildContext context){
-    return Scaffold();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Requests"),
+      ),
+      body: Column(
+        children: [
+          Center(child: Text("requests"),),
+        ],
+      ),
+    );
   }
 }

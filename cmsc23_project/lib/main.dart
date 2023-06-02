@@ -4,6 +4,7 @@ import 'package:cmsc23_project/screens/admin/admin_requests.dart';
 import 'package:cmsc23_project/screens/admin/admin_students.dart';
 import 'package:cmsc23_project/screens/entrance_monitor/QR_scanner.dart';
 import 'package:cmsc23_project/screens/login/admin_login.dart';
+import 'package:cmsc23_project/screens/signup/admin_signup.dart';
 import 'package:cmsc23_project/screens/signup/user_signup.dart';
 import 'package:cmsc23_project/screens/user/user_homepage.dart';
 import 'package:cmsc23_project/screens/login/user_login.dart';
@@ -52,13 +53,15 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       routes: {
-        '/': (context) => const UserSignupPage(),
+        '/': (context) => const MainMenu(),
         // '/': (context) => const AdminPage(),
         // '/': (context) => const HomePage(),
         // '/': (context) => const EntranceMonitor(),
         // '/login': (context) => const LoginPage(),
-        'user_login': (context) => const UserLoginPage(),
-        'admin_login': (context) => const AdminLoginPage(),
+        '/user_login': (context) => const UserLoginPage(),
+        '/admin_login': (context) => const AdminLoginPage(),
+        '/user_signup':(context) => const UserSignupPage(),
+        '/admin_signup':(context) => const AdminSignupPage(),
         // '/todo': (context) => const LoginPage(),
         '/user_details': (context) => const UserDetailsPage(),
         '/homepage': (context) => const HomePage(),
