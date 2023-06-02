@@ -1,3 +1,4 @@
+import 'package:cmsc23_project/screens/login/admin_login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/entry_model.dart';
@@ -208,10 +209,11 @@ class _AdminPageState extends State<AdminPage> {
   }
 
   //builds entries from stream
-  Widget entriesBuilder(Stream<QuerySnapshot> entriesStream) {
+  Widget entriesBuilder(Stream<QuerySnapshot> entriesStream, String UID) {
+    print("at entries builder");
     return StreamBuilder(
         stream: entriesStream,
-        builder: (context, snapshot) {
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
             return Center(
               child: Text("Error encountered! ${snapshot.error}"),
@@ -226,23 +228,31 @@ class _AdminPageState extends State<AdminPage> {
             );
           }
 
-          return displayScaffold(context, entriesStream);
+          return ListView.builder(
+              itemCount: snapshot.data?.docs.length,
+              itemBuilder: (context, index) {
+                Entry entry = Entry.fromJson(
+                    snapshot.data?.docs[index].data() as Map<String, dynamic>);
+                return ListTile(
+                  title: Text(
+                    entry.UID,
+                  ),
+                  leading: Text(
+                    entry.date,
+                  ),
+                );
+              });
+          // return Center();
         });
   }
 
   //this function returns a different widget depending on the index of the
   //bottomnav bar
-  body(int index, Stream<QuerySnapshot> entriesStream) {
+  body(int index, Stream<QuerySnapshot> entriesStream, String UID) {
     if (index == 0) {
       return students_buttons();
     } else if (index == 1) {
-      if (entries.isEmpty) {
-        return const Center(
-          child: Text("No entries yet"),
-        );
-      } else {
-        return entriesBuilder(entriesStream);
-      }
+      return entriesBuilder(entriesStream, UID);
     } else if (index == 2) {
       return profileBuilder();
     }
@@ -254,15 +264,22 @@ class _AdminPageState extends State<AdminPage> {
     });
   }
 
+  Stream<QuerySnapshot> getEntriesStream(String UID) {
+    Stream<QuerySnapshot> entriesStream =
+        context.watch<EntryListProvider>().getEntries(UID);
+    return entriesStream;
+  }
+
   @override
   Widget build(BuildContext context) {
-    Stream<QuerySnapshot> entriesStream =
-        context.watch<EntryListProvider>().entries;
     Stream<User?> userStream = context.watch<AuthProvider>().uStream;
+    print(userStream);
+    // Stream<QuerySnapshot> entriesStream =
+    //     context.watch<EntryListProvider>()._myEntriesStream;
 
     return StreamBuilder(
       stream: userStream,
-      builder: (context, snapshot) {
+      builder: (context, AsyncSnapshot<User?> snapshot) {
         if (snapshot.hasError) {
           return Center(
             child: Text("Error encountered! ${snapshot.error}"),
@@ -272,20 +289,21 @@ class _AdminPageState extends State<AdminPage> {
             child: CircularProgressIndicator(),
           );
         } else if (!snapshot.hasData) {
-          // Navigator.pop(context);
-          // print("no data");
+          print("snapshot has no data");
+          return const AdminLoginPage();
         }
-        // print("user currently logged in: ${snapshot.data!.uid}");
-        //get the uid of current logged in user, then kunin sa admin collection yung data nya
-        //then store to an instance of AdminRecord?
+        print("user currently logged in: ${snapshot.data!.uid}");
         // String crrntlogged = snapshot.data!.uid;
-        return displayScaffold(context, entriesStream);
+        String UID = snapshot.data!.uid;
+        Stream<QuerySnapshot> entriesStream = getEntriesStream(UID);
+
+        return displayScaffold(context, entriesStream, UID);
       },
     );
   }
 
-  Scaffold displayScaffold(
-      BuildContext context, Stream<QuerySnapshot<Object?>> entriesStream) {
+  Scaffold displayScaffold(BuildContext context,
+      Stream<QuerySnapshot<Object?>> entriesStream, String UID) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 0, 37, 67),
@@ -317,7 +335,7 @@ class _AdminPageState extends State<AdminPage> {
             ],
           ),
         ),
-        child: body(_selectedIndex, entriesStream),
+        child: body(_selectedIndex, entriesStream, UID),
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.shifting,

@@ -36,6 +36,7 @@ class AuthProvider with ChangeNotifier {
 
   // authenticating a user with firebase authentication
   Future<String> signIn(String email, String password) async {
+    fetchAuthentication();
     String err = await authService.signIn(email, password);
     notifyListeners();
     return err;

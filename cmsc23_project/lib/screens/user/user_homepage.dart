@@ -1,3 +1,4 @@
+import 'package:cmsc23_project/screens/user/entryform.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/entry_model.dart';
@@ -39,6 +40,8 @@ class _HomePageState extends State<HomePage> {
         if (snapshot.hasData) {
           User? user = snapshot.data;
           String? userId = user?.uid;
+          print("$userId is logged in");
+          print(snapshot.connectionState);
           // Query the Firestore collection to get the documents associated with the user
           Stream<QuerySnapshot<Map<String, dynamic>>> userEntriesStream =
               FirebaseFirestore.instance
@@ -103,26 +106,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 0: Home',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 1: Business',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 3: Settings',
-      style: optionStyle,
-    ),
-  ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -133,7 +116,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(child: Text('Drawer')),
+      // drawer: Drawer(child: Text('Drawer')),
       appBar: AppBar(
         automaticallyImplyLeading: false,
         actions: [
@@ -156,7 +139,9 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Color.fromARGB(255, 0, 37, 67),
         onPressed: () {
-          Navigator.pushNamed(context, '/entryform');
+          // Navigator.pushNamed(context, '/entryform');
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const EntryForm()));
         },
         child: Icon(Icons.add),
       ),

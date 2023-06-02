@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class FirebaseEntryAPI {
   static final FirebaseFirestore db = FirebaseFirestore.instance;
+  static final FirebaseAuth auth = FirebaseAuth.instance;
 
   Future<String> addEntry(Map<String, dynamic> entry) async {
     try {
@@ -16,6 +18,14 @@ class FirebaseEntryAPI {
   Stream<QuerySnapshot> getAllEntries() {
     return db.collection("entries").snapshots();
   }
+
+  Stream<QuerySnapshot> getEntries(String UID) {
+    return db.collection('entries').where('UID', isEqualTo: UID).snapshots();
+  }
+
+  // Stream<QuerySnapshot> getMyEntries(){
+
+  // }
 
   Future<String> deleteEntry(String? id) async {
     try {
