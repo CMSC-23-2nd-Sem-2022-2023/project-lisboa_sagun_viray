@@ -244,7 +244,6 @@ class _MonitorSignupPageState extends State<MonitorSignupPage> {
                   },
                 );
               } else {
-                print("nagproceed siya");
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState?.save();
 
@@ -255,11 +254,6 @@ class _MonitorSignupPageState extends State<MonitorSignupPage> {
                       position: positionController.text,
                       unit: homeUnitController.text,
                       email: emailController.text);
-                  // UserRecord tempUser = UserRecord(
-                  //     id: "123",
-                  //     fname: firstNameController.text,
-                  //     lname: lastNameController.text,
-                  //     email: emailController.text);
 
                   String err = await context
                       .read<AuthProvider>()

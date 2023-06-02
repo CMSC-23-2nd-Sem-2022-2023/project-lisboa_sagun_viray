@@ -88,10 +88,13 @@ class FirebaseAuthAPI {
       // sets the credentials of the user
       UserRecord temp = UserRecord(
         id: credential.user!.uid,
-        fname: u.fname,
-        lname: u.lname,
+        name: u.name,
+        username: u.username,
         email: u.email,
         entries: u.entries,
+        isUnderMonitoring: u.isUnderMonitoring,
+        isQuarantined: u.isQuarantined,
+        userType: u.userType,
       );
 
       addUser(temp.toJson(temp));

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cmsc23_project/models/admin_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -32,8 +33,11 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
 
     Widget emailInUse = Visibility(
       visible: _isVisible,
-      child: Text("Password already in use", style: TextStyle(color: Colors.red),),
-      );
+      child: Text(
+        "Password already in use",
+        style: TextStyle(color: Colors.red),
+      ),
+    );
 
     final name = TextFormField(
       controller: nameController,
@@ -53,7 +57,7 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter your last name';
-        }else if(value.contains(RegExp(r'[0-9]'))){
+        } else if (value.contains(RegExp(r'[0-9]'))) {
           return 'Name has numbers';
         }
         return null;
@@ -78,7 +82,7 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter your employee number';
-        }else if(RegExp(r'[A-Za-z]').hasMatch(value)){
+        } else if (RegExp(r'[A-Za-z]').hasMatch(value)) {
           return 'Contains letters';
         }
         return null;
@@ -153,7 +157,9 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter your email';
-        } else if(!(RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value))){
+        } else if (!(RegExp(
+                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+            .hasMatch(value))) {
           return 'Invalid email format';
         }
         return null;
@@ -203,37 +209,70 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
               ),
             ),
             onPressed: () async {
-              if (_formKey.currentState!.validate()) {
-                _formKey.currentState?.save();
-                AdminRecord admin = AdminRecord(
-                  id: '',
-                  name: nameController.text,
-                  empno: empnoController.text,
-                  position: positionController.text,
-                  unit: homeUnitController.text,
-                  email: emailController.text,
-                  entries: []
-                  );
-                // UserRecord tempUser = UserRecord(
-                //     id: "123",
-                //     fname: firstNameController.text,
-                //     lname: lastNameController.text,
-                //     email: emailController.text);
+              FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-                String err = await context.read<AuthProvider>().adminSignUp(
-                    emailController.text, passwordController.text, admin);
+              Future<bool> isEmailAlreadyInUse(String email) async {
+                try {
+                  final result =
+                      await _firebaseAuth.fetchSignInMethodsForEmail(email);
+                  return result.isNotEmpty;
+                } catch (e) {
+                  // Handle any errors that occur during the process
+                  print('Error checking email usage: $e');
+                  return false;
+                }
+              }
 
-                //if (context.mounted) Navigator.pop(context);
-                if(err == 'success'){
-                  // setState(() {
-                  //   _isVisible = false;
-                  // });
-                  Navigator.pop(context);
-                }else{
-                  setState(() {
-                    _isVisible = true;
-                  });
-                  print("isvisible is $_isVisible");
+              bool emailExists =
+                  await isEmailAlreadyInUse(emailController.text);
+              if (emailExists) {
+                print("dito siya pumasok");
+                // Prompt the user that the email is already in use
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Email Already in Use'),
+                      content: Text(
+                          'The email address is already registered. Please use a different email.'),
+                      actions: [
+                        TextButton(
+                          child: Text('OK'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              } else {
+                if (_formKey.currentState!.validate()) {
+                  _formKey.currentState?.save();
+                  AdminRecord admin = AdminRecord(
+                      id: '',
+                      name: nameController.text,
+                      empno: empnoController.text,
+                      position: positionController.text,
+                      unit: homeUnitController.text,
+                      email: emailController.text,
+                      entries: []);
+
+                  String err = await context.read<AuthProvider>().adminSignUp(
+                      emailController.text, passwordController.text, admin);
+
+                  //if (context.mounted) Navigator.pop(context);
+                  if (err == 'success') {
+                    // setState(() {
+                    //   _isVisible = false;
+                    // });
+                    Navigator.pop(context);
+                  } else {
+                    setState(() {
+                      _isVisible = true;
+                    });
+                    print("isvisible is $_isVisible");
+                  }
                 }
               }
             },
