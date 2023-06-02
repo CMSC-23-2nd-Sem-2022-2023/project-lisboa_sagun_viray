@@ -249,30 +249,21 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
               } else {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState?.save();
-                  AdminRecord admin = AdminRecord(
-                      id: '',
-                      name: nameController.text,
-                      empno: empnoController.text,
-                      position: positionController.text,
-                      unit: homeUnitController.text,
-                      email: emailController.text,
-                      entries: []);
+                  UserRecord admin = UserRecord(
+                    id: '',
+                    name: nameController.text,
+                    empno: empnoController.text,
+                    position: positionController.text,
+                    unit: homeUnitController.text,
+                    email: emailController.text,
+                    entries: [],
+                    isUnderMonitoring: false,
+                    isQuarantined: false,
+                    userType: 'admin',
+                  );
 
-                  String err = await context.read<AuthProvider>().adminSignUp(
+                  await context.read<AuthProvider>().signUp(
                       emailController.text, passwordController.text, admin);
-
-                  //if (context.mounted) Navigator.pop(context);
-                  if (err == 'success') {
-                    // setState(() {
-                    //   _isVisible = false;
-                    // });
-                    Navigator.pop(context);
-                  } else {
-                    setState(() {
-                      _isVisible = true;
-                    });
-                    print("isvisible is $_isVisible");
-                  }
                 }
               }
             },

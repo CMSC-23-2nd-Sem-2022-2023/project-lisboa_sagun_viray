@@ -21,8 +21,9 @@ class FirebaseAuthAPI {
   // then updates the newly added document's field id with the generated id
   Future<String> addUser(Map<String, dynamic> user) async {
     try {
-      final docRef = await db.collection("users").add(user);
-      await db.collection("users").doc(docRef.id).update({'id': docRef.id});
+      // final docRef = await db.collection("users").add(user);
+      // await db.collection("users").doc(docRef.id).update({'id': docRef.id});
+      await db.collection("users").doc(user["id"]).set(user);
       return "Successfully added user!";
     } on FirebaseException catch (e) {
       return "Failed with error '${e.code}: ${e.message}";
@@ -85,6 +86,8 @@ class FirebaseAuthAPI {
         password: password,
       );
 
+      print("user ${u.name}'s uid is: ${credential.user!.uid}");
+
       // sets the credentials of the user
       UserRecord temp = UserRecord(
         id: credential.user!.uid,
@@ -95,6 +98,12 @@ class FirebaseAuthAPI {
         isUnderMonitoring: u.isUnderMonitoring,
         isQuarantined: u.isQuarantined,
         userType: u.userType,
+        college: u.college,
+        course: u.course,
+        studno: u.studno,
+        empno: u.empno,
+        position: u.position,
+        unit: u.unit,
       );
 
       addUser(temp.toJson(temp));

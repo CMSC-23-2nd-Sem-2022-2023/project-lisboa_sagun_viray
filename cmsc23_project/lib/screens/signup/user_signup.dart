@@ -298,23 +298,6 @@ class _UserSignupPageState extends State<UserSignupPage> {
         fillColor: Colors.white,
       ),
       validator: (value) {
-        // FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-
-        // Future<bool> isEmailAlreadyInUse(String email) async {
-        //   try {
-        //     final result =
-        //         await _firebaseAuth.fetchSignInMethodsForEmail(email);
-        //     return result.isNotEmpty;
-        //   } catch (e) {
-        //     // Handle any errors that occur during the process
-        //     print('Error checking email usage: $e');
-        //     return false;
-        //   }
-        // }
-
-        // bool emailExists =
-        //           await isEmailAlreadyInUse(emailController.text);
-
         if (value == null || value.isEmpty) {
           return 'Please enter your email';
         } else if (!(RegExp(
@@ -381,11 +364,15 @@ class _UserSignupPageState extends State<UserSignupPage> {
               } else {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState?.save();
+                  //make a userrecord model that will be of type student and pass it to signup
                   UserRecord user = UserRecord(
                     id: '',
                     name: nameController.text,
                     username: usernameController.text,
                     email: emailController.text,
+                    course: courseController.text,
+                    college: collegeController.text,
+                    studno: studnoController.text,
                     entries: [],
                     userType: 'student',
                     isUnderMonitoring: false,
@@ -393,6 +380,9 @@ class _UserSignupPageState extends State<UserSignupPage> {
                   );
                   await context.read<AuthProvider>().signUp(
                       emailController.text, passwordController.text, user);
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                  }
                 }
               }
             },
@@ -468,6 +458,10 @@ class _UserSignupPageState extends State<UserSignupPage> {
                       height: 15,
                     ),
                     course,
+                    SizedBox(
+                      height: 15,
+                    ),
+                    studno,
                     SizedBox(
                       height: 15,
                     ),
