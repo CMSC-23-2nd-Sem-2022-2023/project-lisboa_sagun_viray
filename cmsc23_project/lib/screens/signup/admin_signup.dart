@@ -226,7 +226,7 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
               bool emailExists =
                   await isEmailAlreadyInUse(emailController.text);
               if (emailExists) {
-                print("dito siya pumasok");
+                // print("dito siya pumasok");
                 // Prompt the user that the email is already in use
                 showDialog(
                   context: context,

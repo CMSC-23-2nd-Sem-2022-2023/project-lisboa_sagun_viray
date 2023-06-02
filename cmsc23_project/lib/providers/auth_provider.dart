@@ -25,7 +25,6 @@ class AuthProvider with ChangeNotifier {
   // fetching the user's authentication status and updating ustream
   void fetchAuthentication() {
     uStream = authService.getUser();
-
     notifyListeners();
   }
 
@@ -47,5 +46,13 @@ class AuthProvider with ChangeNotifier {
     print('going to API');
     await authService.signOut();
     notifyListeners();
+  }
+
+  //will ask api to validate the user under said email's usertype
+  Future<String> validateUsertype(String email) async {
+    print("validating $email");
+    String message = await authService.validateUsertype(email);
+    notifyListeners();
+    return message;
   }
 }

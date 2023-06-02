@@ -12,6 +12,11 @@ class FirebaseAuthAPI {
   // allows authentification using the Firebase Authentication
   static final FirebaseAuth auth = FirebaseAuth.instance;
 
+  //returns a db snapshot of 'users' collection
+  Stream<QuerySnapshot> getUserDocs() {
+    return db.collection('users').snapshots();
+  }
+
   // returns a stream of firebase user objects
   Stream<User?> getUser() {
     return auth.authStateChanges();
@@ -25,17 +30,6 @@ class FirebaseAuthAPI {
       // await db.collection("users").doc(docRef.id).update({'id': docRef.id});
       await db.collection("users").doc(user["id"]).set(user);
       return "Successfully added user!";
-    } on FirebaseException catch (e) {
-      return "Failed with error '${e.code}: ${e.message}";
-    }
-  }
-
-  Future<String> addHealthMonitor(Map<String, dynamic> hm) async {
-    try {
-      await db.collection("entrance_monitor").doc(hm["id"]).set(hm);
-      // final docRef = await db.collection("admin").add(admin);
-      // await db.collection("admin").doc(docRef.id).update({'id': docRef.id});
-      return "Successfully added healthmonitor!";
     } on FirebaseException catch (e) {
       return "Failed with error '${e.code}: ${e.message}";
     }
@@ -115,5 +109,18 @@ class FirebaseAuthAPI {
   Future<void> signOut() async {
     print('trying to signout');
     await auth.signOut();
+  }
+
+  Future<String> validateUsertype(email) async {
+    // print("in api");
+    //this gets a querysnapshot of the user with the provided email
+    QuerySnapshot<Map<String, dynamic>> queryUser =
+        await db.collection('users').where('email', isEqualTo: email).get();
+    //user is a map of the document that was found in queryUser
+    Map<String, dynamic> user = queryUser.docs[0].data();
+    String userType = user['userType'];
+    return userType;
+    // print (await db.collection('users').doc(docRef.UID));
+    // return await db.collection('users').where('UID', isEqualTo: docRef.id);
   }
 }

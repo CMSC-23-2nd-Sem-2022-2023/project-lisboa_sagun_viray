@@ -89,24 +89,34 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
             ),
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                String err = await context.read<AuthProvider>().signIn(
-                      emailController.text.trim(),
-                      passwordController.text.trim(),
-                    );
-                if(err == 'success'){
+                String usertype = await context
+                    .read<AuthProvider>()
+                    .validateUsertype(emailController.text.trim());
+                print(usertype);
+                String err = '';
+                if (usertype == 'admin') {
+                  err = await context.read<AuthProvider>().signIn(
+                        emailController.text.trim(),
+                        passwordController.text.trim(),
+                      );
+                } else {
+                  err = "wrong usertype";
+                  print("wrong user type");
+                }
+                if (err == 'success') {
                   // Navigator.pushNamed(context, '/admin_homepage');
                   Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const AdminPage(),
-            ),
-          );
-                }else{
+                    MaterialPageRoute(
+                      builder: (context) => const AdminPage(),
+                    ),
+                  );
+                } else {
                   print(err);
                 }
               }
             },
-            child:
-                const Text('LOG IN AS ADMIN', style: TextStyle(color: Colors.white)),
+            child: const Text('LOG IN AS ADMIN',
+                style: TextStyle(color: Colors.white)),
           ),
         ));
 
@@ -117,8 +127,8 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
       child: ElevatedButton(
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-          foregroundColor:
-              MaterialStateProperty.all<Color>(const Color.fromARGB(255, 0, 37, 67)),
+          foregroundColor: MaterialStateProperty.all<Color>(
+              const Color.fromARGB(255, 0, 37, 67)),
           shape: MaterialStateProperty.all<StadiumBorder>(
             const StadiumBorder(),
           ),
