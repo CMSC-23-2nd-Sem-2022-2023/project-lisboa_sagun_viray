@@ -12,6 +12,11 @@ class FirebaseAuthAPI {
   // allows authentification using the Firebase Authentication
   static final FirebaseAuth auth = FirebaseAuth.instance;
 
+  //returns a db snapshot of 'users' collection
+  Stream<QuerySnapshot> getUserDocs() {
+    return db.collection('users').snapshots();
+  }
+
   // returns a stream of firebase user objects
   Stream<User?> getUser() {
     return auth.authStateChanges();
@@ -21,32 +26,10 @@ class FirebaseAuthAPI {
   // then updates the newly added document's field id with the generated id
   Future<String> addUser(Map<String, dynamic> user) async {
     try {
-      final docRef = await db.collection("users").add(user);
-      await db.collection("users").doc(docRef.id).update({'id': docRef.id});
+      // final docRef = await db.collection("users").add(user);
+      // await db.collection("users").doc(docRef.id).update({'id': docRef.id});
+      await db.collection("users").doc(user["id"]).set(user);
       return "Successfully added user!";
-    } on FirebaseException catch (e) {
-      return "Failed with error '${e.code}: ${e.message}";
-    }
-  }
-
-  //adds a new document to firestore collection "admin"
-  Future<String> addAdmin(Map<String, dynamic> admin) async {
-    try {
-      await db.collection("admin").doc(admin["id"]).set(admin);
-      // final docRef = await db.collection("admin").add(admin);
-      // await db.collection("admin").doc(docRef.id).update({'id': docRef.id});
-      return "Successfully added admin!";
-    } on FirebaseException catch (e) {
-      return "Failed with error '${e.code}: ${e.message}";
-    }
-  }
-
-  Future<String> addHealthMonitor(Map<String, dynamic> hm) async {
-    try {
-      await db.collection("entrance_monitor").doc(hm["id"]).set(hm);
-      // final docRef = await db.collection("admin").add(admin);
-      // await db.collection("admin").doc(docRef.id).update({'id': docRef.id});
-      return "Successfully added healthmonitor!";
     } on FirebaseException catch (e) {
       return "Failed with error '${e.code}: ${e.message}";
     }
@@ -85,13 +68,24 @@ class FirebaseAuthAPI {
         password: password,
       );
 
+      print("user ${u.name}'s uid is: ${credential.user!.uid}");
+
       // sets the credentials of the user
       UserRecord temp = UserRecord(
         id: credential.user!.uid,
-        fname: u.fname,
-        lname: u.lname,
+        name: u.name,
+        username: u.username,
         email: u.email,
         entries: u.entries,
+        isUnderMonitoring: u.isUnderMonitoring,
+        isQuarantined: u.isQuarantined,
+        userType: u.userType,
+        college: u.college,
+        course: u.course,
+        studno: u.studno,
+        empno: u.empno,
+        position: u.position,
+        unit: u.unit,
       );
 
       addUser(temp.toJson(temp));
@@ -112,92 +106,21 @@ class FirebaseAuthAPI {
     }
   }
 
-  //Admin sign up
-  Future<String> adminSignUp(
-      String email, String password, AdminRecord admin) async {
-    UserCredential credential;
-    try {
-      // creating a new user account with an email and password
-      credential = await auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      // sets the credentials of the user
-      AdminRecord temp = AdminRecord(
-          id: credential.user?.uid,
-          name: admin.name,
-          empno: admin.empno,
-          unit: admin.unit,
-          position: admin.position,
-          email: admin.email,
-          entries: admin.entries);
-
-      addAdmin(temp.toJson(temp));
-      return 'success';
-
-      //let's print the object returned by signInWithEmailAndPassword
-      //you can use this object to get the user's id, email, etc.\
-      // print(credential);
-    } on FirebaseAuthException catch (e) {
-      //possible to return something more useful
-      //than just print an error message to improve UI/UX
-      if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
-        return 'The password provided is too weak.';
-      } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
-        return 'Email already in use';
-      }
-    } catch (e) {
-      print(e);
-    }
-    return '';
-  }
-
-  Future<String> healthMonitorSignUp(
-      String email, String password, Health_Monitor_Record hm) async {
-    UserCredential credential;
-    try {
-      // creating a new user account with an email and password
-      credential = await auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      // sets the credentials of the user
-      Health_Monitor_Record temp = Health_Monitor_Record(
-          id: credential.user?.uid,
-          name: hm.name,
-          empno: hm.empno,
-          unit: hm.unit,
-          position: hm.position,
-          email: hm.email);
-
-      addHealthMonitor(temp.toJson(temp));
-      return 'success';
-
-      //let's print the object returned by signInWithEmailAndPassword
-      //you can use this object to get the user's id, email, etc.\
-      // print(credential);
-    } on FirebaseAuthException catch (e) {
-      //possible to return something more useful
-      //than just print an error message to improve UI/UX
-      if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
-        return 'The password provided is too weak.';
-      } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
-        return 'Email already in use';
-      }
-    } catch (e) {
-      print(e);
-    }
-    return '';
-  }
-
   Future<void> signOut() async {
     print('trying to signout');
     await auth.signOut();
+  }
+
+  Future<String> validateUsertype(email) async {
+    // print("in api");
+    //this gets a querysnapshot of the user with the provided email
+    QuerySnapshot<Map<String, dynamic>> queryUser =
+        await db.collection('users').where('email', isEqualTo: email).get();
+    //user is a map of the document that was found in queryUser
+    Map<String, dynamic> user = queryUser.docs[0].data();
+    String userType = user['userType'];
+    return userType;
+    // print (await db.collection('users').doc(docRef.UID));
+    // return await db.collection('users').where('UID', isEqualTo: docRef.id);
   }
 }

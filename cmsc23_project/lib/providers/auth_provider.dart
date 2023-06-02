@@ -25,7 +25,6 @@ class AuthProvider with ChangeNotifier {
   // fetching the user's authentication status and updating ustream
   void fetchAuthentication() {
     uStream = authService.getUser();
-
     notifyListeners();
   }
 
@@ -42,25 +41,18 @@ class AuthProvider with ChangeNotifier {
     return err;
   }
 
-  //registering an admin with firebase authentication
-  Future<String> adminSignUp(
-      String email, String password, AdminRecord admin) async {
-    String err = await authService.adminSignUp(email, password, admin);
-    notifyListeners();
-    return err;
-  }
-
-  Future<String> healthMonitorSignUp(
-      String email, String password, Health_Monitor_Record hm) async {
-    String err = await authService.healthMonitorSignUp(email, password, hm);
-    notifyListeners();
-    return err;
-  }
-
   // signing out the currently authenticated user from firebase authentication
   Future<void> signOut() async {
     print('going to API');
     await authService.signOut();
     notifyListeners();
+  }
+
+  //will ask api to validate the user under said email's usertype
+  Future<String> validateUsertype(String email) async {
+    print("validating $email");
+    String message = await authService.validateUsertype(email);
+    notifyListeners();
+    return message;
   }
 }

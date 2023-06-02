@@ -1,3 +1,4 @@
+import 'package:cmsc23_project/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -244,40 +245,28 @@ class _MonitorSignupPageState extends State<MonitorSignupPage> {
                   },
                 );
               } else {
-                print("nagproceed siya");
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState?.save();
 
-                  Health_Monitor_Record health_monitor = Health_Monitor_Record(
-                      id: '',
-                      name: nameController.text,
-                      empno: empnoController.text,
-                      position: positionController.text,
-                      unit: homeUnitController.text,
-                      email: emailController.text);
-                  // UserRecord tempUser = UserRecord(
-                  //     id: "123",
-                  //     fname: firstNameController.text,
-                  //     lname: lastNameController.text,
-                  //     email: emailController.text);
+                  UserRecord health_monitor = UserRecord(
+                    id: '',
+                    name: nameController.text,
+                    empno: empnoController.text,
+                    position: positionController.text,
+                    unit: homeUnitController.text,
+                    email: emailController.text,
+                    entries: [],
+                    isQuarantined: false,
+                    isUnderMonitoring: false,
+                    userType: 'monitor',
+                  );
 
-                  String err = await context
-                      .read<AuthProvider>()
-                      .healthMonitorSignUp(emailController.text,
-                          passwordController.text, health_monitor);
+                  await context.read<AuthProvider>().signUp(
+                      emailController.text,
+                      passwordController.text,
+                      health_monitor);
 
-                  //if (context.mounted) Navigator.pop(context);
-                  if (err == 'success') {
-                    // setState(() {
-                    //   _isVisible = false;
-                    // });
-                    Navigator.pop(context);
-                  } else {
-                    // setState(() {
-                    //   _isVisible = true;
-                    // });
-                    // print("isvisible is $_isVisible");
-                  }
+                  if (context.mounted) Navigator.pop(context);
                 }
               }
             },

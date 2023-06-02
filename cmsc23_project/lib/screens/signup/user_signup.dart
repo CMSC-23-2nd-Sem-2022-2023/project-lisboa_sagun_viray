@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/user_model.dart';
@@ -297,23 +298,6 @@ class _UserSignupPageState extends State<UserSignupPage> {
         fillColor: Colors.white,
       ),
       validator: (value) {
-        // FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-
-        // Future<bool> isEmailAlreadyInUse(String email) async {
-        //   try {
-        //     final result =
-        //         await _firebaseAuth.fetchSignInMethodsForEmail(email);
-        //     return result.isNotEmpty;
-        //   } catch (e) {
-        //     // Handle any errors that occur during the process
-        //     print('Error checking email usage: $e');
-        //     return false;
-        //   }
-        // }
-
-        // bool emailExists =
-        //           await isEmailAlreadyInUse(emailController.text);
-
         if (value == null || value.isEmpty) {
           return 'Please enter your email';
         } else if (!(RegExp(
@@ -341,52 +325,65 @@ class _UserSignupPageState extends State<UserSignupPage> {
               ),
             ),
             onPressed: () async {
-              if (_formKey.currentState!.validate()) {
-                _formKey.currentState?.save();
-                UserRecord user = UserRecord(
+              FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+              Future<bool> isEmailAlreadyInUse(String email) async {
+                try {
+                  final result =
+                      await _firebaseAuth.fetchSignInMethodsForEmail(email);
+                  return result.isNotEmpty;
+                } catch (e) {
+                  // Handle any errors that occur during the process
+                  print('Error checking email usage: $e');
+                  return false;
+                }
+              }
+
+              bool emailExists =
+                  await isEmailAlreadyInUse(emailController.text);
+              if (emailExists) {
+                // Prompt the user that the email is already in use
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Email Already in Use'),
+                      content: Text(
+                          'The email address is already registered. Please use a different email.'),
+                      actions: [
+                        TextButton(
+                          child: Text('OK'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              } else {
+                if (_formKey.currentState!.validate()) {
+                  _formKey.currentState?.save();
+                  //make a userrecord model that will be of type student and pass it to signup
+                  UserRecord user = UserRecord(
                     id: '',
-                    fname: nameController.text,
-                    lname: nameController.text,
+                    name: nameController.text,
+                    username: usernameController.text,
                     email: emailController.text,
-                    entries: []);
-                await context.read<AuthProvider>().signUp(
-                    emailController.text, passwordController.text, user);
-
-                // bool emailExists = await isEmailAlreadyInUse(email);
-                // if (emailExists) {
-                //   // Prompt the user that the email is already in use
-                //   showDialog(
-                //     context: context,
-                //     builder: (BuildContext context) {
-                //       return AlertDialog(
-                //         title: Text('Email Already in Use'),
-                //         content: Text(
-                //             'The email address is already registered. Please use a different email.'),
-                //         actions: [
-                //           TextButton(
-                //             child: Text('OK'),
-                //             onPressed: () {
-                //               Navigator.of(context).pop();
-                //             },
-                //           ),
-                //         ],
-                //       );
-                //     },
-                //   );
-                // } else {
-                //   // Proceed with the registration process
-                //   // ...
-                // }
-                // UserRecord tempUser = UserRecord(
-                //     id: "123",
-                //     fname: firstNameController.text,
-                //     lname: lastNameController.text,
-                //     email: emailController.text);
-
-                // context.read<AuthProvider>().signUp(
-                //     emailController.text, passwordController.text, tempUser);
-
-                // if (context.mounted) Navigator.pop(context);
+                    course: courseController.text,
+                    college: collegeController.text,
+                    studno: studnoController.text,
+                    entries: [],
+                    userType: 'student',
+                    isUnderMonitoring: false,
+                    isQuarantined: false,
+                  );
+                  await context.read<AuthProvider>().signUp(
+                      emailController.text, passwordController.text, user);
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                  }
+                }
               }
             },
             child: const Text('SIGN UP AS USER',
@@ -464,96 +461,100 @@ class _UserSignupPageState extends State<UserSignupPage> {
                     SizedBox(
                       height: 15,
                     ),
-                    SizedBox(
-                      height: 65,
-                      width: 320,
-                      child: // Dropdown
-                          DropdownButtonFormField<String>(
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Color.fromARGB(255, 255, 255, 255),
-                        ),
-                        value: currentCollege,
-                        dropdownColor: Color.fromARGB(255, 231, 218, 255),
-                        onChanged: (value) {
-                          // This is called when the user selects an item.
-                          // saves the current selected superpower to formValues
-                          setState(() {
-                            currentCollege = value.toString();
-                            // formValues["superpower"] = value.toString();
-                          });
-                        },
-                        // gets the items from the dropdownoptions map
-                        items: allColleges.map<DropdownMenuItem<String>>(
-                          (String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(
-                                value,
-                                style: const TextStyle(
-                                  color: Color.fromARGB(255, 97, 97, 97),
-                                ),
-                              ),
-                            );
-                          },
-                        ).toList(),
-                        // saves it to formValues
-                        // onSaved: (newValue) {
-                        //   setState(() {
-                        //     formValues["superpower"] = newValue.toString();
-                        //   });
-
-                        //   //print("Dropdown onSaved method triggered");
-                        // },
-                      ),
-                    ),
+                    studno,
                     SizedBox(
                       height: 15,
                     ),
-                    SizedBox(
-                      height: 65,
-                      width: 320,
-                      child: // Dropdown
-                          DropdownButtonFormField<String>(
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Color.fromARGB(255, 255, 255, 255),
-                        ),
-                        value: currentCourse,
-                        dropdownColor: Color.fromARGB(255, 231, 218, 255),
-                        onChanged: (value) {
-                          // This is called when the user selects an item.
-                          // saves the current selected superpower to formValues
-                          setState(() {
-                            currentCourse = value.toString();
-                            // formValues["superpower"] = value.toString();
-                          });
-                        },
-                        // gets the items from the dropdownoptions map
-                        items: (retrieveList(currentCollege))
-                            .map<DropdownMenuItem<String>>(
-                          (String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(
-                                value,
-                                style: const TextStyle(
-                                  color: Color.fromARGB(255, 97, 97, 97),
-                                ),
-                              ),
-                            );
-                          },
-                        ).toList(),
-                        // saves it to formValues
-                        // onSaved: (newValue) {
-                        //   setState(() {
-                        //     formValues["superpower"] = newValue.toString();
-                        //   });
+                    // SizedBox(
+                    //   height: 65,
+                    //   width: 320,
+                    //   child: // Dropdown
+                    //       DropdownButtonFormField<String>(
+                    //     decoration: InputDecoration(
+                    //       filled: true,
+                    //       fillColor: Color.fromARGB(255, 255, 255, 255),
+                    //     ),
+                    //     value: currentCollege,
+                    //     dropdownColor: Color.fromARGB(255, 231, 218, 255),
+                    //     onChanged: (value) {
+                    //       // This is called when the user selects an item.
+                    //       // saves the current selected superpower to formValues
+                    //       setState(() {
+                    //         currentCollege = value.toString();
+                    //         // formValues["superpower"] = value.toString();
+                    //       });
+                    //     },
+                    //     // gets the items from the dropdownoptions map
+                    //     items: allColleges.map<DropdownMenuItem<String>>(
+                    //       (String value) {
+                    //         return DropdownMenuItem<String>(
+                    //           value: value,
+                    //           child: Text(
+                    //             value,
+                    //             style: const TextStyle(
+                    //               color: Color.fromARGB(255, 97, 97, 97),
+                    //             ),
+                    //           ),
+                    //         );
+                    //       },
+                    //     ).toList(),
+                    //     // saves it to formValues
+                    //     // onSaved: (newValue) {
+                    //     //   setState(() {
+                    //     //     formValues["superpower"] = newValue.toString();
+                    //     //   });
 
-                        //   //print("Dropdown onSaved method triggered");
-                        // },
-                      ),
+                    //     //   //print("Dropdown onSaved method triggered");
+                    //     // },
+                    //   ),
+                    // ),
+                    SizedBox(
+                      height: 15,
                     ),
+                    // SizedBox(
+                    //   height: 65,
+                    //   width: 320,
+                    //   child: // Dropdown
+                    //       DropdownButtonFormField<String>(
+                    //     decoration: InputDecoration(
+                    //       filled: true,
+                    //       fillColor: Color.fromARGB(255, 255, 255, 255),
+                    //     ),
+                    //     value: currentCourse,
+                    //     dropdownColor: Color.fromARGB(255, 231, 218, 255),
+                    //     onChanged: (value) {
+                    //       // This is called when the user selects an item.
+                    //       // saves the current selected superpower to formValues
+                    //       setState(() {
+                    //         currentCourse = value.toString();
+                    //         // formValues["superpower"] = value.toString();
+                    //       });
+                    //     },
+                    //     // gets the items from the dropdownoptions map
+                    //     items: (retrieveList(currentCollege))
+                    //         .map<DropdownMenuItem<String>>(
+                    //       (String value) {
+                    //         return DropdownMenuItem<String>(
+                    //           value: value,
+                    //           child: Text(
+                    //             value,
+                    //             style: const TextStyle(
+                    //               color: Color.fromARGB(255, 97, 97, 97),
+                    //             ),
+                    //           ),
+                    //         );
+                    //       },
+                    //     ).toList(),
+                    //     // saves it to formValues
+                    //     // onSaved: (newValue) {
+                    //     //   setState(() {
+                    //     //     formValues["superpower"] = newValue.toString();
+                    //     //   });
+
+                    //     //   //print("Dropdown onSaved method triggered");
+                    //     // },
+                    //   ),
+                    // ),
                     SignupButton,
                     backButton
                   ],

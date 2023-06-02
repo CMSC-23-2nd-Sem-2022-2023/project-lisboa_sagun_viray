@@ -1,8 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cmsc23_project/screens/signup/user_signup.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
-import '../signup.dart';
 import 'dart:core';
 // import 'package:email_validator/email_validator.dart';
 
@@ -37,17 +37,6 @@ class _UserLoginPageState extends State<UserLoginPage> {
         contentPadding: EdgeInsets.all(16),
         fillColor: Colors.white,
       ),
-      // validator: (value) {
-      //   final bool emailValid = RegExp(
-      //           r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-      //       .hasMatch(emailController.text);
-
-      //   if (!emailValid) {
-      //     return "Please enter a valid email address";
-      //   }
-
-      //   return null;
-      // },
     );
 
     // text form field for password with validator if at least 6 characters
@@ -94,13 +83,23 @@ class _UserLoginPageState extends State<UserLoginPage> {
             ),
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                String err = await context.read<AuthProvider>().signIn(
-                      emailController.text.trim(),
-                      passwordController.text.trim(),
-                    );
-                if(err == 'success'){
+                String usertype = await context
+                    .read<AuthProvider>()
+                    .validateUsertype(emailController.text.trim());
+                print(usertype);
+                String err = '';
+                if (usertype == 'student') {
+                  err = await context.read<AuthProvider>().signIn(
+                        emailController.text.trim(),
+                        passwordController.text.trim(),
+                      );
+                } else {
+                  err = "wrong usertype";
+                  print("wrong user type");
+                }
+                if (err == 'success') {
                   Navigator.pushNamed(context, '/homepage');
-                }else{
+                } else {
                   print(err);
                 }
               }

@@ -91,11 +91,20 @@ class _MonitorLoginPageState extends State<MonitorLoginPage> {
             onPressed: () async {
               print(_formKey.currentState!.validate());
               if (_formKey.currentState!.validate()) {
-                String err = await context.read<AuthProvider>().signIn(
-                      emailController.text.trim(),
-                      passwordController.text.trim(),
-                    );
-                print(err);
+                String usertype = await context
+                    .read<AuthProvider>()
+                    .validateUsertype(emailController.text.trim());
+                print(usertype);
+                String err = '';
+                if (usertype == 'monitor') {
+                  err = await context.read<AuthProvider>().signIn(
+                        emailController.text.trim(),
+                        passwordController.text.trim(),
+                      );
+                } else {
+                  err = "wrong usertype";
+                  print("wrong user type");
+                }
                 if (err == 'success') {
                   Navigator.pushNamed(context, '/entrance-monitor_homepage');
                 } else {
