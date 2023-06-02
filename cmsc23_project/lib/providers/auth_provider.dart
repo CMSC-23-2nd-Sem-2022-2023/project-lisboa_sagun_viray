@@ -42,21 +42,6 @@ class AuthProvider with ChangeNotifier {
     return err;
   }
 
-  //registering an admin with firebase authentication
-  Future<String> adminSignUp(
-      String email, String password, AdminRecord admin) async {
-    String err = await authService.adminSignUp(email, password, admin);
-    notifyListeners();
-    return err;
-  }
-
-  Future<String> healthMonitorSignUp(
-      String email, String password, Health_Monitor_Record hm) async {
-    String err = await authService.healthMonitorSignUp(email, password, hm);
-    notifyListeners();
-    return err;
-  }
-
   // signing out the currently authenticated user from firebase authentication
   Future<void> signOut() async {
     print('going to API');
