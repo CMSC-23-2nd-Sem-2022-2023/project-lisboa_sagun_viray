@@ -19,8 +19,8 @@ class AuthProvider with ChangeNotifier {
     fetchAuthentication();
   }
 
-  // getter
   Stream<User?> get userStream => uStream;
+  // getter
 
   // fetching the user's authentication status and updating ustream
   void fetchAuthentication() {

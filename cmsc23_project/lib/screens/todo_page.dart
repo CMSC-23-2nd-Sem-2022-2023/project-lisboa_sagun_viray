@@ -21,7 +21,6 @@ class _TodoPageState extends State<TodoPage> {
   Widget build(BuildContext context) {
     // access the list of todos in the provider
     Stream<QuerySnapshot> todosStream = context.watch<TodoListProvider>().todos;
-
     Stream<User?> userStream = context.watch<AuthProvider>().uStream;
 
     return StreamBuilder(
@@ -36,7 +35,8 @@ class _TodoPageState extends State<TodoPage> {
               child: CircularProgressIndicator(),
             );
           } else if (!snapshot.hasData) {
-            return const LoginPage();
+            child:
+            Text("snapshot has no data");
           }
 
           // if user is logged in, display the scaffold containing the streambuilder for the todos

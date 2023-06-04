@@ -21,6 +21,7 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
   List<dynamic> student_logs = ["maria", "Jason", "louie"];
   int _selectedIndex = 0;
   TextEditingController _searchController = TextEditingController();
+
   performSearch() {
     //handle search
     //mas maganda if mag generate ako ng material page to the searched student
@@ -78,7 +79,11 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
   }
 
   bool _isVisible = false;
-  Entry entry = Entry(date: "2023-05-01", UID: "3T30G7rbGxOnhHhzDff0Vnb06i82", symptoms: [], hasContact: false);
+  Entry entry = Entry(
+      date: "2023-05-01",
+      UID: "3T30G7rbGxOnhHhzDff0Vnb06i82",
+      symptoms: [],
+      hasContact: false);
 
   Widget profileBuilder() {
     return Center(
