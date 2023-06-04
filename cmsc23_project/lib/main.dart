@@ -31,7 +31,6 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: ((context) => TodoListProvider())),
         ChangeNotifierProvider(create: ((context) => AuthProvider())),
         ChangeNotifierProvider(create: ((context) => EntryListProvider())),
       ],
@@ -62,7 +61,6 @@ class MyApp extends StatelessWidget {
         '/admin_login': (context) => const AdminLoginPage(),
         '/user_signup': (context) => const UserSignupPage(),
         '/admin_signup': (context) => const AdminSignupPage(),
-        // '/todo': (context) => const LoginPage(),
         '/user_details': (context) => const UserDetailsPage(),
         '/homepage': (context) => const HomePage(),
         '/entryform': (context) => const EntryForm(),

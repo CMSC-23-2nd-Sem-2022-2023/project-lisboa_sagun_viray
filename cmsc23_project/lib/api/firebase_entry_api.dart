@@ -137,10 +137,6 @@ class FirebaseEntryAPI {
     return db.collection('entries').where('UID', isEqualTo: UID).snapshots();
   }
 
-  // Stream<QuerySnapshot> getMyEntries(){
-
-  // }
-
   Future<String> deleteEntry(String? id) async {
     try {
       await db.collection("entries").doc(id).delete();
