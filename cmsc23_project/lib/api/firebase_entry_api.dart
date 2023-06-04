@@ -22,6 +22,7 @@ class FirebaseEntryAPI {
   }
 
   Stream<QuerySnapshot> getAllStudents() {
+    print('getting students');
     return db
         .collection("users")
         .where("userType", isEqualTo: "student")
@@ -72,11 +73,11 @@ class FirebaseEntryAPI {
     return 'successfully deleted pending entry';
   }
 
-  Future<String> addToQuarantine(String studno) async {
+  Future<String> addToQuarantine(String id) async {
     CollectionReference entriesCollection = db.collection("users");
 
     await entriesCollection
-        .where("studno", isEqualTo: studno)
+        .where("id", isEqualTo: id)
         .snapshots()
         .listen((QuerySnapshot snapshot) {
       snapshot.docs.forEach((DocumentSnapshot document) {
@@ -86,11 +87,11 @@ class FirebaseEntryAPI {
     return 'successfully put student into quarantine';
   }
 
-  Future<String> turnToAdmin(String studno) async {
+  Future<String> turnToAdmin(String id) async {
     CollectionReference entriesCollection = db.collection("users");
 
     await entriesCollection
-        .where("studno", isEqualTo: studno)
+        .where("id", isEqualTo: id)
         .snapshots()
         .listen((QuerySnapshot snapshot) {
       snapshot.docs.forEach((DocumentSnapshot document) {
@@ -100,11 +101,11 @@ class FirebaseEntryAPI {
     return 'successfully turned student to admin';
   }
 
-  Future<String> turnToEntranceMonitor(String studno) async {
+  Future<String> turnToEntranceMonitor(String id) async {
     CollectionReference entriesCollection = db.collection("users");
 
     await entriesCollection
-        .where("studno", isEqualTo: studno)
+        .where("id", isEqualTo: id)
         .snapshots()
         .listen((QuerySnapshot snapshot) {
       snapshot.docs.forEach((DocumentSnapshot document) {
@@ -128,26 +129,22 @@ class FirebaseEntryAPI {
     return 'successfully put entry to pending edit';
   }
 
-  Future<int> getQuarantineCount(String studno) async {
-    CollectionReference entriesCollection = db.collection("users");
+  Future<int> getQuarantineCount() async {
+    CollectionReference usersCollection = db.collection("users");
 
     QuerySnapshot snapshot =
-        await entriesCollection.where("studno", isEqualTo: studno).get();
+        await usersCollection.where("isQuarantined", isEqualTo: true).get();
 
-    int count = 0;
-    for (DocumentSnapshot document in snapshot.docs) {
-      await entriesCollection.doc(document.id).update({"isQuarantined": true});
-      count++;
-    }
-
+    int count = snapshot.docs.length;
+    print('successfully got quarantine count');
     return count;
   }
 
-  Future<String> removeFromQuarantine(String studno) async {
+  Future<String> removeFromQuarantine(String id) async {
     CollectionReference entriesCollection = db.collection("users");
 
     await entriesCollection
-        .where("studno", isEqualTo: studno)
+        .where("id", isEqualTo: id)
         .snapshots()
         .listen((QuerySnapshot snapshot) {
       snapshot.docs.forEach((DocumentSnapshot document) {

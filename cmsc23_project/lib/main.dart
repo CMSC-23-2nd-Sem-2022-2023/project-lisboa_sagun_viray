@@ -63,6 +63,7 @@ class MyApp extends StatelessWidget {
         '/user_signup': (context) => const UserSignupPage(),
         '/admin_signup': (context) => const AdminSignupPage(),
         // '/todo': (context) => const LoginPage(),
+        '/quarantined_students': (context) => const QuarantinedStudents(),
         '/user_details': (context) => const UserDetailsPage(),
         '/homepage': (context) => const HomePage(),
         '/entryform': (context) => const EntryForm(),

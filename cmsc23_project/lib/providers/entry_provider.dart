@@ -99,18 +99,46 @@ class EntryListProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void turnToAdmin(String? id) async {
+    String message = await firebaseService.turnToAdmin(id!);
+    print(message);
+    notifyListeners();
+  }
+
+  void turnToMonitor(String? id) async {
+    String message = await firebaseService.turnToEntranceMonitor(id!);
+    print(message);
+    notifyListeners();
+  }
+
+  void addToQuarantine(String? id) async {
+    String message = await firebaseService.addToQuarantine(id!);
+    print(message);
+    notifyListeners();
+  }
+
+  void removeFromQuarantine(String? id) async {
+    String message = await firebaseService.removeFromQuarantine(id!);
+    print(message);
+    notifyListeners();
+  }
+
+  Future<int> getQuarantineCount() {
+    return firebaseService.getQuarantineCount();
+  }
+
   Stream<QuerySnapshot> getPendingEditEntries() {
-    Stream<QuerySnapshot> pendingEntries =
+    Stream<QuerySnapshot> pendingEditEntries =
         firebaseService.getPendingEditEntries();
     // notifyListeners();
-    return pendingEntries;
+    return pendingEditEntries;
   }
 
   Stream<QuerySnapshot> getPendingDeleteEntries() {
-    Stream<QuerySnapshot> pendingEntries =
+    Stream<QuerySnapshot> pendingDeleteEntries =
         firebaseService.getPendingDeleteEntries();
     // notifyListeners();
-    return pendingEntries;
+    return pendingDeleteEntries;
   }
 
   Stream<QuerySnapshot> getAllPendingEntries() {
@@ -119,5 +147,20 @@ class EntryListProvider with ChangeNotifier {
     print("successfully got pending entries");
     // notifyListeners();
     return pendingEntries;
+  }
+
+  Stream<QuerySnapshot> getAllStudents() {
+    Stream<QuerySnapshot> allStudents = firebaseService.getAllStudents();
+    print("successfully got all Students");
+    // notifyListeners();
+    return allStudents;
+  }
+
+  Stream<QuerySnapshot> getAllQuarantinedStudents() {
+    Stream<QuerySnapshot> quarantinedStudents =
+        firebaseService.getQuarantinedStudents();
+    print("successfully got all Quarantined Students");
+    // notifyListeners();
+    return quarantinedStudents;
   }
 }

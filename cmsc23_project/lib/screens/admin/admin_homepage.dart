@@ -107,7 +107,7 @@ class _AdminPageState extends State<AdminPage> {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, '/monitor_students');
+              Navigator.pushNamed(context, '/quarantined_students');
             },
             child: SizedBox(
               width: 160,

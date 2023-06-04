@@ -76,7 +76,6 @@ class FirebaseAuthAPI {
         name: u.name,
         username: u.username,
         email: u.email,
-        entries: u.entries,
         isUnderMonitoring: u.isUnderMonitoring,
         isQuarantined: u.isQuarantined,
         userType: u.userType,
