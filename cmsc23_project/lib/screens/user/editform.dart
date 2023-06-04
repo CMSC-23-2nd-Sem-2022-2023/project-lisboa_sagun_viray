@@ -11,14 +11,14 @@ import '../../models/entry_model.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/entry_provider.dart';
 
-class EntryForm extends StatefulWidget {
-  const EntryForm({super.key});
+class EditForm extends StatefulWidget {
+  const EditForm({super.key});
 
   @override
   _EntryFormState createState() => _EntryFormState();
 }
 
-class _EntryFormState extends State<EntryForm> {
+class _EntryFormState extends State<EditForm> {
   final _formkey = GlobalKey<FormState>();
 
   TextEditingController dateController = TextEditingController();
@@ -184,7 +184,8 @@ class _EntryFormState extends State<EntryForm> {
     );
   }
 
-  Widget submitAndResetButtons(BuildContext context, Stream<User?> userStream) {
+  Widget submitAndResetButtons(
+      BuildContext context, Stream<User?> userStream, String newForm) {
     return StreamBuilder(
         stream: userStream,
         builder: (context, AsyncSnapshot<User?> snapshot) {
@@ -215,19 +216,14 @@ class _EntryFormState extends State<EntryForm> {
                     ),
                   ),
                   onPressed: () async {
-                    print('button pressed');
-                    print(dateController.text);
                     Entry entry = Entry(
                         UID: userId!,
                         date: dateController.text,
                         symptoms: isCheckedList,
                         hasContact: contactCheck,
-                        status: 'open');
+                        status: 'clone',
+                        replacementId: newForm);
                     context.read<EntryListProvider>().addEntry(entry);
-                    if (contactCheck) {
-                      context.read<EntryListProvider>().putUnderMonitoring(
-                          userId); // Retrieve the user record and update the isUnderMonitoring field
-                    }
                     Navigator.pop(context);
                   },
                   child: const Text('SUBMIT ENTRY',
@@ -272,6 +268,7 @@ class _EntryFormState extends State<EntryForm> {
 
   @override
   Widget build(BuildContext context) {
+    String? replacement = context.read<EntryListProvider>().replacement;
     context.read<AuthProvider>().fetchAuthentication();
     Stream<User?> userStream = context.watch<AuthProvider>().uStream;
     return Scaffold(
@@ -293,7 +290,7 @@ class _EntryFormState extends State<EntryForm> {
                     height: 15,
                   ),
                   covidContact(),
-                  submitAndResetButtons(context, userStream),
+                  submitAndResetButtons(context, userStream, replacement!),
                 ],
               ),
             ),

@@ -255,7 +255,6 @@ class _MonitorSignupPageState extends State<MonitorSignupPage> {
                     position: positionController.text,
                     unit: homeUnitController.text,
                     email: emailController.text,
-                    entries: [],
                     isQuarantined: false,
                     isUnderMonitoring: false,
                     userType: 'monitor',
