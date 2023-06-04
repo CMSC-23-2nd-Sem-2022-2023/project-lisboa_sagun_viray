@@ -12,6 +12,7 @@ class EntryListProvider with ChangeNotifier {
   Future<List<DocumentSnapshot>>? _userEntryStream;
 
   Entry? _selectedEntry;
+  String? _toEdit;
 
   EntryListProvider() {
     firebaseService = FirebaseEntryAPI();
@@ -23,9 +24,15 @@ class EntryListProvider with ChangeNotifier {
   Stream<QuerySnapshot> get myentries => _myEntriesStream;
   Future<List<DocumentSnapshot>>? get userEntries => _userEntryStream;
   Entry get selected => _selectedEntry!;
+  String? get replacement => _toEdit;
 
   changeSelectedEntry(Entry entry) {
     _selectedEntry = entry;
+  }
+
+  void setToEdit(String? newToEdit) {
+    _toEdit = newToEdit;
+    notifyListeners();
   }
 
   void fetchEntries() {
@@ -40,7 +47,7 @@ class EntryListProvider with ChangeNotifier {
 
   Stream<QuerySnapshot> getEntries(String UID) {
     Stream<QuerySnapshot> uEntries = firebaseService.getEntries(UID);
-    // notifyListeners();
+    notifyListeners();
     return uEntries;
   }
 
@@ -62,9 +69,98 @@ class EntryListProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleStatus(int index, bool status) {
-    // _todoList[index].completed = status;
-    print("Toggle Status");
+  void entryPendingDelete(String? id) async {
+    String message = await firebaseService.turnToPendingDelete(id);
+    print(message);
     notifyListeners();
+  }
+
+  void entryPendingEdit(String? id) async {
+    String message = await firebaseService.turnToPendingEdit(id);
+    print(message);
+    notifyListeners();
+  }
+
+  void adminDelete(String? id) async {
+    String message = await firebaseService.deletePendingEntries(id);
+    print(message);
+    notifyListeners();
+  }
+
+  void adminTurnToPendingDelete(String? id) async {
+    String message = await firebaseService.turnToPendingDelete(id);
+    print(message);
+    notifyListeners();
+  }
+
+  void adminReplaceEntry(String? id1, String? id2) async {
+    String message = await firebaseService.replacePendingEntries(id1!, id2!);
+    print(message);
+    notifyListeners();
+  }
+
+  void turnToAdmin(String? id) async {
+    String message = await firebaseService.turnToAdmin(id!);
+    print(message);
+    notifyListeners();
+  }
+
+  void turnToMonitor(String? id) async {
+    String message = await firebaseService.turnToEntranceMonitor(id!);
+    print(message);
+    notifyListeners();
+  }
+
+  void addToQuarantine(String? id) async {
+    String message = await firebaseService.addToQuarantine(id!);
+    print(message);
+    notifyListeners();
+  }
+
+  void removeFromQuarantine(String? id) async {
+    String message = await firebaseService.removeFromQuarantine(id!);
+    print(message);
+    notifyListeners();
+  }
+
+  Future<int> getQuarantineCount() {
+    return firebaseService.getQuarantineCount();
+  }
+
+  Stream<QuerySnapshot> getPendingEditEntries() {
+    Stream<QuerySnapshot> pendingEditEntries =
+        firebaseService.getPendingEditEntries();
+    // notifyListeners();
+    return pendingEditEntries;
+  }
+
+  Stream<QuerySnapshot> getPendingDeleteEntries() {
+    Stream<QuerySnapshot> pendingDeleteEntries =
+        firebaseService.getPendingDeleteEntries();
+    // notifyListeners();
+    return pendingDeleteEntries;
+  }
+
+  Stream<QuerySnapshot> getAllPendingEntries() {
+    Stream<QuerySnapshot> pendingEntries =
+        firebaseService.getAllPendingEntries();
+    print("successfully got pending entries");
+    // notifyListeners();
+    return pendingEntries;
+  }
+
+  Stream<QuerySnapshot> getAllStudents() {
+    Stream<QuerySnapshot> allStudents = firebaseService.getAllStudents();
+    print("successfully got all Students");
+    // notifyListeners();
+    return allStudents;
+  }
+
+  Stream<QuerySnapshot> getAllQuarantinedStudents() {
+    Stream<QuerySnapshot> quarantinedStudents =
+        firebaseService.getQuarantinedStudents();
+    print("successfully got all Quarantined Students");
+    // notifyListeners();
+    return quarantinedStudents;
   }
 }

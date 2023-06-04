@@ -256,7 +256,6 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
                     position: positionController.text,
                     unit: homeUnitController.text,
                     email: emailController.text,
-                    entries: [],
                     isUnderMonitoring: false,
                     isQuarantined: false,
                     userType: 'admin',
