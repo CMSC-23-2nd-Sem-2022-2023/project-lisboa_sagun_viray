@@ -85,11 +85,6 @@ class _HomePageState extends State<HomePage> {
                               ),
                             );
                           }
-
-                          // Perform edit operation for the entry
-                          // You can navigate to an edit screen or show a dialog
-                          // to allow the user to modify the entry.
-                          // Example: navigate to EditEntryScreen(entry);
                         },
                       ),
                       IconButton(
@@ -114,11 +109,6 @@ class _HomePageState extends State<HomePage> {
                               ),
                             );
                           }
-
-                          // Perform edit operation for the entry
-                          // You can navigate to an edit screen or show a dialog
-                          // to allow the user to modify the entry.
-                          // Example: navigate to EditEntryScreen(entry);
                         },
                       ),
                     ],
