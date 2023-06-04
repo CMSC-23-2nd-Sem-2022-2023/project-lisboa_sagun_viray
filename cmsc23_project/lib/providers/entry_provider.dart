@@ -67,9 +67,4 @@ class EntryListProvider with ChangeNotifier {
     print("Toggle Status");
     notifyListeners();
   }
-
-  void fetchUserEntries(String UserId) {
-    _userEntryStream = firebaseService.getEntriesForUser(UserId);
-    notifyListeners();
-  }
 }

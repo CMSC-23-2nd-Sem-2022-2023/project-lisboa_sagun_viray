@@ -174,7 +174,7 @@ class _EntryFormState extends State<EntryForm> {
                 // saves currently selected radio button
                 onChanged: (value) {
                   setState(() {
-                    //print(value.toString());
+                    contactCheck = !contactCheck;
                     isInContact = value.toString();
                   });
                 },
@@ -221,7 +221,8 @@ class _EntryFormState extends State<EntryForm> {
                         UID: userId!,
                         date: dateController.text,
                         symptoms: isCheckedList,
-                        hasContact: contactCheck);
+                        hasContact: contactCheck,
+                        status: 'open');
                     context.read<EntryListProvider>().addEntry(entry);
                     Navigator.pop(context);
                   },

@@ -21,6 +21,7 @@ class _HomePageState extends State<HomePage> {
     BuildContext context,
     int index,
   ) {
+    context.read<AuthProvider>().fetchAuthentication();
     Stream<User?> userStream = context.watch<AuthProvider>().uStream;
     if (index == 0 && entries.isEmpty) {
       return Center(
@@ -37,53 +38,85 @@ class _HomePageState extends State<HomePage> {
     return StreamBuilder<User?>(
       stream: userStream,
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          User? user = snapshot.data;
-          String? userId = user?.uid;
-          print("$userId is logged in");
-          print(snapshot.connectionState);
-          // Query the Firestore collection to get the documents associated with the user
-          Stream<QuerySnapshot<Map<String, dynamic>>> userEntriesStream =
-              FirebaseFirestore.instance
-                  .collection('entries')
-                  .where('UID', isEqualTo: userId)
-                  .snapshots();
-          return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-            stream: userEntriesStream,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                QuerySnapshot<Map<String, dynamic>> entriesSnapshot =
-                    snapshot.data!;
-                List<QueryDocumentSnapshot<Map<String, dynamic>>> entries =
-                    entriesSnapshot.docs;
+        {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text("Error encountered! ${snapshot.error}"),
+            );
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (!snapshot.hasData) {
+            child:
+            Text("snapshot has no data");
+          }
 
-                // Access and work with the documents in the 'entries' list
-                // ...
-
-                // Example: Display the titles of the entries
-                return ListView.builder(
-                  itemCount: entries.length,
-                  itemBuilder: (context, index) {
-                    QueryDocumentSnapshot<Map<String, dynamic>> entry =
-                        entries[index];
-                    String title = entry.data()['title'];
-                    return ListTile(
-                      title: Text(title),
-                    );
-                  },
-                );
-              } else if (snapshot.hasError) {
-                return Text('Error retrieving entries');
-              } else {
-                return CircularProgressIndicator();
-              }
-            },
-          );
-        } else if (snapshot.hasError) {
-          return Text('Error retrieving user');
-        } else {
-          return CircularProgressIndicator();
+          String UID = snapshot.data!.uid;
+          Stream<QuerySnapshot> entriesStream =
+              context.read<EntryListProvider>().getEntries(UID);
+          // if user i s logged in, display the scaffold containing the streambuilder for the todos
+          return entriesBuilder(entriesStream, UID);
         }
+      },
+    );
+  }
+
+  Widget entriesBuilder(Stream<QuerySnapshot> entriesStream, String UID) {
+    print("at entries builder");
+    return StreamBuilder(
+      stream: entriesStream,
+      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+            child: Text("Error encountered! ${snapshot.error}"),
+          );
+        } else if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (!snapshot.hasData) {
+          return const Center(
+            child: Text("No Entries Found"),
+          );
+        }
+
+        return ListView.builder(
+          itemCount: snapshot.data?.docs.length,
+          itemBuilder: (context, index) {
+            Entry entry = Entry.fromJson(
+              snapshot.data?.docs[index].data() as Map<String, dynamic>,
+            );
+
+            return ListTile(
+              title: Text(entry.UID),
+              leading: Text(entry.date),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () {
+                      // Perform edit operation for the entry
+                      // You can navigate to an edit screen or show a dialog
+                      // to allow the user to modify the entry.
+                      // Example: navigate to EditEntryScreen(entry);
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () {
+                      // Perform delete operation for the entry
+                      // You can show a confirmation dialog before deleting
+                      // the entry to confirm the user's intent.
+                      // Example: showDeleteConfirmationDialog(entry);
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        );
       },
     );
   }
@@ -133,7 +166,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ],
-        title: Text("Monitor View"),
+        title: Text("User View"),
       ),
       body: entryList(context, _selectedIndex),
       floatingActionButton: FloatingActionButton(
