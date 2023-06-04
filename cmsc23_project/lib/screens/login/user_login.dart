@@ -1,18 +1,18 @@
-import 'package:cmsc23_project/screens/admin_signup.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cmsc23_project/screens/signup/user_signup.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/auth_provider.dart';
-import '../screens/signup.dart';
+import '../../providers/auth_provider.dart';
 import 'dart:core';
 // import 'package:email_validator/email_validator.dart';
 
-class AdminLoginPage extends StatefulWidget {
-  const AdminLoginPage({super.key});
+class UserLoginPage extends StatefulWidget {
+  const UserLoginPage({super.key});
   @override
-  _AdminLoginPageState createState() => _AdminLoginPageState();
+  _UserLoginPageState createState() => _UserLoginPageState();
 }
 
-class _AdminLoginPageState extends State<AdminLoginPage> {
+class _UserLoginPageState extends State<UserLoginPage> {
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -21,11 +21,11 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
     TextEditingController passwordController = TextEditingController();
 
     // text form field for email with validator if valid email
-    final empno = TextFormField(
+    final email = TextFormField(
       controller: emailController,
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
-        hintText: "Enter your employee number",
+        hintText: "Enter your username",
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(
@@ -37,12 +37,6 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
         contentPadding: EdgeInsets.all(16),
         fillColor: Colors.white,
       ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter your employee number';
-        }
-        return null;
-      },
     );
 
     // text form field for password with validator if at least 6 characters
@@ -89,14 +83,29 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
             ),
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                await context.read<AuthProvider>().signIn(
-                      emailController.text.trim(),
-                      passwordController.text.trim(),
-                    );
+                String usertype = await context
+                    .read<AuthProvider>()
+                    .validateUsertype(emailController.text.trim());
+                print(usertype);
+                String err = '';
+                if (usertype == 'student') {
+                  err = await context.read<AuthProvider>().signIn(
+                        emailController.text.trim(),
+                        passwordController.text.trim(),
+                      );
+                } else {
+                  err = "wrong usertype";
+                  print("wrong user type");
+                }
+                if (err == 'success') {
+                  Navigator.pushNamed(context, '/homepage');
+                } else {
+                  print(err);
+                }
               }
             },
             child:
-                Text('LOG IN AS ADMIN', style: TextStyle(color: Colors.white)),
+                Text('LOG IN AS USER', style: TextStyle(color: Colors.white)),
           ),
         ));
 
@@ -116,7 +125,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
         onPressed: () async {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => const AdminSignupPage(),
+              builder: (context) => const UserSignupPage(),
             ),
           );
         },
@@ -151,7 +160,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    empno,
+                    email,
                     SizedBox(
                       height: 15,
                     ),

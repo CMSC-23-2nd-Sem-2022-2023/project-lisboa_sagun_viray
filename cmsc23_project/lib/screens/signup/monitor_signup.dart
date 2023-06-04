@@ -1,7 +1,9 @@
+import 'package:cmsc23_project/models/user_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/user_model.dart';
-import '../providers/auth_provider.dart';
+import '../../models/health_monitor_model.dart';
+import '../../providers/auth_provider.dart';
 
 class MonitorSignupPage extends StatefulWidget {
   const MonitorSignupPage({super.key});
@@ -19,6 +21,7 @@ class _MonitorSignupPageState extends State<MonitorSignupPage> {
     TextEditingController empnoController = TextEditingController();
     TextEditingController positionController = TextEditingController();
     TextEditingController homeUnitController = TextEditingController();
+    TextEditingController emailController = TextEditingController();
 
     final name = TextFormField(
       controller: nameController,
@@ -38,6 +41,8 @@ class _MonitorSignupPageState extends State<MonitorSignupPage> {
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter your last name';
+        } else if (value.contains(RegExp(r'[0-9]'))) {
+          return 'Name has numbers';
         }
         return null;
       },
@@ -61,6 +66,8 @@ class _MonitorSignupPageState extends State<MonitorSignupPage> {
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter your employee number';
+        } else if (RegExp(r'[A-Za-z]').hasMatch(value)) {
+          return 'Contains letters';
         }
         return null;
       },
@@ -114,6 +121,49 @@ class _MonitorSignupPageState extends State<MonitorSignupPage> {
       },
     );
 
+    final email = TextFormField(
+      controller: emailController,
+      decoration: InputDecoration(
+        hintText: 'Email',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            width: 0,
+            style: BorderStyle.none,
+          ),
+        ),
+        filled: true,
+        contentPadding: EdgeInsets.all(16),
+        fillColor: Colors.white,
+      ),
+      validator: (value) {
+        // FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+        // Future<bool> isEmailAlreadyInUse(String email) async {
+        //   try {
+        //     final result =
+        //         await _firebaseAuth.fetchSignInMethodsForEmail(email);
+        //     return result.isNotEmpty;
+        //   } catch (e) {
+        //     // Handle any errors that occur during the process
+        //     print('Error checking email usage: $e');
+        //     return false;
+        //   }
+        // }
+
+        // bool emailExists =
+        //           await isEmailAlreadyInUse(emailController.text);
+
+        if (value == null || value.isEmpty) {
+          return 'Please enter your email';
+        } else if (!(RegExp(
+                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+            .hasMatch(value))) {
+          return 'Invalid email format';
+        }
+        return null;
+      },
+    );
     // text form field for password with validator if at least 6 characters
     final password = TextFormField(
       controller: passwordController,
@@ -157,18 +207,68 @@ class _MonitorSignupPageState extends State<MonitorSignupPage> {
               ),
             ),
             onPressed: () async {
-              // if (_formKey.currentState!.validate()) {
-              //   UserRecord tempUser = UserRecord(
-              //       id: "123",
-              //       fname: firstNameController.text,
-              //       lname: lastNameController.text,
-              //       email: emailController.text);
+              FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-              //   context.read<AuthProvider>().signUp(
-              //       emailController.text, passwordController.text, tempUser);
+              Future<bool> isEmailAlreadyInUse(String email) async {
+                try {
+                  final result =
+                      await _firebaseAuth.fetchSignInMethodsForEmail(email);
+                  return result.isNotEmpty;
+                } catch (e) {
+                  // Handle any errors that occur during the process
+                  print('Error checking email usage: $e');
+                  return false;
+                }
+              }
 
-              //   if (context.mounted) Navigator.pop(context);
-              // }
+              bool emailExists =
+                  await isEmailAlreadyInUse(emailController.text);
+              if (emailExists) {
+                print("dito siya pumasok");
+                // Prompt the user that the email is already in use
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Email Already in Use'),
+                      content: Text(
+                          'The email address is already registered. Please use a different email.'),
+                      actions: [
+                        TextButton(
+                          child: Text('OK'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              } else {
+                if (_formKey.currentState!.validate()) {
+                  _formKey.currentState?.save();
+
+                  UserRecord health_monitor = UserRecord(
+                    id: '',
+                    name: nameController.text,
+                    empno: empnoController.text,
+                    position: positionController.text,
+                    unit: homeUnitController.text,
+                    email: emailController.text,
+                    entries: [],
+                    isQuarantined: false,
+                    isUnderMonitoring: false,
+                    userType: 'monitor',
+                  );
+
+                  await context.read<AuthProvider>().signUp(
+                      emailController.text,
+                      passwordController.text,
+                      health_monitor);
+
+                  if (context.mounted) Navigator.pop(context);
+                }
+              }
             },
             child: const Text('SIGN UP AS ENTRANCE MONITOR',
                 style: TextStyle(color: Colors.white)),
@@ -234,6 +334,10 @@ class _MonitorSignupPageState extends State<MonitorSignupPage> {
                       height: 15,
                     ),
                     homeUnit,
+                    SizedBox(
+                      height: 15,
+                    ),
+                    email,
                     SizedBox(
                       height: 15,
                     ),

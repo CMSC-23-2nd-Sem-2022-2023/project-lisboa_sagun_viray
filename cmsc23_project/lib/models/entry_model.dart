@@ -3,25 +3,26 @@ import 'dart:convert';
 class Entry {
   final String date;
   final String UID;
-  // List<bool> symptoms;
-  final String symptoms;
+  List<dynamic> symptoms;
   bool hasContact;
+  String? status;
 
   Entry({
     required this.date,
     required this.UID,
     required this.symptoms,
     required this.hasContact,
+    this.status,
   });
 
   // Factory constructor to instantiate object from json format
   factory Entry.fromJson(Map<String, dynamic> json) {
     return Entry(
-      hasContact: json['hasContact'],
-      date: json['date'],
-      UID: json['UID'],
-      symptoms: json['symptoms'],
-    );
+        hasContact: json['hasContact'],
+        date: json['date'],
+        UID: json['UID'],
+        symptoms: json['symptoms'],
+        status: json['status']);
   }
 
   static List<Entry> fromJsonArray(String jsonData) {
@@ -33,8 +34,9 @@ class Entry {
     return {
       'UID': entry.UID,
       'date': entry.date,
-      'hasContact': entry.hasContact,
       'symptoms': entry.symptoms,
+      'hasContact': entry.hasContact,
+      'status': entry.status,
     };
   }
 }

@@ -1,18 +1,19 @@
-import 'package:cmsc23_project/screens/user_signup.dart';
+import 'package:cmsc23_project/screens/signup/admin_signup.dart';
+import 'package:cmsc23_project/screens/signup/monitor_signup.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/auth_provider.dart';
-import '../screens/signup.dart';
+import '../../providers/auth_provider.dart';
+import '../signup.dart';
 import 'dart:core';
 // import 'package:email_validator/email_validator.dart';
 
-class UserLoginPage extends StatefulWidget {
-  const UserLoginPage({super.key});
+class MonitorLoginPage extends StatefulWidget {
+  const MonitorLoginPage({super.key});
   @override
-  _UserLoginPageState createState() => _UserLoginPageState();
+  _MonitorLoginPageState createState() => _MonitorLoginPageState();
 }
 
-class _UserLoginPageState extends State<UserLoginPage> {
+class _MonitorLoginPageState extends State<MonitorLoginPage> {
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -21,11 +22,11 @@ class _UserLoginPageState extends State<UserLoginPage> {
     TextEditingController passwordController = TextEditingController();
 
     // text form field for email with validator if valid email
-    final email = TextFormField(
+    final empno = TextFormField(
       controller: emailController,
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
-        hintText: "Enter your username",
+        hintText: "Enter your E-mail",
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(
@@ -37,17 +38,12 @@ class _UserLoginPageState extends State<UserLoginPage> {
         contentPadding: EdgeInsets.all(16),
         fillColor: Colors.white,
       ),
-      // validator: (value) {
-      //   final bool emailValid = RegExp(
-      //           r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-      //       .hasMatch(emailController.text);
-
-      //   if (!emailValid) {
-      //     return "Please enter a valid email address";
-      //   }
-
-      //   return null;
-      // },
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your E-mail';
+        }
+        return null;
+      },
     );
 
     // text form field for password with validator if at least 6 characters
@@ -93,15 +89,31 @@ class _UserLoginPageState extends State<UserLoginPage> {
               ),
             ),
             onPressed: () async {
+              print(_formKey.currentState!.validate());
               if (_formKey.currentState!.validate()) {
-                await context.read<AuthProvider>().signIn(
-                      emailController.text.trim(),
-                      passwordController.text.trim(),
-                    );
+                String usertype = await context
+                    .read<AuthProvider>()
+                    .validateUsertype(emailController.text.trim());
+                print(usertype);
+                String err = '';
+                if (usertype == 'monitor') {
+                  err = await context.read<AuthProvider>().signIn(
+                        emailController.text.trim(),
+                        passwordController.text.trim(),
+                      );
+                } else {
+                  err = "wrong usertype";
+                  print("wrong user type");
+                }
+                if (err == 'success') {
+                  Navigator.pushNamed(context, '/entrance-monitor_homepage');
+                } else {
+                  print(err);
+                }
               }
             },
-            child:
-                Text('LOG IN AS USER', style: TextStyle(color: Colors.white)),
+            child: Text('LOG IN AS ENTRANCE MONITOR',
+                style: TextStyle(color: Colors.white)),
           ),
         ));
 
@@ -121,7 +133,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
         onPressed: () async {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => const UserSignupPage(),
+              builder: (context) => const MonitorSignupPage(),
             ),
           );
         },
@@ -156,7 +168,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    email,
+                    empno,
                     SizedBox(
                       height: 15,
                     ),

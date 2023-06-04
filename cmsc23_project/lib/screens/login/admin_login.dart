@@ -1,19 +1,19 @@
-import 'package:cmsc23_project/screens/admin_signup.dart';
-import 'package:cmsc23_project/screens/monitor_signup.dart';
+import 'package:cmsc23_project/screens/signup/admin_signup.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/auth_provider.dart';
-import '../screens/signup.dart';
+import '../../providers/auth_provider.dart';
+// import '../signup.dart';
+import '../admin/admin_homepage.dart';
 import 'dart:core';
 // import 'package:email_validator/email_validator.dart';
 
-class MonitorLoginPage extends StatefulWidget {
-  const MonitorLoginPage({super.key});
+class AdminLoginPage extends StatefulWidget {
+  const AdminLoginPage({super.key});
   @override
-  _MonitorLoginPageState createState() => _MonitorLoginPageState();
+  _AdminLoginPageState createState() => _AdminLoginPageState();
 }
 
-class _MonitorLoginPageState extends State<MonitorLoginPage> {
+class _AdminLoginPageState extends State<AdminLoginPage> {
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -26,21 +26,21 @@ class _MonitorLoginPageState extends State<MonitorLoginPage> {
       controller: emailController,
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
-        hintText: "Enter your employee number",
+        hintText: "Enter your email",
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             width: 0,
             style: BorderStyle.none,
           ),
         ),
         filled: true,
-        contentPadding: EdgeInsets.all(16),
+        contentPadding: const EdgeInsets.all(16),
         fillColor: Colors.white,
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter your employee number';
+          return 'Please enter your email';
         }
         return null;
       },
@@ -55,48 +55,67 @@ class _MonitorLoginPageState extends State<MonitorLoginPage> {
         hintText: 'Password',
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             width: 0,
             style: BorderStyle.none,
           ),
         ),
         filled: true,
-        contentPadding: EdgeInsets.all(16),
+        contentPadding: const EdgeInsets.all(16),
         fillColor: Colors.white,
       ),
       validator: (value) {
         if (!((passwordController.text).length >= 6)) {
           return "Password should be at least 6 characters.";
         }
-
         return null;
       },
     );
 
     // log in button that also has validator and will call authentication
     final loginButton = Padding(
-        padding: EdgeInsets.symmetric(vertical: 16.0),
+        padding: const EdgeInsets.symmetric(vertical: 16.0),
         child: SizedBox(
           width: 350,
           height: 50,
           child: ElevatedButton(
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color>(
-                  Color.fromARGB(255, 0, 37, 67)),
+                  const Color.fromARGB(255, 0, 37, 67)),
               foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
               shape: MaterialStateProperty.all<StadiumBorder>(
-                StadiumBorder(),
+                const StadiumBorder(),
               ),
             ),
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                await context.read<AuthProvider>().signIn(
-                      emailController.text.trim(),
-                      passwordController.text.trim(),
-                    );
+                String usertype = await context
+                    .read<AuthProvider>()
+                    .validateUsertype(emailController.text.trim());
+                print(usertype);
+                String err = '';
+                if (usertype == 'admin') {
+                  err = await context.read<AuthProvider>().signIn(
+                        emailController.text.trim(),
+                        passwordController.text.trim(),
+                      );
+                } else {
+                  err = "wrong usertype";
+                  print("wrong user type");
+                }
+                if (err == 'success') {
+                  // Navigator.pushNamed(context, '/admin_homepage');
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const AdminPage(),
+                    ),
+                  );
+                } else {
+                  print(err);
+                }
               }
             },
-            child: Text('LOG IN AS ENTRANCE MONITOR',
+            child: const Text('LOG IN AS ADMIN',
                 style: TextStyle(color: Colors.white)),
           ),
         ));
@@ -108,16 +127,16 @@ class _MonitorLoginPageState extends State<MonitorLoginPage> {
       child: ElevatedButton(
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-          foregroundColor:
-              MaterialStateProperty.all<Color>(Color.fromARGB(255, 0, 37, 67)),
+          foregroundColor: MaterialStateProperty.all<Color>(
+              const Color.fromARGB(255, 0, 37, 67)),
           shape: MaterialStateProperty.all<StadiumBorder>(
-            StadiumBorder(),
+            const StadiumBorder(),
           ),
         ),
         onPressed: () async {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => const MonitorSignupPage(),
+              builder: (context) => const AdminSignupPage(),
             ),
           );
         },
@@ -128,7 +147,7 @@ class _MonitorLoginPageState extends State<MonitorLoginPage> {
     );
 
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 209, 221, 255),
+      backgroundColor: const Color.fromARGB(255, 209, 221, 255),
       body: Center(
         child: ListView(
           shrinkWrap: true,
@@ -145,7 +164,7 @@ class _MonitorLoginPageState extends State<MonitorLoginPage> {
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(129, 0, 0, 0)),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Form(
@@ -153,20 +172,20 @@ class _MonitorLoginPageState extends State<MonitorLoginPage> {
                 child: Column(
                   children: [
                     empno,
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
                     password,
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     loginButton,
                     const Text('Do not have an account?'),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     signUpButton,
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     Padding(
@@ -174,11 +193,11 @@ class _MonitorLoginPageState extends State<MonitorLoginPage> {
                       child: ElevatedButton(
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
-                              Color.fromARGB(255, 79, 0, 0)),
+                              const Color.fromARGB(255, 79, 0, 0)),
                           foregroundColor: MaterialStateProperty.all<Color>(
-                              Color.fromARGB(255, 67, 0, 0)),
+                              const Color.fromARGB(255, 67, 0, 0)),
                           shape: MaterialStateProperty.all<StadiumBorder>(
-                            StadiumBorder(),
+                            const StadiumBorder(),
                           ),
                         ),
                         onPressed: () async {

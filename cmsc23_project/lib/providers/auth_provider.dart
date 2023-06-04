@@ -5,6 +5,8 @@ import '../models/todo_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../api/firebase_todo_api.dart';
 import '../models/user_model.dart';
+import '../models/admin_model.dart';
+import '../models/health_monitor_model.dart';
 
 class AuthProvider with ChangeNotifier {
   late FirebaseAuthAPI authService;
@@ -17,13 +19,12 @@ class AuthProvider with ChangeNotifier {
     fetchAuthentication();
   }
 
-  // getter
   Stream<User?> get userStream => uStream;
+  // getter
 
   // fetching the user's authentication status and updating ustream
   void fetchAuthentication() {
     uStream = authService.getUser();
-
     notifyListeners();
   }
 
@@ -34,14 +35,25 @@ class AuthProvider with ChangeNotifier {
   }
 
   // authenticating a user with firebase authentication
-  Future<void> signIn(String email, String password) async {
-    await authService.signIn(email, password);
+  Future<String> signIn(String email, String password) async {
+    fetchAuthentication();
+    String err = await authService.signIn(email, password);
     notifyListeners();
+    return err;
   }
 
   // signing out the currently authenticated user from firebase authentication
   Future<void> signOut() async {
+    print('going to API');
     await authService.signOut();
     notifyListeners();
+  }
+
+  //will ask api to validate the user under said email's usertype
+  Future<String> validateUsertype(String email) async {
+    print("validating $email");
+    String message = await authService.validateUsertype(email);
+    notifyListeners();
+    return message;
   }
 }

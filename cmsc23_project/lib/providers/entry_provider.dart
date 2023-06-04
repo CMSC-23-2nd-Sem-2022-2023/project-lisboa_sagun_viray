@@ -8,6 +8,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class EntryListProvider with ChangeNotifier {
   late FirebaseEntryAPI firebaseService;
   late Stream<QuerySnapshot> _entriesStream;
+  late Stream<QuerySnapshot> _myEntriesStream;
+  Future<List<DocumentSnapshot>>? _userEntryStream;
+
   Entry? _selectedEntry;
 
   EntryListProvider() {
@@ -17,6 +20,8 @@ class EntryListProvider with ChangeNotifier {
 
   // getter
   Stream<QuerySnapshot> get entries => _entriesStream;
+  Stream<QuerySnapshot> get myentries => _myEntriesStream;
+  Future<List<DocumentSnapshot>>? get userEntries => _userEntryStream;
   Entry get selected => _selectedEntry!;
 
   changeSelectedEntry(Entry entry) {
@@ -26,6 +31,17 @@ class EntryListProvider with ChangeNotifier {
   void fetchEntries() {
     _entriesStream = firebaseService.getAllEntries();
     notifyListeners();
+  }
+
+  void fetchMyEntries(String UID) async {
+    _myEntriesStream = await firebaseService.getEntries(UID);
+    notifyListeners();
+  }
+
+  Stream<QuerySnapshot> getEntries(String UID) {
+    Stream<QuerySnapshot> uEntries = firebaseService.getEntries(UID);
+    // notifyListeners();
+    return uEntries;
   }
 
   void addEntry(Entry entry) async {
