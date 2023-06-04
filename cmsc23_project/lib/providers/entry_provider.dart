@@ -10,6 +10,7 @@ class EntryListProvider with ChangeNotifier {
   late Stream<QuerySnapshot> _entriesStream;
   late Stream<QuerySnapshot> _myEntriesStream;
   Future<List<DocumentSnapshot>>? _userEntryStream;
+  late bool _quarantined = false;
 
   Entry? _selectedEntry;
   String? _toEdit;
@@ -25,6 +26,7 @@ class EntryListProvider with ChangeNotifier {
   Future<List<DocumentSnapshot>>? get userEntries => _userEntryStream;
   Entry get selected => _selectedEntry!;
   String? get replacement => _toEdit;
+  bool get quarantineStatus => _quarantined;
 
   changeSelectedEntry(Entry entry) {
     _selectedEntry = entry;
@@ -111,6 +113,12 @@ class EntryListProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void putUnderMonitoring(String? id) async {
+    String message = await firebaseService.addToMonitoring(id!);
+    print(message);
+    notifyListeners();
+  }
+
   void addToQuarantine(String? id) async {
     String message = await firebaseService.addToQuarantine(id!);
     print(message);
@@ -162,5 +170,11 @@ class EntryListProvider with ChangeNotifier {
     print("successfully got all Quarantined Students");
     // notifyListeners();
     return quarantinedStudents;
+  }
+
+  Future<bool> isQuarantined(String? id) async {
+    bool isQuarantined = await firebaseService.isQuarantined(id!);
+    notifyListeners();
+    return isQuarantined;
   }
 }

@@ -28,6 +28,10 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  User? getCurrentUser() {
+    return FirebaseAuth.instance.currentUser;
+  }
+
   // registering new users with firebase authentication
   Future<void> signUp(String email, String password, UserRecord temp) async {
     await authService.signUp(email, password, temp);

@@ -39,26 +39,24 @@ class _HomePageState extends State<HomePage> {
     return StreamBuilder<User?>(
       stream: userStream,
       builder: (context, snapshot) {
-        {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text("Error encountered! ${snapshot.error}"),
-            );
-          } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (!snapshot.hasData) {
-            child:
-            Text("snapshot has no data");
-          }
-
-          String UID = snapshot.data!.uid;
-          Stream<QuerySnapshot> entriesStream =
-              context.read<EntryListProvider>().getEntries(UID);
-          // if user i s logged in, display the scaffold containing the streambuilder for the todos
-          return entriesBuilder(entriesStream, UID);
+        if (snapshot.hasError) {
+          return Center(
+            child: Text("Error encountered! ${snapshot.error}"),
+          );
+        } else if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (!snapshot.hasData) {
+          return Text("snapshot has no data");
         }
+
+        String UID = snapshot.data!.uid;
+        Stream<QuerySnapshot> entriesStream =
+            context.read<EntryListProvider>().getEntries(UID);
+        // Delay the execution of code until after the build method has complete
+        // If user is logged in, display the scaffold containing the streambuilder for the todos
+        return entriesBuilder(entriesStream, UID);
       },
     );
   }
@@ -192,54 +190,90 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // drawer: Drawer(child: Text('Drawer')),
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        actions: [
-          TextButton(
-            onPressed: () {
-              print('pessed logout');
-              context.read<AuthProvider>().signOut();
-              Navigator.pop(context);
-            },
-            child: Text('Logout'),
-            style: TextButton.styleFrom(
-              primary: Colors.white,
-              textStyle: TextStyle(fontSize: 16),
+    String? uid = context.read<AuthProvider>().getCurrentUser()?.uid;
+    print('this is the uid: $uid');
+
+    return FutureBuilder<bool>(
+      future: context.read<EntryListProvider>().isQuarantined(uid),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Show a loading indicator while the future is in progress
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Loading...'),
             ),
-          ),
-        ],
-        title: Text("User View"),
-      ),
-      body: entryList(context, _selectedIndex),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Color.fromARGB(255, 0, 37, 67),
-        onPressed: () {
-          // Navigator.pushNamed(context, '/entryform');
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const EntryForm()));
-        },
-        child: Icon(Icons.add),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.shifting,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list_alt_outlined),
-            label: 'Entries',
-            backgroundColor: Color.fromARGB(255, 0, 37, 67),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-            backgroundColor: Colors.black,
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
-      ),
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          // Handle the error case
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Error'),
+            ),
+            body: Center(
+              child: Text('Error: ${snapshot.error}'),
+            ),
+          );
+        } else {
+          // Future completed successfully
+          bool isQuarantined = snapshot.data ?? false;
+          print('THIS IS THE BOOLEAN $isQuarantined');
+
+          return Scaffold(
+            // drawer: Drawer(child: Text('Drawer')),
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    print('pessed logout');
+                    context.read<AuthProvider>().signOut();
+                    Navigator.pop(context);
+                  },
+                  child: Text('Logout'),
+                  style: TextButton.styleFrom(
+                    primary: Colors.white,
+                    textStyle: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ],
+              title: Text(isQuarantined ? "Quarantined!" : "Not Quarantined"),
+            ),
+            body: entryList(context, _selectedIndex),
+            floatingActionButton: FloatingActionButton(
+              backgroundColor: Color.fromARGB(255, 0, 37, 67),
+              onPressed: () {
+                // Navigator.pushNamed(context, '/entryform');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const EntryForm()),
+                );
+              },
+              child: Icon(Icons.add),
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.shifting,
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.list_alt_outlined),
+                  label: 'Entries',
+                  backgroundColor: Color.fromARGB(255, 0, 37, 67),
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  label: 'Profile',
+                  backgroundColor: Colors.black,
+                ),
+              ],
+              currentIndex: _selectedIndex,
+              selectedItemColor: Colors.amber[800],
+              onTap: _onItemTapped,
+            ),
+          );
+        }
+      },
     );
   }
 }

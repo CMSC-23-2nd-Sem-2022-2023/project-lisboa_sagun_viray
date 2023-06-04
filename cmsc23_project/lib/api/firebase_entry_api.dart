@@ -87,6 +87,20 @@ class FirebaseEntryAPI {
     return 'successfully put student into quarantine';
   }
 
+  Future<String> addToMonitoring(String id) async {
+    CollectionReference entriesCollection = db.collection("users");
+
+    await entriesCollection
+        .where("id", isEqualTo: id)
+        .snapshots()
+        .listen((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((DocumentSnapshot document) {
+        entriesCollection.doc(document.id).update({"isUnderMonitoring": true});
+      });
+    });
+    return 'successfully put student into quarantine';
+  }
+
   Future<String> turnToAdmin(String id) async {
     CollectionReference entriesCollection = db.collection("users");
 
@@ -138,6 +152,21 @@ class FirebaseEntryAPI {
     int count = snapshot.docs.length;
     print('successfully got quarantine count');
     return count;
+  }
+
+  Future<bool> isQuarantined(String id) async {
+    CollectionReference usersCollection = db.collection("users");
+
+    QuerySnapshot snapshot = await usersCollection
+        .where("id", isEqualTo: id)
+        .where("isQuarantined", isEqualTo: true)
+        .get();
+
+    bool isQuarantined = snapshot.docs.isNotEmpty;
+    print('successfully checked if user is quarantined');
+    print('snapshot.docs length: ${snapshot.docs.length}');
+    print('isQuarantined value: $isQuarantined');
+    return isQuarantined;
   }
 
   Future<String> removeFromQuarantine(String id) async {

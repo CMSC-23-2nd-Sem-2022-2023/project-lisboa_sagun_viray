@@ -224,6 +224,10 @@ class _EntryFormState extends State<EntryForm> {
                         hasContact: contactCheck,
                         status: 'open');
                     context.read<EntryListProvider>().addEntry(entry);
+                    if (contactCheck) {
+                      context.read<EntryListProvider>().putUnderMonitoring(
+                          userId); // Retrieve the user record and update the isUnderMonitoring field
+                    }
                     Navigator.pop(context);
                   },
                   child: const Text('SUBMIT ENTRY',
