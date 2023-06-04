@@ -373,7 +373,6 @@ class _UserSignupPageState extends State<UserSignupPage> {
                     course: courseController.text,
                     college: collegeController.text,
                     studno: studnoController.text,
-                    entries: [],
                     userType: 'student',
                     isUnderMonitoring: false,
                     isQuarantined: false,
