@@ -16,7 +16,9 @@ class FirebaseEntryAPI {
   }
 
   Stream<QuerySnapshot> getAllEntries() {
-    return db.collection("entries").snapshots();
+    return db
+        .collection("entries")
+        .where("status", whereIn: ["pendingEdit", "clone"]).snapshots();
   }
 
   Stream<QuerySnapshot> getAllStudents() {
@@ -52,26 +54,25 @@ class FirebaseEntryAPI {
   Stream<QuerySnapshot> getPendingEditEntries() {
     return db
         .collection("entries")
-        .where("status", isEqualTo: "pendingDelete")
+        .where("status", isEqualTo: "pendingEdit")
         .snapshots();
   }
 
-  Future<String> deletePendingEntries() async {
+  Stream<QuerySnapshot> getAllPendingEntries() {
+    return db
+        .collection("entries")
+        .where("status", whereIn: ["clone", "pendingDelete"]).snapshots();
+  }
+
+  Future<String> deletePendingEntries(String? id) async {
     CollectionReference entriesCollection = db.collection("entries");
 
-    await entriesCollection
-        .where("status", isEqualTo: "pending")
-        .snapshots()
-        .listen((QuerySnapshot snapshot) {
-      snapshot.docs.forEach((DocumentSnapshot document) {
-        entriesCollection.doc(document.id).update({"status": "deleted"});
-      });
-    });
+    await entriesCollection.doc(id).update({"status": "deleted"});
 
     return 'successfully deleted pending entry';
   }
 
-  Future<String> AddToQuarantine(String studno) async {
+  Future<String> addToQuarantine(String studno) async {
     CollectionReference entriesCollection = db.collection("users");
 
     await entriesCollection
@@ -85,7 +86,49 @@ class FirebaseEntryAPI {
     return 'successfully put student into quarantine';
   }
 
-  Future<int> GetQuarantineCount(String studno) async {
+  Future<String> turnToAdmin(String studno) async {
+    CollectionReference entriesCollection = db.collection("users");
+
+    await entriesCollection
+        .where("studno", isEqualTo: studno)
+        .snapshots()
+        .listen((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((DocumentSnapshot document) {
+        entriesCollection.doc(document.id).update({"userType": "admin"});
+      });
+    });
+    return 'successfully turned student to admin';
+  }
+
+  Future<String> turnToEntranceMonitor(String studno) async {
+    CollectionReference entriesCollection = db.collection("users");
+
+    await entriesCollection
+        .where("studno", isEqualTo: studno)
+        .snapshots()
+        .listen((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((DocumentSnapshot document) {
+        entriesCollection.doc(document.id).update({"userType": "monitor"});
+      });
+    });
+    return 'successfully turned student to monitor';
+  }
+
+  Future<String> turnToPendingDelete(String? id) async {
+    CollectionReference entriesCollection = db.collection("entries");
+
+    await entriesCollection.doc(id).update({"status": "pendingDelete"});
+    return 'successfully put entry to pending delete';
+  }
+
+  Future<String> turnToPendingEdit(String? id) async {
+    CollectionReference entriesCollection = db.collection("entries");
+
+    await entriesCollection.doc(id).update({"status": "pendingEdit"});
+    return 'successfully put entry to pending edit';
+  }
+
+  Future<int> getQuarantineCount(String studno) async {
     CollectionReference entriesCollection = db.collection("users");
 
     QuerySnapshot snapshot =
@@ -100,7 +143,7 @@ class FirebaseEntryAPI {
     return count;
   }
 
-  Future<String> RemoveFromQuarantine(String studno) async {
+  Future<String> removeFromQuarantine(String studno) async {
     CollectionReference entriesCollection = db.collection("users");
 
     await entriesCollection
@@ -120,13 +163,22 @@ class FirebaseEntryAPI {
 
     DocumentSnapshot snapshot1 = await entriesCollection.doc(id1).get();
     DocumentSnapshot snapshot2 = await entriesCollection.doc(id2).get();
-
     if (snapshot1.exists && snapshot2.exists) {
-      Map<String, dynamic> data2 = snapshot2.data()
-          as Map<String, dynamic>; // Explicitly cast to Map<String, dynamic>
-      await entriesCollection.doc(id1).set(data2);
-      await entriesCollection.doc(id2).delete(); // Delete snapshot2
+      Map<String, dynamic> data2 = snapshot2.data() as Map<String, dynamic>;
+      String preserveId = snapshot1.id; // Get the original 'id' field value
 
+      data2['id'] =
+          preserveId; // Set the 'id' field in data2 to the original 'id' value
+
+      // Remove the 'id' and 'status' fields from data2, so they won't be overwritten
+      data2.remove('id');
+      data2.remove('status');
+
+      await entriesCollection
+          .doc(id1)
+          .set(data2); // Replace the content of id1 with data2
+      await entriesCollection.doc(id2).delete(); // Delete snapshot2
+      await entriesCollection.doc(id1).update({'status': 'open'});
       return 'Successfully replaced content of $id1 with $id2 and deleted $id2';
     } else {
       return 'Document with ID $id1 or $id2 does not exist';
@@ -134,9 +186,19 @@ class FirebaseEntryAPI {
   }
 
   Stream<QuerySnapshot> getEntries(String UID) {
-    return db.collection('entries').where('UID', isEqualTo: UID).snapshots();
+    final refs = db.collection('entries');
+    return refs
+        .where('UID', isEqualTo: UID)
+        .where('status', isNotEqualTo: 'clone')
+        .snapshots();
   }
 
+  Stream<QuerySnapshot> getClone(String id) {
+    return db
+        .collection('entries')
+        .where('replacementId', isEqualTo: id)
+        .snapshots();
+  }
   // Stream<QuerySnapshot> getMyEntries(){
 
   // }

@@ -1,4 +1,5 @@
 import 'package:cmsc23_project/screens/user/entryform.dart';
+import 'package:cmsc23_project/screens/user/editform.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/entry_model.dart';
@@ -66,14 +67,14 @@ class _HomePageState extends State<HomePage> {
     print("at entries builder");
     return StreamBuilder(
       stream: entriesStream,
-      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+      builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Center(
             child: Text("Error encountered! ${snapshot.error}"),
           );
         } else if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
-            child: CircularProgressIndicator(),
+            child: Text('this is loading'),
           );
         } else if (!snapshot.hasData) {
           return const Center(
@@ -97,6 +98,30 @@ class _HomePageState extends State<HomePage> {
                   IconButton(
                     icon: Icon(Icons.edit),
                     onPressed: () {
+                      String? docrefID = entry.id;
+                      String? status = entry.status;
+                      if (status == "open") {
+                        context
+                            .read<EntryListProvider>()
+                            .entryPendingEdit(docrefID);
+                        context.read<EntryListProvider>().setToEdit(docrefID);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Entry is now pending for edit"),
+                          ),
+                        );
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditForm()));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Entry is already pending"),
+                          ),
+                        );
+                      }
+
                       // Perform edit operation for the entry
                       // You can navigate to an edit screen or show a dialog
                       // to allow the user to modify the entry.
@@ -106,10 +131,30 @@ class _HomePageState extends State<HomePage> {
                   IconButton(
                     icon: Icon(Icons.delete),
                     onPressed: () {
-                      // Perform delete operation for the entry
-                      // You can show a confirmation dialog before deleting
-                      // the entry to confirm the user's intent.
-                      // Example: showDeleteConfirmationDialog(entry);
+                      String? docrefID = entry.id;
+                      String? status = entry.status;
+                      if (status == "open") {
+                        context
+                            .read<EntryListProvider>()
+                            .entryPendingDelete(docrefID);
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Entry is now pending for delete"),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Entry is already pending"),
+                          ),
+                        );
+                      }
+
+                      // Perform edit operation for the entry
+                      // You can navigate to an edit screen or show a dialog
+                      // to allow the user to modify the entry.
+                      // Example: navigate to EditEntryScreen(entry);
                     },
                   ),
                 ],
