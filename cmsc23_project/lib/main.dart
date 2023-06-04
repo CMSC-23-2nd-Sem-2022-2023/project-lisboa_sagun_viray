@@ -31,7 +31,6 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: ((context) => TodoListProvider())),
         ChangeNotifierProvider(create: ((context) => AuthProvider())),
         ChangeNotifierProvider(create: ((context) => EntryListProvider())),
       ],

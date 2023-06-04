@@ -40,7 +40,7 @@ class AuthProvider with ChangeNotifier {
 
   // authenticating a user with firebase authentication
   Future<String> signIn(String email, String password) async {
-    fetchAuthentication();
+    fetchAuthentication(); //call here every sign in so that the snapshot doesn't become null after sign out
     String err = await authService.signIn(email, password);
     notifyListeners();
     return err;
