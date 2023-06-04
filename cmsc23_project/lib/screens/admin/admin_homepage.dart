@@ -233,6 +233,7 @@ class _AdminPageState extends State<AdminPage> {
               itemBuilder: (context, index) {
                 Entry entry = Entry.fromJson(
                     snapshot.data?.docs[index].data() as Map<String, dynamic>);
+                //access entry like 'entry.'
                 return ListTile(
                   title: Text(
                     entry.UID,
@@ -240,6 +241,9 @@ class _AdminPageState extends State<AdminPage> {
                   leading: Text(
                     entry.date,
                   ),
+                  onTap: () {
+                    //TODO open a new screen or modal that shows entry details
+                  },
                 );
               });
           // return Center();
@@ -272,10 +276,8 @@ class _AdminPageState extends State<AdminPage> {
 
   @override
   Widget build(BuildContext context) {
+    //keep watching userStream
     Stream<User?> userStream = context.watch<AuthProvider>().uStream;
-    print(userStream);
-    // Stream<QuerySnapshot> entriesStream =
-    //     context.watch<EntryListProvider>()._myEntriesStream;
 
     return StreamBuilder(
       stream: userStream,
@@ -289,11 +291,13 @@ class _AdminPageState extends State<AdminPage> {
             child: CircularProgressIndicator(),
           );
         } else if (!snapshot.hasData) {
+          // if snapshot has no data, keep returning the login page
+          //TODO have UI prompt like alertdialog or new screent instead
           print("snapshot has no data");
           return const AdminLoginPage();
         }
         print("user currently logged in: ${snapshot.data!.uid}");
-        // String crrntlogged = snapshot.data!.uid;
+        //get the UID of currently logged in user and use it to get stream of their entries
         String UID = snapshot.data!.uid;
         Stream<QuerySnapshot> entriesStream = getEntriesStream(UID);
 
@@ -302,6 +306,7 @@ class _AdminPageState extends State<AdminPage> {
     );
   }
 
+  //if a user succesfully logs in, return this scaffold
   Scaffold displayScaffold(BuildContext context,
       Stream<QuerySnapshot<Object?>> entriesStream, String UID) {
     return Scaffold(
