@@ -169,9 +169,8 @@ class FirebaseEntryAPI {
 
       data2['id'] =
           preserveId; // Set the 'id' field in data2 to the original 'id' value
-
+      data2['replacementId'] = null;
       // Remove the 'id' and 'status' fields from data2, so they won't be overwritten
-      data2.remove('id');
       data2.remove('status');
 
       await entriesCollection
@@ -189,8 +188,7 @@ class FirebaseEntryAPI {
     final refs = db.collection('entries');
     return refs
         .where('UID', isEqualTo: UID)
-        .where('status', isNotEqualTo: 'clone')
-        .snapshots();
+        .where('status', whereNotIn: ['clone', 'deleted']).snapshots();
   }
 
   Stream<QuerySnapshot> getClone(String id) {

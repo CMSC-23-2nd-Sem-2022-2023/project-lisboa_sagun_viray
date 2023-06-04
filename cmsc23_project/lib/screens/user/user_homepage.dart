@@ -137,7 +137,6 @@ class _HomePageState extends State<HomePage> {
                         context
                             .read<EntryListProvider>()
                             .entryPendingDelete(docrefID);
-
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text("Entry is now pending for delete"),
