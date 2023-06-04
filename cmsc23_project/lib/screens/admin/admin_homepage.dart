@@ -235,15 +235,31 @@ class _AdminPageState extends State<AdminPage> {
                     snapshot.data?.docs[index].data() as Map<String, dynamic>);
                 //access entry like 'entry.'
                 return ListTile(
-                  title: Text(
-                    entry.UID,
+                  title: Text(entry.UID),
+                  leading: Text(entry.date),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: () {
+                          // Perform edit operation for the entry
+                          // You can navigate to an edit screen or show a dialog
+                          // to allow the user to modify the entry.
+                          // Example: navigate to EditEntryScreen(entry);
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () {
+                          // Perform delete operation for the entry
+                          // You can show a confirmation dialog before deleting
+                          // the entry to confirm the user's intent.
+                          // Example: showDeleteConfirmationDialog(entry);
+                        },
+                      ),
+                    ],
                   ),
-                  leading: Text(
-                    entry.date,
-                  ),
-                  onTap: () {
-                    //TODO open a new screen or modal that shows entry details
-                  },
                 );
               });
           // return Center();
