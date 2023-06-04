@@ -16,15 +16,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<dynamic> entries = [1, 2, 3];
-
   Widget body(int index, Stream<QuerySnapshot> entriesStream, String UID) {
     // context.read<AuthProvider>().fetchAuthentication();
-    if (index == 0 && entries.isEmpty) {
-      return Center(
-        child: Text("No entries yet"),
-      );
-    } else if (index == 1) {
+    if (index == 1) {
       return profileBuilder();
     } else {
       return displayUserEntries(entriesStream, UID);
