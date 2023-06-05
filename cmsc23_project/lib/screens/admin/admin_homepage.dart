@@ -348,7 +348,7 @@ class _AdminPageState extends State<AdminPage> {
                   Entry entry = Entry.fromJson(snapshot.data?.docs[index].data()
                       as Map<String, dynamic>);
                   //access entry like 'entry.'
-                  return Container(
+                  return SizedBox(
                     height: 80,
                     child: Card(
                       elevation: 9,
