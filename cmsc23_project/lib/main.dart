@@ -69,9 +69,9 @@ class MyApp extends StatelessWidget {
         '/admin_homepage': (context) => const AdminPage(),
         '/entrance-monitor_homepage': (context) => const EntranceMonitor(),
         '/QR_scanner_page': (context) => const QRViewExample(),
-        '/monitor_requests': (context) => AdminRequests(),
-        '/monitor_students': (context) => ViewStudents(),
-        '/monitor_quarantined': (context) => QuarantinedStudents()
+        '/monitor_requests': (context) => const AdminRequests(),
+        '/monitor_students': (context) => const ViewStudents(),
+        '/monitor_quarantined': (context) => const QuarantinedStudents()
       },
     );
   }

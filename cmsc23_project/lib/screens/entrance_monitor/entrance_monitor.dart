@@ -114,7 +114,7 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
                 //access entry like 'entry.'
                 return ListTile(
                   title: Text(
-                    entry.date + " Entry",
+                    entry.date + " ENTRY",
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   // leading: Text(entry.date),
@@ -173,7 +173,8 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
           ),
           Text(
             "LASTNAME, FIRSTNAME MIDDLENAME",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            style: TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
           ),
           SizedBox(
             height: 10,
@@ -188,21 +189,24 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
           //     size: 200.0,
           //   ),
           // ),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                // _isVisible = !_isVisible;
-
-                showDialog(
+          SizedBox(
+            width: 200,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  // _isVisible = !_isVisible;
+                  showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
                         title: Center(
-                            child: Text(
-                          'QR Code Generated.',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        )),
-                        content: SizedBox(
+                          child: Text(
+                            'QR CODE GENERATED.',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        content: Container(
                           width: 200,
                           height: 200,
                           child: Center(
@@ -224,19 +228,50 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
                           ),
                         ],
                       );
-                    });
-              });
-            },
-            child: Text("View Building Pass"),
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(
-                  const Color.fromARGB(255, 0, 37, 67)),
-              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-              shape: MaterialStateProperty.all<StadiumBorder>(
-                const StadiumBorder(),
+                    },
+                  );
+                });
+              },
+              child: Text("VIEW BUILDING PASS"),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  const Color.fromARGB(255, 0, 37, 67),
+                ),
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                shape: MaterialStateProperty.all<StadiumBorder>(
+                  const StadiumBorder(),
+                ),
               ),
             ),
           ),
+          SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            width: 200,
+            height: 50,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  const Color.fromARGB(255, 67, 0, 0),
+                ),
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                shape: MaterialStateProperty.all<StadiumBorder>(
+                  const StadiumBorder(),
+                ),
+              ),
+              onPressed: () {
+                context.read<AuthProvider>().signOut();
+                Navigator.pop(context);
+              },
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [Icon(Icons.exit_to_app), Text("LOGOUT")],
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );
@@ -311,23 +346,35 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 0, 37, 67),
         automaticallyImplyLeading: false,
-        actions: [
-          TextButton(
-            onPressed: () {
-              print('pressed logout');
-              context.read<AuthProvider>().signOut();
-              Navigator.pop(context);
-            },
-            child: Text('Logout'),
-            style: TextButton.styleFrom(
-              primary: Colors.white,
-              textStyle: TextStyle(fontSize: 16),
-            ),
-          ),
-        ],
-        title: Text("Monitor View"),
+        // actions: [
+        //   TextButton(
+        //     onPressed: () {
+        //       print('pressed logout');
+        //       context.read<AuthProvider>().signOut();
+        //       Navigator.pop(context);
+        //     },
+        //     child: Text('Logout'),
+        //     style: TextButton.styleFrom(
+        //       primary: Colors.white,
+        //       textStyle: TextStyle(fontSize: 16),
+        //     ),
+        //   ),
+        // ],
+        title: Text("Viewing as Entrance Monitor"),
       ),
-      body: body(_selectedIndex, entriesStream, UID),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color.fromARGB(255, 0, 37, 67), // First color
+              Color.fromARGB(255, 128, 150, 209), // Second color
+            ],
+          ),
+        ),
+        child: body(_selectedIndex, entriesStream, UID),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.shifting,
         items: const <BottomNavigationBarItem>[

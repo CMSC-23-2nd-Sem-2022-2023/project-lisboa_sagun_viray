@@ -68,88 +68,267 @@ class _AdminRequestsState extends State<AdminRequests> {
             );
           }
 
-          return ListView.builder(
-            itemCount: snapshot.data?.docs.length,
-            itemBuilder: (context, index) {
-              Entry entry = Entry.fromJson(
-                  snapshot.data?.docs[index].data() as Map<String, dynamic>);
-              return ListTile(
-                title: Text(
-                  'entry id:${entry.id} has status: ${entry.status!}',
-                ),
-                leading: Text(
-                  entry.date,
-                ),
-                trailing: TextButton(
-                  onPressed: () {
-                    if (entry.status == 'clone') {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Approve Edit'),
-                            content: Text(
-                                'Are you sure you want to approve this edit?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context)
-                                      .pop(); // Close the dialog
-                                  context
-                                      .read<EntryListProvider>()
-                                      .adminReplaceEntry(
-                                          entry.replacementId, entry.id);
-                                },
-                                child: Text('Approve'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context)
-                                      .pop(); // Close the dialog
-                                },
-                                child: Text('Cancel'),
-                              ),
-                            ],
+          return Padding(
+            padding: const EdgeInsets.all(8),
+            child: ListView.builder(
+              itemCount: snapshot.data?.docs.length,
+              itemBuilder: (context, index) {
+                Entry entry = Entry.fromJson(
+                    snapshot.data?.docs[index].data() as Map<String, dynamic>);
+                return SizedBox(
+                  height: 80,
+                  child: Card(
+                    elevation: 9,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(30))),
+                    child: Center(
+                      child: GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                title: Center(
+                                    child: Text(
+                                  'ENTRY DETAILS',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                )),
+                                content: Container(
+                                  width: 200,
+                                  height: 80,
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Center(
+                                            child: Text(
+                                              "Date Submitted: ",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                          Center(
+                                            child: Text(entry.date),
+                                          )
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Center(
+                                            child: Text(
+                                              "Has Contact: ",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                          Center(
+                                            child: Text(
+                                                entry.hasContact.toString()),
+                                          )
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Center(
+                                            child: Text(
+                                              "Status: ",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                          Center(
+                                            child:
+                                                Text(entry.status.toString()),
+                                          )
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                actions: <Widget>[
+                                  ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            Color.fromARGB(255, 0, 37, 67),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15.0),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("CLOSE"))
+                                  // TextButton(
+                                  //   child: Text('Close'),
+                                  //   onPressed: () {
+                                  //     Navigator.of(context).pop();
+                                  //   },
+                                  // ),
+                                ],
+                              );
+                            },
                           );
                         },
-                      );
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Delete Entry'),
-                            content: Text(
-                                'Are you sure you want to delete this entry?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context)
-                                      .pop(); // Close the dialog
-                                  context
-                                      .read<EntryListProvider>()
-                                      .adminDelete(entry.id);
-                                },
-                                child: Text('Delete'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context)
-                                      .pop(); // Close the dialog
-                                },
-                                child: Text('Cancel'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }
-                  },
-                  child: Text('Approve'),
-                ),
-              );
-            },
+                        child: ListTile(
+                          title: Text(
+                            'ENTRY DATE: ${entry.date}',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text(
+                            "status: " + entry.status!,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          leading: CircleAvatar(
+                            backgroundColor: Color.fromARGB(255, 0, 37, 67),
+                            child: Text((index + 1).toString()),
+                          ),
+                          trailing: CircleAvatar(
+                            backgroundColor: Color.fromARGB(255, 12, 67, 0),
+                            child: GestureDetector(
+                              onTap: () {
+                                if (entry.status == 'clone') {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20.0),
+                                        ),
+                                        title: Text('Approve Edit'),
+                                        content: Text(
+                                            'Are you sure you want to approve this edit?'),
+                                        actions: [
+                                          ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Color.fromARGB(
+                                                    255, 0, 67, 3),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          15.0),
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.of(context)
+                                                    .pop(); // Close the dialog
+                                                context
+                                                    .read<EntryListProvider>()
+                                                    .adminReplaceEntry(
+                                                        entry.replacementId,
+                                                        entry.id);
+                                              },
+                                              child: Text("APPROVE")),
+                                          ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Color.fromARGB(
+                                                    255, 0, 37, 67),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          15.0),
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text("CLOSE")),
+                                          // TextButton(
+                                          //   onPressed: () {
+                                          //     Navigator.of(context)
+                                          //         .pop(); // Close the dialog
+                                          //     context
+                                          //         .read<EntryListProvider>()
+                                          //         .adminReplaceEntry(
+                                          //             entry.replacementId,
+                                          //             entry.id);
+                                          //   },
+                                          //   child: Text('Approve'),
+                                          // ),
+                                          // TextButton(
+                                          //   onPressed: () {
+                                          //     Navigator.of(context)
+                                          //         .pop(); // Close the dialog
+                                          //   },
+                                          //   child: Text('Cancel'),
+                                          // ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20.0),
+                                        ),
+                                        title: Center(
+                                            child: Text(
+                                          'DELETE ENTRY',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        )),
+                                        content: Text(
+                                            'Are you sure you want to delete this entry?'),
+                                        actions: [
+                                          ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Color.fromARGB(
+                                                    255, 67, 0, 0),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          15.0),
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.of(context)
+                                                    .pop(); // Close the dialog
+                                                context
+                                                    .read<EntryListProvider>()
+                                                    .adminDelete(entry.id);
+                                              },
+                                              child: Text("DELETE")),
+                                          ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Color.fromARGB(
+                                                    255, 0, 37, 67),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          15.0),
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text("CLOSE")),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
+                              },
+                              child: Icon(Icons.check),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
           );
+
+          ;
 
           // return Center();
         });
@@ -159,23 +338,29 @@ class _AdminRequestsState extends State<AdminRequests> {
       BuildContext context, Stream<QuerySnapshot<Object?>> entriesStream) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         backgroundColor: Color.fromARGB(255, 0, 37, 67),
         automaticallyImplyLeading: false,
-        actions: [
-          TextButton(
-            onPressed: () {
-              print('pressed logout');
-              context.read<AuthProvider>().signOut();
-              Navigator.pop(context);
-            },
-            child: Text('Logout'),
-            style: TextButton.styleFrom(
-              primary: Colors.white,
-              textStyle: TextStyle(fontSize: 16),
-            ),
-          ),
-        ],
-        title: Text("Admin Dashboard"),
+        // actions: [
+        //   TextButton(
+        //     onPressed: () {
+        //       print('pressed logout');
+        //       context.read<AuthProvider>().signOut();
+        //       Navigator.pop(context);
+        //     },
+        //     child: Text('Logout'),
+        //     style: TextButton.styleFrom(
+        //       primary: Colors.white,
+        //       textStyle: TextStyle(fontSize: 16),
+        //     ),
+        //   ),
+        // ],
+        // title: Text("Admin Dashboard"),
       ),
       body: Container(
         decoration: BoxDecoration(
