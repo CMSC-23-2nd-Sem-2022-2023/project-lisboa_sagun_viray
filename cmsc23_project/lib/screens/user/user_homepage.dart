@@ -62,7 +62,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget entriesBuilder(Stream<QuerySnapshot> entriesStream, String UID) {
-    print("at entries builder");
     return StreamBuilder(
       stream: entriesStream,
       builder: (context, snapshot) {

@@ -129,8 +129,6 @@ class FirebaseEntryAPI {
     return 'successfully turned student to admin';
   }
 
-  
-
   Future<String> turnToEntranceMonitor(String id) async {
     CollectionReference entriesCollection = db.collection("users");
 
@@ -179,9 +177,18 @@ class FirebaseEntryAPI {
         .get();
 
     bool isQuarantined = snapshot.docs.isNotEmpty;
-    print('successfully checked if user is quarantined');
-    print('snapshot.docs length: ${snapshot.docs.length}');
-    print('isQuarantined value: $isQuarantined');
+    return isQuarantined;
+  }
+
+  Future<bool> isUnderMonitoring(String id) async {
+    CollectionReference usersCollection = db.collection("users");
+
+    QuerySnapshot snapshot = await usersCollection
+        .where("id", isEqualTo: id)
+        .where("isUnderMonitoring", isEqualTo: true)
+        .get();
+
+    bool isQuarantined = snapshot.docs.isNotEmpty;
     return isQuarantined;
   }
 
@@ -252,7 +259,4 @@ class FirebaseEntryAPI {
       return "Failed with error '${e.code}: ${e.message}";
     }
   }
-
-
-
 }

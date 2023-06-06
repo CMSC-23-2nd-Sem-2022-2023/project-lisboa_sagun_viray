@@ -226,7 +226,7 @@ class _EntryFormState extends State<EditForm> {
                     context.read<EntryListProvider>().addEntry(entry);
                     Navigator.pop(context);
                   },
-                  child: const Text('SUBMIT ENTRY',
+                  child: const Text('EDIT ENTRY',
                       style: TextStyle(color: Colors.white)),
                 ),
                 const SizedBox(
