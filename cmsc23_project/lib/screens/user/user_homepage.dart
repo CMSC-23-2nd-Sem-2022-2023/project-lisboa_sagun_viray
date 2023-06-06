@@ -8,6 +8,8 @@ import '../../providers/auth_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import '../../models/user_model.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,20 +19,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<dynamic> entries = [1, 2, 3];
+  List<Entry> entries = [];
 
-  Widget entryList(
-    BuildContext context,
-    int index,
-  ) {
+  Widget entryList(BuildContext context, int index, String UID) {
     context.read<AuthProvider>().fetchAuthentication();
     Stream<User?> userStream = context.watch<AuthProvider>().uStream;
-    if (index == 0 && entries.isEmpty) {
-      return Center(
-        child: Text("No entries yet"),
-      );
+    if (index == 0) {
+      return displayUserEntries(userStream);
+      // return Center(
+      //   child: Text("No entries yet"),
+      // );
     } else if (index == 1) {
-      return profileBuilder();
+      return profileBuilder(UID);
     } else {
       return displayUserEntries(userStream);
     }
@@ -86,6 +86,7 @@ class _HomePageState extends State<HomePage> {
             Entry entry = Entry.fromJson(
               snapshot.data?.docs[index].data() as Map<String, dynamic>,
             );
+            entries.add(entry);
 
             return ListTile(
               title: Text(entry.UID),
@@ -163,21 +164,222 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget profileBuilder() {
-    return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.person),
-          Text("FULL NAME"),
-          ElevatedButton(
-            onPressed: () {},
-            child: Text("Generate Building Pass"),
-          ),
-        ],
-      ),
-    );
+  Future<bool> checkConditions(String UID) async {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+    bool today = false;
+    bool isUnderQuarantine =
+        await context.read<EntryListProvider>().isQuarantined(UID);
+    bool isUnderMonitoring =
+        await context.read<EntryListProvider>().isUnderMonitoring(UID);
+    for (Entry entry in entries) {
+      print(entry.date);
+      if (entry.date == formattedDate) {
+        today = true;
+      }
+    }
+    if (today == true &&
+        isUnderQuarantine == false &&
+        isUnderMonitoring == false) {
+      print('@@@@@@@@@@@@$today, $isUnderQuarantine, $isUnderMonitoring');
+      return true;
+    } else {
+      print('!!!!!!!!!!!!!!!!$today, $isUnderQuarantine, $isUnderMonitoring');
+      return false;
+    }
+  }
+
+  Widget profileBuilder(String UID) {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+    print('###################$formattedDate');
+    Stream<QuerySnapshot> userDocs =
+        context.watch<AuthProvider>().getUserDocs(UID);
+
+    return StreamBuilder(
+        stream: userDocs,
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text("Error encountered! ${snapshot.error}"),
+            );
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (!snapshot.hasData) {
+            return const Center(
+              child: Text("No Entries Found"),
+            );
+          }
+
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color.fromARGB(255, 0, 13, 47),
+                  ),
+                  child: Icon(
+                    Icons.person,
+                    size: 50,
+                    color: Color.fromARGB(255, 252, 253, 255),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "LASTNAME, FIRSTNAME MIDDLENAME",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.white),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                SizedBox(
+                  width: 200,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() async {
+                        bool able = await checkConditions(UID);
+                        if (able) {
+                          UserRecord user = UserRecord.fromJson(
+                              snapshot.data?.docs[0].data()
+                                  as Map<String, dynamic>);
+                          Map<String, dynamic> message = {
+                            'date': formattedDate,
+                            'name': user.name,
+                            'location': 'Physci'
+                          };
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Center(
+                                  child: Text(
+                                    'QR CODE GENERATED.',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                content: Container(
+                                  width: 200,
+                                  height: 200,
+                                  child: Center(
+                                    child: QrImage(
+                                      // TODO change the data to an instance of entry, but for that to work
+                                      // need to implement getting of entries from stream first
+                                      data: message.toString(),
+                                      version: QrVersions.auto,
+                                      size: 200.0,
+                                    ),
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Center(
+                                  child: Text(
+                                    'QR CODE CANT BE GENERATED.',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                content: Container(
+                                  width: 200,
+                                  height: 200,
+                                  child: Text(
+                                    'Either: You dont\'t have an entry for today\nYou are under quarantine\n You are under monitoring',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                        // _isVisible = !_isVisible;
+                      });
+                    },
+                    child: Text("VIEW BUILDING PASS"),
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color.fromARGB(255, 0, 37, 67),
+                      ),
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(Colors.white),
+                      shape: MaterialStateProperty.all<StadiumBorder>(
+                        const StadiumBorder(),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                SizedBox(
+                  width: 200,
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color.fromARGB(255, 67, 0, 0),
+                      ),
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(Colors.white),
+                      shape: MaterialStateProperty.all<StadiumBorder>(
+                        const StadiumBorder(),
+                      ),
+                    ),
+                    onPressed: () {
+                      context.read<AuthProvider>().signOut();
+                      Navigator.pop(context);
+                    },
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [Icon(Icons.exit_to_app), Text("LOGOUT")],
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          );
+          // return Center();
+        });
   }
 
   int _selectedIndex = 0;
@@ -237,7 +439,11 @@ class _HomePageState extends State<HomePage> {
               // title: Text(isQuarantined ? "Quarantined!" : "Not Quarantined"),
               title: Text("User's "),
             ),
-            body: entryList(context, _selectedIndex),
+            body: entryList(
+              context,
+              _selectedIndex,
+              uid!,
+            ),
             floatingActionButton: FloatingActionButton(
               backgroundColor: Color.fromARGB(255, 0, 37, 67),
               onPressed: () {
