@@ -32,6 +32,17 @@ class _QRViewExampleState extends State<QRViewExample> {
     controller!.resumeCamera();
   }
 
+  Widget checkResult(result) {
+    if (result != null) {
+      return Text('QR Code Scanned!');
+    }
+    // Text(
+    //     'Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}')
+    else {
+      return const Text('Scan a code');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,11 +56,7 @@ class _QRViewExampleState extends State<QRViewExample> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  if (result != null)
-                    Text(
-                        'Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}')
-                  else
-                    const Text('Scan a code'),
+                  checkResult(result),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
