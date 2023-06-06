@@ -80,52 +80,49 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
                 leading: Text(
                   user.name,
                 ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('Remove from quarantine'),
-                              content: Text(
-                                  'Are you sure you want to remove this student from quarantine?'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    context
-                                        .read<EntryListProvider>()
-                                        .removeFromQuarantine(
-                                            user.id); // Close the dialog
-                                    // Perform the promotion logic here
-                                  },
-                                  child: Text('proceed'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .pop(); // Close the dialog
-                                  },
-                                  child: Text('Cancel'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      child: Text('Remove from quarantine'),
-                    ),
+                trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                  TextButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Remove from quarantine'),
+                            content: Text(
+                                'Are you sure you want to remove this student from quarantine?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  context
+                                      .read<EntryListProvider>()
+                                      .removeFromQuarantine(
+                                          user.id); // Close the dialog
+                                  // Perform the promotion logic here
+                                },
+                                child: Text('proceed'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .pop(); // Close the dialog
+                                },
+                                child: Text('Cancel'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    child: Text('Remove from quarantine'),
                   ),
-                );
-              },
-            ),
+                ]),
+              );
+            },
           );
-
-          // return Center();
         });
+
+    // return Center();
   }
 
   Scaffold displayScaffold(
