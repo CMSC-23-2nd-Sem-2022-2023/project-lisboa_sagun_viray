@@ -98,7 +98,7 @@ class FirebaseEntryAPI {
         entriesCollection.doc(document.id).update({"isUnderMonitoring": true});
       });
     });
-    return 'successfully put student into quarantine';
+    return 'successfully put student into monitoring';
   }
 
   Future<String> turnToAdmin(String id) async {
@@ -114,6 +114,22 @@ class FirebaseEntryAPI {
     });
     return 'successfully turned student to admin';
   }
+
+  Future<String> turnToStudent(String id) async {
+    CollectionReference entriesCollection = db.collection("users");
+
+    await entriesCollection
+        .where("id", isEqualTo: id)
+        .snapshots()
+        .listen((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((DocumentSnapshot document) {
+        entriesCollection.doc(document.id).update({"userType": "student"});
+      });
+    });
+    return 'successfully turned student to admin';
+  }
+
+  
 
   Future<String> turnToEntranceMonitor(String id) async {
     CollectionReference entriesCollection = db.collection("users");
@@ -236,4 +252,7 @@ class FirebaseEntryAPI {
       return "Failed with error '${e.code}: ${e.message}";
     }
   }
+
+
+
 }

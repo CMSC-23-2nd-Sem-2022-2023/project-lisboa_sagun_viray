@@ -79,7 +79,7 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
                   'Student number: ${user.studno} - ${user.name}',
                 ),
                 leading: Text(
-                  user.id,
+                  user.name,
                 ),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -90,20 +90,18 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: Text('Promote to Admin'),
+                              title: Text('Remove from quarantine'),
                               content: Text(
-                                  'Are you sure you want to promote this student to admin?'),
+                                  'Are you sure you want to remove this student from quarantine?'),
                               actions: [
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.of(context).pop();
-                                    context
-                                        .read<EntryListProvider>()
-                                        .turnToAdmin(
-                                            user.id); // Close the dialog
+                                    Navigator.of(context)
+                                        .pop();
+                                    context.read<EntryListProvider>().removeFromQuarantine(user.id);// Close the dialog
                                     // Perform the promotion logic here
                                   },
-                                  child: Text('Promote'),
+                                  child: Text('proceed'),
                                 ),
                                 TextButton(
                                   onPressed: () {
@@ -117,76 +115,7 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
                           },
                         );
                       },
-                      child: Text('Promote to Admin'),
-                    ),
-                    SizedBox(width: 10),
-                    TextButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('Promote to Monitor'),
-                              content: Text(
-                                  'Are you sure you want to promote this student to monitor?'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .pop(); // Close the dialog
-                                    context
-                                        .read<EntryListProvider>()
-                                        .turnToMonitor(user
-                                            .id); // Perform the promotion logic here
-                                  },
-                                  child: Text('Promote'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .pop(); // Close the dialog
-                                  },
-                                  child: Text('Cancel'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      child: Text('Promote to Monitor'),
-                    ),
-                    SizedBox(width: 10),
-                    TextButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('Put in quarantine'),
-                              content: Text(
-                                  'Are you sure you want to put this student into quarantine?'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .pop(); // Close the dialog
-                                    // Perform the promotion logic here
-                                  },
-                                  child: Text('Promote'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .pop(); // Close the dialog
-                                  },
-                                  child: Text('Cancel'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      child: Text('Promote to Monitor'),
+                      child: Text('Remove from quarantine'),
                     ),
                   ],
                 ),

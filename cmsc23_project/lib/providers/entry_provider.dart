@@ -107,6 +107,12 @@ class EntryListProvider with ChangeNotifier {
     notifyListeners();
   }
 
+   void turnToStudent(String? id) async {
+    String message = await firebaseService.turnToStudent(id!);
+    print(message);
+    notifyListeners();
+  }
+
   void turnToMonitor(String? id) async {
     String message = await firebaseService.turnToEntranceMonitor(id!);
     print(message);

@@ -52,153 +52,146 @@ class _ViewStudentsState extends State<ViewStudents> {
 
   Widget studentBuilder(Stream<QuerySnapshot> studentStream) {
     return StreamBuilder(
-        stream: studentStream,
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text("Error encountered! ${snapshot.error}"),
-            );
-          } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (!snapshot.hasData) {
-            return const Center(
-              child: Text("No Entries Found"),
-            );
-          }
-
-          return ListView.builder(
-            itemCount: snapshot.data?.docs.length,
-            itemBuilder: (context, index) {
-              UserRecord user = UserRecord.fromJson(
-                snapshot.data?.docs[index].data() as Map<String, dynamic>,
-              );
-              return ListTile(
-                title: Text(
-                  'Student number: ${user.studno} - ${user.name}',
-                ),
-                leading: Text(
-                  user.id,
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('Promote to Admin'),
-                              content: Text(
-                                  'Are you sure you want to promote this student to admin?'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    context
-                                        .read<EntryListProvider>()
-                                        .turnToAdmin(
-                                            user.id); // Close the dialog
-                                    // Perform the promotion logic here
-                                  },
-                                  child: Text('Promote'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .pop(); // Close the dialog
-                                  },
-                                  child: Text('Cancel'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      child: Text('Promote to Admin'),
-                    ),
-                    SizedBox(width: 10),
-                    TextButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('Promote to Monitor'),
-                              content: Text(
-                                  'Are you sure you want to promote this student to monitor?'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .pop(); // Close the dialog
-                                    context
-                                        .read<EntryListProvider>()
-                                        .turnToMonitor(user
-                                            .id); // Perform the promotion logic here
-                                  },
-                                  child: Text('Promote'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .pop(); // Close the dialog
-                                  },
-                                  child: Text('Cancel'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      child: Text('Promote to Monitor'),
-                    ),
-                    SizedBox(width: 10),
-                    TextButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('Put in quarantine'),
-                              content: Text(
-                                  'Are you sure you want to put this student into quarantine?'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    context
-                                        .read<EntryListProvider>()
-                                        .addToQuarantine(
-                                            user.id); // Close the dialog
-                                    // Perform the promotion logic here
-                                  },
-                                  child: Text('Quarantine'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .pop(); // Close the dialog
-                                  },
-                                  child: Text('Cancel'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      child: Text('Put into quarantine'),
-                    ),
-                  ],
-                ),
-              );
-            },
+      stream: studentStream,
+      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+            child: Text("Error encountered! ${snapshot.error}"),
           );
+        } else if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (!snapshot.hasData) {
+          return const Center(
+            child: Text("No Entries Found"),
+          );
+        }
 
-          // return Center();
-        });
+        return ListView.builder(
+          itemCount: snapshot.data?.docs.length,
+          itemBuilder: (context, index) {
+            UserRecord user = UserRecord.fromJson(
+              snapshot.data?.docs[index].data() as Map<String, dynamic>,
+            );
+            return ListTile(
+              title: Text(
+                user.name,
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Promote to Admin'),
+                            content: Text(
+                              'Are you sure you want to promote this student to admin?',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  context
+                                      .read<EntryListProvider>()
+                                      .turnToAdmin(user.id);
+                                  // Perform the promotion logic here
+                                },
+                                child: Text('Promote'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Cancel'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    icon: Icon(Icons.person_add),
+                  ),
+                  SizedBox(width: 10),
+                  IconButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Promote to Monitor'),
+                            content: Text(
+                              'Are you sure you want to promote this student to monitor?',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  context
+                                      .read<EntryListProvider>()
+                                      .turnToMonitor(user.id);
+                                  // Perform the promotion logic here
+                                },
+                                child: Text('Promote'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Cancel'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    icon: Icon(Icons.monitor),
+                  ),
+                  SizedBox(width: 10),
+                  IconButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Put in quarantine'),
+                            content: Text(
+                              'Are you sure you want to put this student into quarantine?',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  context
+                                      .read<EntryListProvider>()
+                                      .addToQuarantine(user.id);
+                                  // Perform the quarantine logic here
+                                },
+                                child: Text('Quarantine'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Cancel'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    icon: Icon(Icons.security),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   Scaffold displayScaffold(
