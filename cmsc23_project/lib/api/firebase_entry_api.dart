@@ -5,6 +5,12 @@ class FirebaseEntryAPI {
   static final FirebaseFirestore db = FirebaseFirestore.instance;
   static final FirebaseAuth auth = FirebaseAuth.instance;
 
+  Future<Stream<QuerySnapshot>> getCurrentUser(String id) async {
+    Stream<QuerySnapshot> user =
+        await db.collection('users').where('uid', isEqualTo: id).snapshots();
+    return user;
+  }
+
   Future<String> addEntry(Map<String, dynamic> entry) async {
     try {
       final docRef = await db.collection("entries").add(entry);

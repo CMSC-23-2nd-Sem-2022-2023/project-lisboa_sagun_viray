@@ -28,6 +28,12 @@ class EntryListProvider with ChangeNotifier {
   String? get replacement => _toEdit;
   bool get quarantineStatus => _quarantined;
 
+  Future<Stream<QuerySnapshot>> getCurrentUser(String id) async {
+    Stream<QuerySnapshot> user = await firebaseService.getCurrentUser(id);
+    notifyListeners();
+    return user;
+  }
+
   changeSelectedEntry(Entry entry) {
     _selectedEntry = entry;
   }
