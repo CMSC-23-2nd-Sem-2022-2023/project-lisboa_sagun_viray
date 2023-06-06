@@ -199,9 +199,6 @@ class _HomePageState extends State<HomePage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // Show a loading indicator while the future is in progress
           return Scaffold(
-            appBar: AppBar(
-              title: Text('Loading...'),
-            ),
             body: Center(
               child: CircularProgressIndicator(),
             ),
@@ -209,9 +206,6 @@ class _HomePageState extends State<HomePage> {
         } else if (snapshot.hasError) {
           // Handle the error case
           return Scaffold(
-            appBar: AppBar(
-              title: Text('Error'),
-            ),
             body: Center(
               child: Text('Error: ${snapshot.error}'),
             ),
@@ -224,22 +218,24 @@ class _HomePageState extends State<HomePage> {
           return Scaffold(
             // drawer: Drawer(child: Text('Drawer')),
             appBar: AppBar(
+              backgroundColor: Color.fromARGB(255, 0, 37, 67),
               automaticallyImplyLeading: false,
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    print('pessed logout');
-                    context.read<AuthProvider>().signOut();
-                    Navigator.pop(context);
-                  },
-                  child: Text('Logout'),
-                  style: TextButton.styleFrom(
-                    primary: Colors.white,
-                    textStyle: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ],
-              title: Text(isQuarantined ? "Quarantined!" : "Not Quarantined"),
+              // actions: [
+              //   TextButton(
+              //     onPressed: () {
+              //       print('pessed logout');
+              //       context.read<AuthProvider>().signOut();
+              //       Navigator.pop(context);
+              //     },
+              //     child: Text('Logout'),
+              //     style: TextButton.styleFrom(
+              //       primary: Colors.white,
+              //       textStyle: TextStyle(fontSize: 16),
+              //     ),
+              //   ),
+              // ],
+              // title: Text(isQuarantined ? "Quarantined!" : "Not Quarantined"),
+              title: Text("User's "),
             ),
             body: entryList(context, _selectedIndex),
             floatingActionButton: FloatingActionButton(
@@ -268,7 +264,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
               currentIndex: _selectedIndex,
-              selectedItemColor: Colors.amber[800],
+              selectedItemColor: Color.fromARGB(255, 255, 255, 255),
               onTap: _onItemTapped,
             ),
           );

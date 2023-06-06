@@ -72,6 +72,64 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
       },
     );
 
+    void showDialogWrongUserType(BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            title: const Text("Wrong User Type"),
+            content: const Text(
+                "You are logging in as the wrong user type. Please try again."),
+            actions: [
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 0, 37, 67),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("CLOSE")),
+            ],
+          );
+        },
+      );
+    }
+
+    void showDialogWrongInput(BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            title: const Text("Wrong Input"),
+            content: const Text(
+                "The input you provided is incorrect. Please make sure to follow the specified format or provide valid input."),
+            actions: [
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 0, 37, 67),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("CLOSE")),
+            ],
+          );
+        },
+      );
+    }
+
     // log in button that also has validator and will call authentication
     final loginButton = Padding(
         padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -101,7 +159,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                       );
                 } else {
                   err = "wrong usertype";
-                  print("wrong user type");
+                  showDialogWrongUserType(context);
                 }
                 if (err == 'success') {
                   // Navigator.pushNamed(context, '/admin_homepage');
@@ -112,6 +170,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                   );
                 } else {
                   print(err);
+                  showDialogWrongInput(context);
                 }
               }
             },
