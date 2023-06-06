@@ -322,6 +322,57 @@ class _AdminPageState extends State<AdminPage> {
     );
   }
 
+  Widget hasContactWidget(entry) {
+    for (int i = 0; i < entry.symptoms.length; i++) {
+      if (entry.symptoms[i] == true) {
+        // print("hey");
+        return Row(
+          children: [
+            Center(
+              child: Text(
+                "Has Symptoms: ",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            Center(
+              child: Text("TRUE"),
+            )
+          ],
+        );
+        break;
+      } else {
+        // print("hello");
+        return Row(
+          children: [
+            Center(
+              child: Text(
+                "has Symptoms: ",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            Center(
+              child: Text("FALSE"),
+            )
+          ],
+        );
+      }
+    }
+    return Text("back to u hey");
+    return Row(
+      children: [
+        Center(
+          child: Text(
+            "has Symptoms: ",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        Center(
+          child: Text("FALSE"),
+        )
+      ],
+    );
+  }
+
   //builds entries from stream
   Widget entriesBuilder(Stream<QuerySnapshot> entriesStream, String UID) {
     print("at entries builder");
@@ -359,6 +410,8 @@ class _AdminPageState extends State<AdminPage> {
                       child: Center(
                         child: ListTile(
                           onTap: () {
+                            print(entry.symptoms);
+                            // hasContactWidget(entry);
                             showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -404,7 +457,8 @@ class _AdminPageState extends State<AdminPage> {
                                               ),
                                               Center(
                                                 child: Text(entry.hasContact
-                                                    .toString()),
+                                                    .toString()
+                                                    .toUpperCase()),
                                               )
                                             ],
                                           ),
@@ -424,6 +478,7 @@ class _AdminPageState extends State<AdminPage> {
                                               )
                                             ],
                                           ),
+                                          hasContactWidget(entry),
                                         ],
                                       ),
                                     ),
@@ -481,13 +536,9 @@ class _AdminPageState extends State<AdminPage> {
                       ),
                     ),
                   );
-
-                  ;
                 }),
           );
-
-          ;
-          // return Center();
+// return Center();
         });
   }
 
