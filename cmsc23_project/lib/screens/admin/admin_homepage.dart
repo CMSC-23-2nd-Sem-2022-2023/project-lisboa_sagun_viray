@@ -1,6 +1,7 @@
 import 'package:cmsc23_project/screens/login/admin_login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../models/user_model.dart';
 import '../../models/entry_model.dart';
 import '../../providers/entry_provider.dart';
 import '../../providers/auth_provider.dart';
@@ -193,133 +194,222 @@ class _AdminPageState extends State<AdminPage> {
   }
 
   //builds the profile of the admin
-  Widget profileBuilder() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            height: 20,
-          ),
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Color.fromARGB(255, 0, 13, 47),
-            ),
-            child: Icon(
-              Icons.person,
-              size: 50,
-              color: Color.fromARGB(255, 252, 253, 255),
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Text(
-            "LASTNAME, FIRSTNAME MIDDLENAME",
-            style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
-          ),
-          SizedBox(height: 5),
-          Text(
-            "type of User: ADMIN",
-            style: TextStyle(color: Colors.white),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          // Visibility(
-          //   visible: _isVisible,
-          //   child: QrImage(
-          //     // TODO change the data to an instance of entry, but for that to work
-          //     // need to implement getting of entries from stream first
-          //     data: entry.toJson(entry).toString(),
-          //     version: QrVersions.auto,
-          //     size: 200.0,
-          //   ),
-          // ),
-          SizedBox(
-            width: 200,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  // _isVisible = !_isVisible;
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Center(
-                          child: Text(
-                            'QR CODE GENERATED.',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        content: Container(
-                          width: 200,
-                          height: 200,
-                          child: Center(
-                            child: Text("QR"),
-                          ),
-                        ),
-                        actions: [
-                          TextButton(
-                            child: Text('OK'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
+  Future<bool> checkConditions(String UID) async {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+    bool today = false;
+    bool isUnderQuarantine =
+        await context.read<EntryListProvider>().isQuarantined(UID);
+    bool isUnderMonitoring =
+        await context.read<EntryListProvider>().isUnderMonitoring(UID);
+    for (Entry entry in entries) {
+      print(entry.date);
+      if (entry.date == formattedDate) {
+        today = true;
+      }
+    }
+    if (today == true &&
+        isUnderQuarantine == false &&
+        isUnderMonitoring == false) {
+      print('@@@@@@@@@@@@$today, $isUnderQuarantine, $isUnderMonitoring');
+      return true;
+    } else {
+      print('!!!!!!!!!!!!!!!!$today, $isUnderQuarantine, $isUnderMonitoring');
+      return false;
+    }
+  }
+
+  Widget profileBuilder(String UID) {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+    print('###################$formattedDate');
+    Stream<QuerySnapshot> userDocs =
+        context.watch<AuthProvider>().getUserDocs(UID);
+
+    return StreamBuilder(
+        stream: userDocs,
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text("Error encountered! ${snapshot.error}"),
+            );
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (!snapshot.hasData) {
+            return const Center(
+              child: Text("No Entries Found"),
+            );
+          }
+
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color.fromARGB(255, 0, 13, 47),
+                  ),
+                  child: Icon(
+                    Icons.person,
+                    size: 50,
+                    color: Color.fromARGB(255, 252, 253, 255),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "LASTNAME, FIRSTNAME MIDDLENAME",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.white),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                SizedBox(
+                  width: 200,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() async {
+                        bool able = await checkConditions(UID);
+                        if (able) {
+                          UserRecord user = UserRecord.fromJson(
+                              snapshot.data?.docs[0].data()
+                                  as Map<String, dynamic>);
+                          Map<String, dynamic> message = {
+                            'date': formattedDate,
+                            'name': user.name,
+                            'location': 'Physci'
+                          };
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Center(
+                                  child: Text(
+                                    'QR CODE GENERATED.',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                content: Container(
+                                  width: 200,
+                                  height: 200,
+                                  child: Center(
+                                    child: QrImage(
+                                      // TODO change the data to an instance of entry, but for that to work
+                                      // need to implement getting of entries from stream first
+                                      data: message.toString(),
+                                      version: QrVersions.auto,
+                                      size: 200.0,
+                                    ),
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
                             },
-                          ),
-                        ],
-                      );
+                          );
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Center(
+                                  child: Text(
+                                    'QR CODE CANT BE GENERATED.',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                content: Container(
+                                  width: 200,
+                                  height: 200,
+                                  child: Text(
+                                    'Either: You dont\'t have an entry for today\nYou are under quarantine\n You are under monitoring',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                        // _isVisible = !_isVisible;
+                      });
                     },
-                  );
-                });
-              },
-              child: Text("VIEW BUILDING PASS"),
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(
-                  const Color.fromARGB(255, 0, 37, 67),
+                    child: Text("VIEW BUILDING PASS"),
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color.fromARGB(255, 0, 37, 67),
+                      ),
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(Colors.white),
+                      shape: MaterialStateProperty.all<StadiumBorder>(
+                        const StadiumBorder(),
+                      ),
+                    ),
+                  ),
                 ),
-                foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                shape: MaterialStateProperty.all<StadiumBorder>(
-                  const StadiumBorder(),
+                SizedBox(
+                  height: 10,
                 ),
-              ),
+                SizedBox(
+                  width: 200,
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color.fromARGB(255, 67, 0, 0),
+                      ),
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(Colors.white),
+                      shape: MaterialStateProperty.all<StadiumBorder>(
+                        const StadiumBorder(),
+                      ),
+                    ),
+                    onPressed: () {
+                      context.read<AuthProvider>().signOut();
+                      Navigator.pop(context);
+                    },
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [Icon(Icons.exit_to_app), Text("LOGOUT")],
+                      ),
+                    ),
+                  ),
+                )
+              ],
             ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            width: 200,
-            height: 50,
-            child: ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(
-                  const Color.fromARGB(255, 67, 0, 0),
-                ),
-                foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                shape: MaterialStateProperty.all<StadiumBorder>(
-                  const StadiumBorder(),
-                ),
-              ),
-              onPressed: () {
-                context.read<AuthProvider>().signOut();
-                Navigator.pop(context);
-              },
-              child: Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [Icon(Icons.exit_to_app), Text("LOGOUT")],
-                ),
-              ),
-            ),
-          )
-        ],
-      ),
-    );
+          );
+          // return Center();
+        });
   }
 
   Widget hasContactWidget(entry) {
@@ -400,6 +490,7 @@ class _AdminPageState extends State<AdminPage> {
                 itemBuilder: (context, index) {
                   Entry entry = Entry.fromJson(snapshot.data?.docs[index].data()
                       as Map<String, dynamic>);
+                  entries.add(entry);
                   //access entry like 'entry.'
                   return SizedBox(
                     height: 80,
@@ -550,7 +641,7 @@ class _AdminPageState extends State<AdminPage> {
     } else if (index == 1) {
       return entriesBuilder(entriesStream, UID);
     } else if (index == 2) {
-      return profileBuilder();
+      return profileBuilder(UID);
     }
   }
 
