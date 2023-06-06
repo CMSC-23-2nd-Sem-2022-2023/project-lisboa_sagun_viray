@@ -356,7 +356,93 @@ class _AdminPageState extends State<AdminPage> {
                           borderRadius: BorderRadius.all(Radius.circular(30))),
                       child: Center(
                         child: ListTile(
-                          onTap: () {},
+                          onTap: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    ),
+                                    title: Center(
+                                        child: Text(
+                                      'ENTRY DETAILS',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    )),
+                                    content: Container(
+                                      width: 200,
+                                      height: 80,
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Center(
+                                                child: Text(
+                                                  "Date Submitted: ",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              Center(
+                                                child: Text(entry.date),
+                                              )
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              Center(
+                                                child: Text(
+                                                  "Has Contact: ",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              Center(
+                                                child: Text(entry.hasContact
+                                                    .toString()),
+                                              )
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              Center(
+                                                child: Text(
+                                                  "Status: ",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              Center(
+                                                child: Text(
+                                                    entry.status.toString()),
+                                              )
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    actions: [
+                                      ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                Color.fromARGB(255, 0, 37, 67),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(15.0),
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text("CLOSE")),
+                                    ],
+                                  );
+                                });
+                          },
                           dense: false,
                           leading: CircleAvatar(
                             backgroundColor: Color.fromARGB(255, 0, 37, 67),
@@ -366,14 +452,6 @@ class _AdminPageState extends State<AdminPage> {
                             entry.date + " ENTRY",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          // leading: Container(
-                          //   width: 35,
-                          //   height: 35,
-                          //   decoration: BoxDecoration(
-                          //     shape: BoxShape.circle,
-                          //     color: Color.fromARGB(255, 0, 13, 47),
-                          //   ),
-                          // ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [

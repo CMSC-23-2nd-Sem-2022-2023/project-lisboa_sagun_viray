@@ -152,6 +152,175 @@ class _AdminRequestsState extends State<AdminRequests> {
                                   ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor:
+                                            Color.fromARGB(255, 0, 67, 3),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15.0),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .pop(); // Close the dialog
+                                        // context
+                                        //     .read<EntryListProvider>()
+                                        //     .adminReplaceEntry(
+                                        //         entry.replacementId, entry.id);
+
+                                        if (entry.status == 'clone') {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          20.0),
+                                                ),
+                                                title: Text('Approve Edit'),
+                                                content: Text(
+                                                    'Are you sure you want to approve this edit?'),
+                                                actions: [
+                                                  ElevatedButton(
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        backgroundColor:
+                                                            Color.fromARGB(
+                                                                255, 0, 67, 3),
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      15.0),
+                                                        ),
+                                                      ),
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop(); // Close the dialog
+                                                        context
+                                                            .read<
+                                                                EntryListProvider>()
+                                                            .adminReplaceEntry(
+                                                                entry
+                                                                    .replacementId,
+                                                                entry.id);
+                                                      },
+                                                      child: Text("APPROVE")),
+                                                  ElevatedButton(
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        backgroundColor:
+                                                            Color.fromARGB(
+                                                                255, 0, 37, 67),
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      15.0),
+                                                        ),
+                                                      ),
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                      child: Text("CLOSE")),
+                                                  // TextButton(
+                                                  //   onPressed: () {
+                                                  //     Navigator.of(context)
+                                                  //         .pop(); // Close the dialog
+                                                  //     context
+                                                  //         .read<EntryListProvider>()
+                                                  //         .adminReplaceEntry(
+                                                  //             entry.replacementId,
+                                                  //             entry.id);
+                                                  //   },
+                                                  //   child: Text('Approve'),
+                                                  // ),
+                                                  // TextButton(
+                                                  //   onPressed: () {
+                                                  //     Navigator.of(context)
+                                                  //         .pop(); // Close the dialog
+                                                  //   },
+                                                  //   child: Text('Cancel'),
+                                                  // ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        } else {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          20.0),
+                                                ),
+                                                title: Center(
+                                                    child: Text(
+                                                  'DELETE ENTRY',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                )),
+                                                content: Text(
+                                                    'Are you sure you want to delete this entry?'),
+                                                actions: [
+                                                  ElevatedButton(
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        backgroundColor:
+                                                            Color.fromARGB(
+                                                                255, 67, 0, 0),
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      15.0),
+                                                        ),
+                                                      ),
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop(); // Close the dialog
+                                                        context
+                                                            .read<
+                                                                EntryListProvider>()
+                                                            .adminDelete(
+                                                                entry.id);
+                                                      },
+                                                      child: Text("DELETE")),
+                                                  ElevatedButton(
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        backgroundColor:
+                                                            Color.fromARGB(
+                                                                255, 0, 37, 67),
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      15.0),
+                                                        ),
+                                                      ),
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                      child: Text("CLOSE")),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        }
+                                      },
+                                      child: Text("APPROVE EDIT")),
+                                  ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
                                             Color.fromARGB(255, 0, 37, 67),
                                         shape: RoundedRectangleBorder(
                                           borderRadius:

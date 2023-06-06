@@ -100,7 +100,7 @@ class _ViewStudentsState extends State<ViewStudents> {
                                   )),
                                   content: Container(
                                     width: 200,
-                                    height: 330,
+                                    height: 350,
                                     child: Column(
                                       children: [
                                         Row(
@@ -480,7 +480,7 @@ class _ViewStudentsState extends State<ViewStudents> {
                         },
                         child: ListTile(
                           title: Text(
-                            'user.name',
+                            user.name,
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(
