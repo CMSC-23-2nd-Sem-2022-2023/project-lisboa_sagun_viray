@@ -34,6 +34,7 @@ class _QRViewExampleState extends State<QRViewExample> {
 
   Widget checkResult(result) {
     if (result != null) {
+      print('${result!.code}');
       return Text('QR Code Scanned!');
     }
     // Text(
