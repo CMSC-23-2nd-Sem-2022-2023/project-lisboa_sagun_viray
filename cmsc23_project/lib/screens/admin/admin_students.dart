@@ -100,7 +100,7 @@ class _ViewStudentsState extends State<ViewStudents> {
                                   )),
                                   content: Container(
                                     width: 200,
-                                    height: 350,
+                                    height: 400,
                                     child: Column(
                                       children: [
                                         Row(
