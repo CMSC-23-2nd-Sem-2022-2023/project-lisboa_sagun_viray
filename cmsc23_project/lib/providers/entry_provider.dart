@@ -107,6 +107,12 @@ class EntryListProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void turnToStudent(String? id) async {
+    String message = await firebaseService.turnToStudent(id!);
+    print(message);
+    notifyListeners();
+  }
+
   void turnToMonitor(String? id) async {
     String message = await firebaseService.turnToEntranceMonitor(id!);
     print(message);
@@ -174,6 +180,12 @@ class EntryListProvider with ChangeNotifier {
 
   Future<bool> isQuarantined(String? id) async {
     bool isQuarantined = await firebaseService.isQuarantined(id!);
+    notifyListeners();
+    return isQuarantined;
+  }
+
+  Future<bool> isUnderMonitoring(String? id) async {
+    bool isQuarantined = await firebaseService.isUnderMonitoring(id!);
     notifyListeners();
     return isQuarantined;
   }

@@ -98,7 +98,7 @@ class FirebaseEntryAPI {
         entriesCollection.doc(document.id).update({"isUnderMonitoring": true});
       });
     });
-    return 'successfully put student into quarantine';
+    return 'successfully put student into monitoring';
   }
 
   Future<String> turnToAdmin(String id) async {
@@ -110,6 +110,20 @@ class FirebaseEntryAPI {
         .listen((QuerySnapshot snapshot) {
       snapshot.docs.forEach((DocumentSnapshot document) {
         entriesCollection.doc(document.id).update({"userType": "admin"});
+      });
+    });
+    return 'successfully turned student to admin';
+  }
+
+  Future<String> turnToStudent(String id) async {
+    CollectionReference entriesCollection = db.collection("users");
+
+    await entriesCollection
+        .where("id", isEqualTo: id)
+        .snapshots()
+        .listen((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((DocumentSnapshot document) {
+        entriesCollection.doc(document.id).update({"userType": "student"});
       });
     });
     return 'successfully turned student to admin';
@@ -163,9 +177,18 @@ class FirebaseEntryAPI {
         .get();
 
     bool isQuarantined = snapshot.docs.isNotEmpty;
-    print('successfully checked if user is quarantined');
-    print('snapshot.docs length: ${snapshot.docs.length}');
-    print('isQuarantined value: $isQuarantined');
+    return isQuarantined;
+  }
+
+  Future<bool> isUnderMonitoring(String id) async {
+    CollectionReference usersCollection = db.collection("users");
+
+    QuerySnapshot snapshot = await usersCollection
+        .where("id", isEqualTo: id)
+        .where("isUnderMonitoring", isEqualTo: true)
+        .get();
+
+    bool isQuarantined = snapshot.docs.isNotEmpty;
     return isQuarantined;
   }
 
