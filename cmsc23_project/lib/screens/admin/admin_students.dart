@@ -16,13 +16,14 @@ class ViewStudents extends StatefulWidget {
 }
 
 class _ViewStudentsState extends State<ViewStudents> {
+  TextEditingController _searchQueryController = TextEditingController();
+  bool _isSearching = false;
+  String searchQuery = "Search query";
   @override
   Widget build(BuildContext context) {
     context.read<AuthProvider>().fetchAuthentication();
     Stream<User?> userStream = context.watch<AuthProvider>().uStream;
     print(userStream);
-    // Stream<QuerySnapshot> entriesStream =
-    //     context.watch<EntryListProvider>()._myEntriesStream;
 
     return StreamBuilder(
       stream: userStream,
@@ -50,7 +51,8 @@ class _ViewStudentsState extends State<ViewStudents> {
     );
   }
 
-  Widget studentBuilder(Stream<QuerySnapshot> studentStream) {
+  Widget studentBuilder(
+      Stream<QuerySnapshot> studentStream, String? searchQuery) {
     return StreamBuilder(
         stream: studentStream,
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -68,14 +70,19 @@ class _ViewStudentsState extends State<ViewStudents> {
             );
           }
 
+          List<UserRecord>? filteredUsers = snapshot.data?.docs
+              .map((doc) =>
+                  UserRecord.fromJson(doc.data() as Map<String, dynamic>))
+              .where((user) =>
+                  user.name.toLowerCase().contains(searchQuery!.toLowerCase()))
+              .toList();
+
           return Padding(
             padding: const EdgeInsets.all(8),
             child: ListView.builder(
-              itemCount: snapshot.data?.docs.length,
+              itemCount: filteredUsers!.length,
               itemBuilder: (context, index) {
-                UserRecord user = UserRecord.fromJson(
-                  snapshot.data?.docs[index].data() as Map<String, dynamic>,
-                );
+                UserRecord user = filteredUsers![index];
                 return Container(
                   height: 80,
                   child: Card(
@@ -501,35 +508,93 @@ class _ViewStudentsState extends State<ViewStudents> {
 
           // return Center();
         });
+<<<<<<< HEAD
+=======
+  }
+
+  Widget _buildSearchField() {
+    return TextField(
+      controller: _searchQueryController,
+      autofocus: true,
+      decoration: InputDecoration(
+        hintText: "Search Data...",
+        border: InputBorder.none,
+        hintStyle: TextStyle(color: Colors.white30),
+      ),
+      style: TextStyle(color: Colors.white, fontSize: 16.0),
+      onChanged: (query) => updateSearchQuery(query),
+    );
+>>>>>>> 207229e4e92c971cbc116f96474a8ab8759d202a
+  }
+
+  List<Widget> _buildActions() {
+    if (_isSearching) {
+      return <Widget>[
+        IconButton(
+          icon: const Icon(Icons.clear),
+          onPressed: () {
+            if (_searchQueryController == null ||
+                _searchQueryController.text.isEmpty) {
+              Navigator.pop(context);
+              return;
+            }
+            _clearSearchQuery();
+          },
+        ),
+      ];
+    }
+
+    return <Widget>[
+      IconButton(
+        icon: const Icon(Icons.search),
+        onPressed: _startSearch,
+      ),
+    ];
+  }
+
+  void _startSearch() {
+    ModalRoute.of(context)!
+        .addLocalHistoryEntry(LocalHistoryEntry(onRemove: _stopSearching));
+
+    setState(() {
+      _isSearching = true;
+    });
+  }
+
+  void updateSearchQuery(String newQuery) async {
+    try {
+      await Future.delayed(Duration(milliseconds: 1000));
+      setState(() {
+        searchQuery = newQuery;
+      });
+    } catch (e) {
+      // Handle any potential errors here
+      print(e);
+    }
+  }
+
+  void _stopSearching() {
+    _clearSearchQuery();
+
+    setState(() {
+      _isSearching = false;
+    });
+  }
+
+  void _clearSearchQuery() {
+    setState(() {
+      _searchQueryController.clear();
+      updateSearchQuery("");
+    });
   }
 
   Scaffold displayScaffold(
       BuildContext context, Stream<QuerySnapshot<Object?>> studentStream) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        backgroundColor: Color.fromARGB(255, 0, 37, 67),
-        automaticallyImplyLeading: false,
-        // actions: [
-        //   TextButton(
-        //     onPressed: () {
-        //       print('pressed logout');
-        //       context.read<AuthProvider>().signOut();
-        //       Navigator.pop(context);
-        //     },
-        //     child: Text('Logout'),
-        //     style: TextButton.styleFrom(
-        //       primary: Colors.white,
-        //       textStyle: TextStyle(fontSize: 16),
-        //     ),
-        //   ),
-        // ],
-        // title: Text("Admin Dashboard"),
+        leading: _isSearching ? const BackButton() : Container(),
+        title: _isSearching ? _buildSearchField() : Text('Search'),
+        actions: _buildActions(),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -542,7 +607,7 @@ class _ViewStudentsState extends State<ViewStudents> {
             ],
           ),
         ),
-        child: studentBuilder(studentStream),
+        child: studentBuilder(studentStream, searchQuery),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Color.fromARGB(255, 0, 37, 67),
