@@ -28,6 +28,12 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Stream<QuerySnapshot> getUserDocs(String UID) {
+    Stream<QuerySnapshot> userDocs = authService.getUserDocs(UID);
+    notifyListeners();
+    return userDocs;
+  }
+
   User? getCurrentUser() {
     return FirebaseAuth.instance.currentUser;
   }

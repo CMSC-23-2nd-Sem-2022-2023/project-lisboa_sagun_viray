@@ -152,6 +152,7 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
     bool isUnderMonitoring =
         await context.read<EntryListProvider>().isUnderMonitoring(UID);
     for (Entry entry in entries) {
+      print(entry.date);
       if (entry.date == formattedDate) {
         today = true;
       }
@@ -171,162 +172,193 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
     print('###################$formattedDate');
+    Stream<QuerySnapshot> userDocs =
+        context.watch<AuthProvider>().getUserDocs(UID);
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            height: 20,
-          ),
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Color.fromARGB(255, 0, 13, 47),
+    return StreamBuilder(
+        stream: userDocs,
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text("Error encountered! ${snapshot.error}"),
+            );
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (!snapshot.hasData) {
+            return const Center(
+              child: Text("No Entries Found"),
+            );
+          }
+
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color.fromARGB(255, 0, 13, 47),
+                  ),
+                  child: Icon(
+                    Icons.person,
+                    size: 50,
+                    color: Color.fromARGB(255, 252, 253, 255),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "LASTNAME, FIRSTNAME MIDDLENAME",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.white),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                SizedBox(
+                  width: 200,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() async {
+                        bool able = await checkConditions(UID);
+                        if (able) {
+                          UserRecord user = UserRecord.fromJson(
+                              snapshot.data?.docs[0].data()
+                                  as Map<String, dynamic>);
+                          Map<String, dynamic> message = {
+                            'date': formattedDate,
+                            'name': user.name,
+                            'location': 'Physci'
+                          };
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Center(
+                                  child: Text(
+                                    'QR CODE GENERATED.',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                content: Container(
+                                  width: 200,
+                                  height: 200,
+                                  child: Center(
+                                    child: QrImage(
+                                      // TODO change the data to an instance of entry, but for that to work
+                                      // need to implement getting of entries from stream first
+                                      data: message.toString(),
+                                      version: QrVersions.auto,
+                                      size: 200.0,
+                                    ),
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Center(
+                                  child: Text(
+                                    'QR CODE CANT BE GENERATED.',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                content: Container(
+                                  width: 200,
+                                  height: 200,
+                                  child: Text(
+                                    'Either: You dont\'t have an entry for today\nYou are under quarantine\n You are under monitoring',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                        // _isVisible = !_isVisible;
+                      });
+                    },
+                    child: Text("VIEW BUILDING PASS"),
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color.fromARGB(255, 0, 37, 67),
+                      ),
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(Colors.white),
+                      shape: MaterialStateProperty.all<StadiumBorder>(
+                        const StadiumBorder(),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                SizedBox(
+                  width: 200,
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color.fromARGB(255, 67, 0, 0),
+                      ),
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(Colors.white),
+                      shape: MaterialStateProperty.all<StadiumBorder>(
+                        const StadiumBorder(),
+                      ),
+                    ),
+                    onPressed: () {
+                      context.read<AuthProvider>().signOut();
+                      Navigator.pop(context);
+                    },
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [Icon(Icons.exit_to_app), Text("LOGOUT")],
+                      ),
+                    ),
+                  ),
+                )
+              ],
             ),
-            child: Icon(
-              Icons.person,
-              size: 50,
-              color: Color.fromARGB(255, 252, 253, 255),
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Text(
-            "LASTNAME, FIRSTNAME MIDDLENAME",
-            style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            width: 200,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: () {
-                setState(() async {
-                  bool able = await checkConditions(UID);
-                  if (able) {
-                    Map<String, dynamic> message = {
-                      'date': formattedDate,
-                      'name': 'username',
-                      'location': 'Physci'
-                    };
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Center(
-                            child: Text(
-                              'QR CODE GENERATED.',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          content: Container(
-                            width: 200,
-                            height: 200,
-                            child: Center(
-                              child: QrImage(
-                                // TODO change the data to an instance of entry, but for that to work
-                                // need to implement getting of entries from stream first
-                                data: message.toString(),
-                                version: QrVersions.auto,
-                                size: 200.0,
-                              ),
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              child: Text('OK'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  } else {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Center(
-                            child: Text(
-                              'QR CODE CANT BE GENERATED.',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          content: Container(
-                            width: 200,
-                            height: 200,
-                            child: Text(
-                              'Either: You dont\'t have an entry for today\nYou are under quarantine\n You are under monitoring',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              child: Text('OK'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
-                  // _isVisible = !_isVisible;
-                });
-              },
-              child: Text("VIEW BUILDING PASS"),
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(
-                  const Color.fromARGB(255, 0, 37, 67),
-                ),
-                foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                shape: MaterialStateProperty.all<StadiumBorder>(
-                  const StadiumBorder(),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            width: 200,
-            height: 50,
-            child: ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(
-                  const Color.fromARGB(255, 67, 0, 0),
-                ),
-                foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                shape: MaterialStateProperty.all<StadiumBorder>(
-                  const StadiumBorder(),
-                ),
-              ),
-              onPressed: () {
-                context.read<AuthProvider>().signOut();
-                Navigator.pop(context);
-              },
-              child: Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [Icon(Icons.exit_to_app), Text("LOGOUT")],
-                ),
-              ),
-            ),
-          )
-        ],
-      ),
-    );
+          );
+          // return Center();
+        });
   }
 
   body(int index, Stream<QuerySnapshot> entriesStream, String UID) {
