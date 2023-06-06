@@ -10,6 +10,7 @@ import 'QR_scanner.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:intl/intl.dart';
 
 class EntranceMonitor extends StatefulWidget {
   const EntranceMonitor({super.key});
@@ -19,6 +20,7 @@ class EntranceMonitor extends StatefulWidget {
 }
 
 class _EntranceMonitorState extends State<EntranceMonitor> {
+  List<Entry> entries = [];
   List<dynamic> student_logs = ["maria", "Jason", "louie"];
   int _selectedIndex = 0;
   TextEditingController _searchController = TextEditingController();
@@ -79,13 +81,6 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
     );
   }
 
-  bool _isVisible = false;
-  Entry entry = Entry(
-      date: "2023-05-01",
-      UID: "3T30G7rbGxOnhHhzDff0Vnb06i82",
-      symptoms: [],
-      hasContact: false);
-
   //builds entries from stream
   Widget entriesBuilder(Stream<QuerySnapshot> entriesStream, String UID) {
     print("at entries builder");
@@ -111,6 +106,7 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
               itemBuilder: (context, index) {
                 Entry entry = Entry.fromJson(
                     snapshot.data?.docs[index].data() as Map<String, dynamic>);
+                entries.add(entry);
                 //access entry like 'entry.'
                 return ListTile(
                   title: Text(
@@ -147,7 +143,35 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
         });
   }
 
-  Widget profileBuilder() {
+  Future<bool> checkConditions(String UID) async {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+    bool today = false;
+    bool isUnderQuarantine =
+        await context.read<EntryListProvider>().isQuarantined(UID);
+    bool isUnderMonitoring =
+        await context.read<EntryListProvider>().isUnderMonitoring(UID);
+    for (Entry entry in entries) {
+      if (entry.date == formattedDate) {
+        today = true;
+      }
+    }
+    if (today == true &&
+        isUnderQuarantine == false &&
+        isUnderMonitoring == false) {
+      print('@@@@@@@@@@@@$today, $isUnderQuarantine, $isUnderMonitoring');
+      return true;
+    } else {
+      print('!!!!!!!!!!!!!!!!$today, $isUnderQuarantine, $isUnderMonitoring');
+      return false;
+    }
+  }
+
+  Widget profileBuilder(String UID) {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+    print('###################$formattedDate');
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -194,42 +218,86 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
             height: 50,
             child: ElevatedButton(
               onPressed: () {
-                setState(() {
-                  // _isVisible = !_isVisible;
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Center(
-                          child: Text(
-                            'QR CODE GENERATED.',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        content: Container(
-                          width: 200,
-                          height: 200,
-                          child: Center(
-                            child: QrImage(
-                              // TODO change the data to an instance of entry, but for that to work
-                              // need to implement getting of entries from stream first
-                              data: entry.toJson(entry).toString(),
-                              version: QrVersions.auto,
-                              size: 200.0,
+                setState(() async {
+                  bool able = await checkConditions(UID);
+                  if (able) {
+                    Stream<QuerySnapshot> currUser = await context
+                        .read<EntryListProvider>()
+                        .getCurrentUser(UID);
+                    UserRecord user = UserRecord.fromJson(currUser.first as Map<
+                        String,
+                        dynamic>); //.docs[0].data as Map<String, dynamic>
+                    Map<String, dynamic> message = {
+                      'date': formattedDate,
+                      'name': user.name,
+                      'location': 'Physci'
+                    };
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Center(
+                            child: Text(
+                              'QR CODE GENERATED.',
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
-                        ),
-                        actions: [
-                          TextButton(
-                            child: Text('OK'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
+                          content: Container(
+                            width: 200,
+                            height: 200,
+                            child: Center(
+                              child: QrImage(
+                                // TODO change the data to an instance of entry, but for that to work
+                                // need to implement getting of entries from stream first
+                                data: message.toString(),
+                                version: QrVersions.auto,
+                                size: 200.0,
+                              ),
+                            ),
                           ),
-                        ],
-                      );
-                    },
-                  );
+                          actions: [
+                            TextButton(
+                              child: Text('OK'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Center(
+                            child: Text(
+                              'QR CODE CANT BE GENERATED.',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          content: Container(
+                            width: 200,
+                            height: 200,
+                            child: Text(
+                              'Either: You dont\'t have an entry for today\nYou are under quarantine\n You are under monitoring',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              child: Text('OK'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                  // _isVisible = !_isVisible;
                 });
               },
               child: Text("VIEW BUILDING PASS"),
@@ -290,7 +358,7 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
       // Navigator.pushNamed(context, '/QR_scanner_page');
       return QRViewExample();
     } else if (index == 3) {
-      return profileBuilder();
+      return profileBuilder(UID);
     } else if (index == 2) {
       return entriesBuilder(entriesStream, UID);
     }
