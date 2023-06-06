@@ -203,16 +203,6 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
           SizedBox(
             height: 10,
           ),
-          // Visibility(
-          //   visible: _isVisible,
-          //   child: QrImage(
-          //     // TODO change the data to an instance of entry, but for that to work
-          //     // need to implement getting of entries from stream first
-          //     data: entry.toJson(entry).toString(),
-          //     version: QrVersions.auto,
-          //     size: 200.0,
-          //   ),
-          // ),
           SizedBox(
             width: 200,
             height: 50,
@@ -221,15 +211,9 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
                 setState(() async {
                   bool able = await checkConditions(UID);
                   if (able) {
-                    Stream<QuerySnapshot> currUser = await context
-                        .read<EntryListProvider>()
-                        .getCurrentUser(UID);
-                    UserRecord user = UserRecord.fromJson(currUser.first as Map<
-                        String,
-                        dynamic>); //.docs[0].data as Map<String, dynamic>
                     Map<String, dynamic> message = {
                       'date': formattedDate,
-                      'name': user.name,
+                      'name': 'username',
                       'location': 'Physci'
                     };
                     showDialog(
