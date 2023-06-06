@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../api/firebase_entry_api.dart';
 // import '../api/firebase_todo_api.dart';
 import '../models/entry_model.dart';
+import '../models/user_model.dart';
 // import '../models/todo_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -27,12 +28,6 @@ class EntryListProvider with ChangeNotifier {
   Entry get selected => _selectedEntry!;
   String? get replacement => _toEdit;
   bool get quarantineStatus => _quarantined;
-
-  Future<Stream<QuerySnapshot>> getCurrentUser(String id) async {
-    Stream<QuerySnapshot> user = await firebaseService.getCurrentUser(id);
-    notifyListeners();
-    return user;
-  }
 
   changeSelectedEntry(Entry entry) {
     _selectedEntry = entry;
