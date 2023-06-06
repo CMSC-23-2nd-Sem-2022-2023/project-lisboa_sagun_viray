@@ -508,8 +508,6 @@ class _ViewStudentsState extends State<ViewStudents> {
 
           // return Center();
         });
-<<<<<<< HEAD
-=======
   }
 
   Widget _buildSearchField() {
@@ -524,7 +522,6 @@ class _ViewStudentsState extends State<ViewStudents> {
       style: TextStyle(color: Colors.white, fontSize: 16.0),
       onChanged: (query) => updateSearchQuery(query),
     );
->>>>>>> 207229e4e92c971cbc116f96474a8ab8759d202a
   }
 
   List<Widget> _buildActions() {
