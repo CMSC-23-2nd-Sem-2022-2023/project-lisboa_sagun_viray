@@ -224,6 +224,10 @@ class _EntryFormState extends State<EditForm> {
                         status: 'clone',
                         replacementId: newForm);
                     context.read<EntryListProvider>().addEntry(entry);
+                    if (contactCheck) {
+                      context.read<EntryListProvider>().putUnderMonitoring(
+                          userId); // Retrieve the user record and update the isUnderMonitoring field
+                    }
                     Navigator.pop(context);
                   },
                   child: const Text('EDIT ENTRY',
