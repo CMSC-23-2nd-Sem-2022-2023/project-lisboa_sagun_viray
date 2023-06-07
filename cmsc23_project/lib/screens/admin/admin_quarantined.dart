@@ -24,8 +24,6 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
     Stream<User?> userStream = context.watch<AuthProvider>().uStream;
     Stream<QuerySnapshot> studentStream =
         context.read<EntryListProvider>().getAllQuarantinedStudents();
-    // Stream<QuerySnapshot> entriesStream =
-    //     context.watch<EntryListProvider>()._myEntriesStream;
     return StreamBuilder(
       stream: userStream,
       builder: (context, AsyncSnapshot<User?> snapshot) {
@@ -91,11 +89,9 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
-                                  // context
-                                  //     .read<EntryListProvider>()
-                                  //     .removeFromQuarantine(
-                                  //         user.id); // Close the dialog
-                                  // Perform the promotion logic here
+                                  context
+                                      .read<EntryListProvider>()
+                                      .removeFromQuarantine(user.id);
                                 },
                                 child: Text('proceed'),
                               ),

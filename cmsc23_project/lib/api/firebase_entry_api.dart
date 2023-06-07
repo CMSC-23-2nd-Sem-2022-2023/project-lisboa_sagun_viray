@@ -85,15 +85,14 @@ class FirebaseEntryAPI {
   Future<String> addToQuarantine(String id) async {
     CollectionReference entriesCollection = db.collection("users");
 
-    await entriesCollection
-        .where("id", isEqualTo: id)
-        .snapshots()
-        .listen((QuerySnapshot snapshot) {
-      snapshot.docs.forEach((DocumentSnapshot document) {
-        entriesCollection.doc(document.id).update({"isQuarantined": true});
-      });
-    });
-    return 'successfully put student into quarantine';
+    QuerySnapshot snapshot =
+        await entriesCollection.where("id", isEqualTo: id).get();
+
+    for (DocumentSnapshot document in snapshot.docs) {
+      await entriesCollection.doc(document.id).update({"isQuarantined": true});
+    }
+
+    return 'Successfully put student into quarantine';
   }
 
   Future<String> addToMonitoring(String id) async {
@@ -207,16 +206,14 @@ class FirebaseEntryAPI {
   Future<String> removeFromQuarantine(String id) async {
     CollectionReference entriesCollection = db.collection("users");
 
-    await entriesCollection
-        .where("id", isEqualTo: id)
-        .snapshots()
-        .listen((QuerySnapshot snapshot) {
-      snapshot.docs.forEach((DocumentSnapshot document) {
-        entriesCollection.doc(document.id).update({"isQuarantined": false});
-      });
+    QuerySnapshot snapshot =
+        await entriesCollection.where("id", isEqualTo: id).get();
+
+    snapshot.docs.forEach((DocumentSnapshot document) {
+      entriesCollection.doc(document.id).update({"isQuarantined": false});
     });
 
-    return 'successfully removed student from quarantine';
+    return 'Successfully removed student from quarantine';
   }
 
   Future<String> removeFromUnderMonitoring(String id) async {

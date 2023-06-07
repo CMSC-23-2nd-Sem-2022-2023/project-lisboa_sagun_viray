@@ -263,6 +263,7 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
 
                   await context.read<AuthProvider>().signUp(
                       emailController.text, passwordController.text, admin);
+                  Navigator.of(context).pop();
                 }
               }
             },
