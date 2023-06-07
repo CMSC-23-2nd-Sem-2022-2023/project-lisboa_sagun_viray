@@ -3,11 +3,13 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'dart:convert';
 
 import '../../providers/auth_provider.dart';
 import '../../providers/entry_provider.dart';
 import '../../models/entry_model.dart';
 import '../../models/user_model.dart';
+import '../../models/log_model.dart';
 
 class QRViewExample extends StatefulWidget {
   const QRViewExample({Key? key}) : super(key: key);
@@ -35,6 +37,11 @@ class _QRViewExampleState extends State<QRViewExample> {
   Widget checkResult(result) {
     if (result != null) {
       print('${result!.code}');
+      //decode the qr first to a map instance then convert it to a log instance
+      Map<String, dynamic> jsonMessage = jsonDecode(result!.code);
+      Log log = Log.fromJson(jsonMessage);
+
+      //add the log to the entrance_monitor collection
       return Text('QR Code Scanned!');
     }
     // Text(
