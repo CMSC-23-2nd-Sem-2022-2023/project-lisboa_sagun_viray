@@ -26,7 +26,7 @@ class _MonitorLoginPageState extends State<MonitorLoginPage> {
       controller: emailController,
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
-        hintText: "Enter your E-mail",
+        hintText: "Enter your email",
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(

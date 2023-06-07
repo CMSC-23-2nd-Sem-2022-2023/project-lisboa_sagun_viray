@@ -5,60 +5,55 @@ class UserRecord {
   String id;
   String name;
   String email;
-  List<String> entries;
   bool isUnderMonitoring;
   bool isQuarantined;
   String userType;
-  
+
   // SPECIFIC user data
   String? username;
   String? college;
   String? course;
   String? studno;
-  
+
   //SPECIFC admin/entrance_monitor data
   String? empno;
   String? position;
   String? unit;
 
   // constructor
-  UserRecord(
-      {required this.id,
-      required this.name,
-      required this.email,
-      required this.entries,
-      required this.isUnderMonitoring,
-      required this.isQuarantined,
-      required this.userType,
-
-      this.username,
-      this.college,
-      this.course,
-      this.studno,
-
-      this.empno,
-      this.position,
-      this.unit,
-      });
+  UserRecord({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.isUnderMonitoring,
+    required this.isQuarantined,
+    required this.userType,
+    this.username,
+    this.college,
+    this.course,
+    this.studno,
+    this.empno,
+    this.position,
+    this.unit,
+  });
 
   // creates new instance of user record using data stored in json
   factory UserRecord.fromJson(Map<String, dynamic> json) {
     return UserRecord(
-        id: json['id'],
-        name: json['name'],
-        email: json['email'],
-        entries: json['entries'],
-        isUnderMonitoring: json['isUnderMonitoring'],
-        isQuarantined: json['isQuarantined'],
-        userType: json['userType'],
-        username: json['username'],
-        college: json['college'],
-        course: json['course'],
-        studno: json['studno'],
-        empno: json['empno'],
-        position: json['position'],
-        unit: json['unit'],
-      );
+      id: json['id'],
+      name: json['name'],
+      email: json['email'],
+      isUnderMonitoring: json['isUnderMonitoring'],
+      isQuarantined: json['isQuarantined'],
+      userType: json['userType'],
+      username: json['username'],
+      college: json['college'],
+      course: json['course'],
+      studno: json['studno'],
+      empno: json['empno'],
+      position: json['position'],
+      unit: json['unit'],
+    );
   }
 
   static List<UserRecord> fromJsonArray(String jsonData) {
@@ -71,7 +66,6 @@ class UserRecord {
       'id': user.id,
       'name': user.name,
       'email': user.email,
-      'entries': user.entries,
       'isUnderMonitoring': user.isUnderMonitoring,
       'isQuarantined': user.isQuarantined,
       'userType': user.userType,

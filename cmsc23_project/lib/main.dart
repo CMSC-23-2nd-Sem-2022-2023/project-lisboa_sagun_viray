@@ -15,6 +15,7 @@ import '../providers/auth_provider.dart';
 import '../providers/todo_provider.dart';
 import '../providers/entry_provider.dart';
 import 'screens/admin/admin_homepage.dart';
+import 'screens/admin/admin_homepage.dart';
 import 'screens/entrance_monitor/entrance_monitor.dart';
 import 'screens/user/entryform.dart';
 import '../screens/login.dart';
@@ -31,7 +32,6 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: ((context) => TodoListProvider())),
         ChangeNotifierProvider(create: ((context) => AuthProvider())),
         ChangeNotifierProvider(create: ((context) => EntryListProvider())),
       ],
@@ -63,15 +63,16 @@ class MyApp extends StatelessWidget {
         '/user_signup': (context) => const UserSignupPage(),
         '/admin_signup': (context) => const AdminSignupPage(),
         // '/todo': (context) => const LoginPage(),
+        '/quarantined_students': (context) => const QuarantinedStudents(),
         '/user_details': (context) => const UserDetailsPage(),
         '/homepage': (context) => const HomePage(),
         '/entryform': (context) => const EntryForm(),
         '/admin_homepage': (context) => const AdminPage(),
         '/entrance-monitor_homepage': (context) => const EntranceMonitor(),
         '/QR_scanner_page': (context) => const QRViewExample(),
-        '/monitor_requests': (context) => AdminRequests(),
-        '/monitor_students': (context) => ViewStudents(),
-        '/monitor_quarantined': (context) => QuarantinedStudents()
+        '/monitor_requests': (context) => const AdminRequests(),
+        '/monitor_students': (context) => const ViewStudents(),
+        '/monitor_quarantined': (context) => const QuarantinedStudents()
       },
     );
   }

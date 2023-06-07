@@ -12,6 +12,64 @@ class UserLoginPage extends StatefulWidget {
   _UserLoginPageState createState() => _UserLoginPageState();
 }
 
+void showDialogWrongUserType(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext dialogContext) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        title: const Text("Wrong User Type"),
+        content: const Text(
+            "You are logging in as the wrong user type. Please try again."),
+        actions: [
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 0, 37, 67),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("CLOSE")),
+        ],
+      );
+    },
+  );
+}
+
+void showDialogWrongInput(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext dialogContext) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        title: const Text("Wrong Input"),
+        content: const Text(
+            "The input you provided is incorrect. Please make sure to follow the specified format or provide valid input."),
+        actions: [
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 0, 37, 67),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("CLOSE")),
+        ],
+      );
+    },
+  );
+}
+
 class _UserLoginPageState extends State<UserLoginPage> {
   final _formKey = GlobalKey<FormState>();
   @override
@@ -96,11 +154,13 @@ class _UserLoginPageState extends State<UserLoginPage> {
                 } else {
                   err = "wrong usertype";
                   print("wrong user type");
+                  showDialogWrongUserType(context);
                 }
                 if (err == 'success') {
                   Navigator.pushNamed(context, '/homepage');
                 } else {
                   print(err);
+                  showDialogWrongInput(context);
                 }
               }
             },

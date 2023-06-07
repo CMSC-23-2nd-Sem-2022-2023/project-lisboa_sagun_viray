@@ -2,12 +2,15 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'dart:convert';
 
 import '../../providers/auth_provider.dart';
 import '../../providers/entry_provider.dart';
 import '../../models/entry_model.dart';
 import '../../models/user_model.dart';
+import '../../models/log_model.dart';
 
 class QRViewExample extends StatefulWidget {
   const QRViewExample({Key? key}) : super(key: key);
@@ -32,6 +35,31 @@ class _QRViewExampleState extends State<QRViewExample> {
     controller!.resumeCamera();
   }
 
+  Widget checkResult(BuildContext context, result) {
+    if (result != null) {
+      print('${result!.code}');
+      Log log;
+      //decode the qr first to a map instance then convert it to a log instance
+      try {
+        Map<String, dynamic> jsonMessage = jsonDecode(result!.code);
+        log = Log.fromJson(jsonMessage);
+      } catch (e) {
+        return Text("Not a valid qr code");
+      }
+
+      context.watch<EntryListProvider>().addLog(log);
+      reassemble();
+
+      //add the log to the entrance_monitor collection
+      return Text('QR Code Scanned!');
+    }
+    // Text(
+    //     'Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}')
+    else {
+      return const Text('Scan a code');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,11 +73,7 @@ class _QRViewExampleState extends State<QRViewExample> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  if (result != null)
-                    Text(
-                        'Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}')
-                  else
-                    const Text('Scan a code'),
+                  checkResult(context, result),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,

@@ -13,8 +13,8 @@ class FirebaseAuthAPI {
   static final FirebaseAuth auth = FirebaseAuth.instance;
 
   //returns a db snapshot of 'users' collection
-  Stream<QuerySnapshot> getUserDocs() {
-    return db.collection('users').snapshots();
+  Stream<QuerySnapshot> getUserDocs(String UID) {
+    return db.collection('users').where('id', isEqualTo: UID).snapshots();
   }
 
   // returns a stream of firebase user objects
@@ -76,7 +76,6 @@ class FirebaseAuthAPI {
         name: u.name,
         username: u.username,
         email: u.email,
-        entries: u.entries,
         isUnderMonitoring: u.isUnderMonitoring,
         isQuarantined: u.isQuarantined,
         userType: u.userType,

@@ -28,6 +28,16 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Stream<QuerySnapshot> getUserDocs(String UID) {
+    Stream<QuerySnapshot> userDocs = authService.getUserDocs(UID);
+    notifyListeners();
+    return userDocs;
+  }
+
+  User? getCurrentUser() {
+    return FirebaseAuth.instance.currentUser;
+  }
+
   // registering new users with firebase authentication
   Future<void> signUp(String email, String password, UserRecord temp) async {
     await authService.signUp(email, password, temp);
@@ -36,7 +46,7 @@ class AuthProvider with ChangeNotifier {
 
   // authenticating a user with firebase authentication
   Future<String> signIn(String email, String password) async {
-    fetchAuthentication();
+    fetchAuthentication(); //call here every sign in so that the snapshot doesn't become null after sign out
     String err = await authService.signIn(email, password);
     notifyListeners();
     return err;

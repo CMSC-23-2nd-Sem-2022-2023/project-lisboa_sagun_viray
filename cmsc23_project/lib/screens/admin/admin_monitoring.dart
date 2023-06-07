@@ -2,6 +2,7 @@ import 'dart:ffi';
 
 import 'package:cmsc23_project/models/user_model.dart';
 import 'package:cmsc23_project/screens/login/admin_login.dart';
+import 'package:cmsc23_project/screens/user/entryform.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/entry_model.dart';
@@ -10,22 +11,18 @@ import '../../providers/auth_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class QuarantinedStudents extends StatefulWidget {
-  const QuarantinedStudents({super.key});
+class MonitoringStudents extends StatefulWidget {
+  const MonitoringStudents({super.key});
 
   @override
-  _QuarantinedStudents createState() => _QuarantinedStudents();
+  _MonitoringStudents createState() => _MonitoringStudents();
 }
 
-class _QuarantinedStudents extends State<QuarantinedStudents> {
+class _MonitoringStudents extends State<MonitoringStudents> {
   @override
   Widget build(BuildContext context) {
     context.read<AuthProvider>().fetchAuthentication();
     Stream<User?> userStream = context.watch<AuthProvider>().uStream;
-    Stream<QuerySnapshot> studentStream =
-        context.read<EntryListProvider>().getAllQuarantinedStudents();
-    // Stream<QuerySnapshot> entriesStream =
-    //     context.watch<EntryListProvider>()._myEntriesStream;
     return StreamBuilder(
       stream: userStream,
       builder: (context, AsyncSnapshot<User?> snapshot) {
@@ -41,6 +38,12 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
           print("snapshot has no data");
           return const AdminLoginPage();
         }
+        print("user currently logged in: ${snapshot.data!.uid}");
+        // String crrntlogged = snapshot.data!.uid;
+
+        Stream<QuerySnapshot> studentStream =
+            context.read<EntryListProvider>().getAllUnderMonitoring();
+
         return displayScaffold(context, studentStream);
       },
     );
@@ -63,7 +66,7 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
               child: Text("No Entries Found"),
             );
           }
-          int numberOfStudents = snapshot.data!.docs.length;
+
           return ListView.builder(
             itemCount: snapshot.data?.docs.length,
             itemBuilder: (context, index) {
@@ -84,17 +87,17 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Text('Remove from quarantine'),
+                            title: Text('Remove from monitoring'),
                             content: Text(
-                                'Are you sure you want to remove this student from quarantine?'),
+                                'Are you sure you want to remove this student from monitoring?'),
                             actions: [
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
-                                  // context
-                                  //     .read<EntryListProvider>()
-                                  //     .removeFromQuarantine(
-                                  //         user.id); // Close the dialog
+                                  context
+                                      .read<EntryListProvider>()
+                                      .removeFromUnderMonitoring(
+                                          user.id); // Close the dialog
                                   // Perform the promotion logic here
                                 },
                                 child: Text('proceed'),
@@ -111,7 +114,7 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
                         },
                       );
                     },
-                    child: Text('Remove from quarantine'),
+                    child: Text('Remove from Monitoring'),
                   ),
                 ]),
               );
@@ -126,7 +129,7 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
       BuildContext context, Stream<QuerySnapshot<Object?>> studentStream) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("null"),
+        title: Text('Under Monitoring'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
           onPressed: () {
@@ -135,26 +138,21 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
         ),
         backgroundColor: Color.fromARGB(255, 0, 37, 67),
         automaticallyImplyLeading: false,
-        actions: [
-          // Display the student count in the app bar
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: StreamBuilder(
-              stream: studentStream,
-              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.hasData) {
-                  int numberOfStudents = snapshot.data!.docs.length;
-                  return Text(
-                    '$numberOfStudents Students',
-                    style: TextStyle(fontSize: 18),
-                  );
-                } else {
-                  return Text('Loading...');
-                }
-              },
-            ),
-          ),
-        ],
+        // actions: [
+        //   TextButton(
+        //     onPressed: () {
+        //       print('pressed logout');
+        //       context.read<AuthProvider>().signOut();
+        //       Navigator.pop(context);
+        //     },
+        //     child: Text('Logout'),
+        //     style: TextButton.styleFrom(
+        //       primary: Colors.white,
+        //       textStyle: TextStyle(fontSize: 16),
+        //     ),
+        //   ),
+        // ],
+        // title: Text("Admin Dashboard"),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -173,7 +171,8 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
         backgroundColor: Color.fromARGB(255, 0, 37, 67),
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.pushNamed(context, '/entryform');
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => EntryForm()));
         },
       ),
     );

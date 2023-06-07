@@ -1,77 +1,34 @@
 {
   "project_info": {
-    "project_number": "199644663898",
-    "project_id": "health-monitoring-app-4ddf0",
-    "storage_bucket": "health-monitoring-app-4ddf0.appspot.com"
+    "project_number": "748132747775",
+    "project_id": "health-monitoring-app-92d67",
+    "storage_bucket": "health-monitoring-app-92d67.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:199644663898:android:df4186e3548dfc85a10863",
+        "mobilesdk_app_id": "1:748132747775:android:81a9b829993987ef16ffca",
         "android_client_info": {
           "package_name": "com.example.cmsc23_project"
         }
       },
       "oauth_client": [
         {
-          "client_id": "199644663898-1ftpj4b8qr9f0jb6h6o5h6u278kktrpd.apps.googleusercontent.com",
+          "client_id": "748132747775-cea7odv4f4hp8l50u6mv2kc3j2qd90nk.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAQ6EuX_qaV1G6JdXck1AyUMA6eNP8xT6E"
+          "current_key": "AIzaSyCB8Cdn8o2ZKqm9wLVI9tN-L97qgz65mPI"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "199644663898-1ftpj4b8qr9f0jb6h6o5h6u278kktrpd.apps.googleusercontent.com",
+              "client_id": "748132747775-cea7odv4f4hp8l50u6mv2kc3j2qd90nk.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "199644663898-err7mjujeffgaj8h30ilu8eohi57dsss.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.week7NetworkingDiscussion"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:199644663898:android:5f549a86dc12f6a4a10863",
-        "android_client_info": {
-          "package_name": "com.example.week7_networking_discussion"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "199644663898-1ftpj4b8qr9f0jb6h6o5h6u278kktrpd.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAQ6EuX_qaV1G6JdXck1AyUMA6eNP8xT6E"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "199644663898-1ftpj4b8qr9f0jb6h6o5h6u278kktrpd.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "199644663898-err7mjujeffgaj8h30ilu8eohi57dsss.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.week7NetworkingDiscussion"
-              }
             }
           ]
         }

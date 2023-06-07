@@ -78,7 +78,7 @@ class _MainMenuState extends State<MainMenu> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color.fromARGB(255, 0, 30, 106),
                       shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                        borderRadius: BorderRadius.all(Radius.circular(30.0)),
                       ),
                       minimumSize: const Size(double.infinity, 60),
                     ),
@@ -110,7 +110,7 @@ class _MainMenuState extends State<MainMenu> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color.fromARGB(255, 0, 84, 114),
                       shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                        borderRadius: BorderRadius.all(Radius.circular(30.0)),
                       ),
                       minimumSize: const Size(double.infinity, 60),
                     ),
@@ -142,7 +142,7 @@ class _MainMenuState extends State<MainMenu> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color.fromARGB(255, 0, 110, 86),
                       shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                        borderRadius: BorderRadius.all(Radius.circular(30.0)),
                       ),
                       minimumSize: const Size(double.infinity, 60),
                     ),
