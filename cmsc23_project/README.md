@@ -5,16 +5,17 @@ A Flutter project in our CMSC 23 class, this allows students and employees to ma
 ### Dependencies:
 
 The app requires the following dependencies:
--firebase_core
--provider
--cloud_firestore
--firebase_auth
--intl
--qr_code_scanner
--qr_flutter
+
+- firebase_core
+- provider
+- cloud_firestore
+- firebase_auth
+- intl
+- qr_code_scanner
+- qr_flutter
 
 ## Members:
 
--Lisboa, Inno Jed
--Sagun, Justin Carl
--Viray, Geraldine
+- Lisboa, Inno Jed
+- Sagun, Justin Carl
+- Viray, Geraldine
