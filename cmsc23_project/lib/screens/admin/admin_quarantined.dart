@@ -75,7 +75,7 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
                   'Student number: ${user.studno} - ${user.name}',
                 ),
                 leading: Text(
-                  user.name,
+                  "${user.studno} - ${user.name}",
                 ),
                 trailing: Row(mainAxisSize: MainAxisSize.min, children: [
                   TextButton(
@@ -126,7 +126,7 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
       BuildContext context, Stream<QuerySnapshot<Object?>> studentStream) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("null"),
+        title: Text("Quarantined students"),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
           onPressed: () {
