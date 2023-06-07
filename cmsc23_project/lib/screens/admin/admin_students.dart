@@ -8,6 +8,7 @@ import '../../providers/auth_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
+import 'package:cmsc23_project/screens/user/entryform.dart';
 
 class ViewStudents extends StatefulWidget {
   const ViewStudents({super.key});
@@ -204,7 +205,8 @@ class _ViewStudentsState extends State<ViewStudents> {
 
                                             showDialog(
                                               context: context,
-                                              builder: (BuildContext context) {
+                                              builder:
+                                                  (BuildContext innerContext) {
                                                 return AlertDialog(
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius:
@@ -239,7 +241,8 @@ class _ViewStudentsState extends State<ViewStudents> {
                                                           ),
                                                         ),
                                                         onPressed: () {
-                                                          Navigator.of(context)
+                                                          Navigator.of(
+                                                                  innerContext)
                                                               .pop();
                                                           context
                                                               .read<
@@ -614,7 +617,8 @@ class _ViewStudentsState extends State<ViewStudents> {
         backgroundColor: Color.fromARGB(255, 0, 37, 67),
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.pushNamed(context, '/entryform');
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => EntryForm()));
         },
       ),
     );

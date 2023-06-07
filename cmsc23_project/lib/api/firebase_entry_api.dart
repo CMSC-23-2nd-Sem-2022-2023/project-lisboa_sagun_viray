@@ -210,6 +210,21 @@ class FirebaseEntryAPI {
     return 'successfully removed student from quarantine';
   }
 
+  Future<String> removeFromUnderMonitoring(String id) async {
+    CollectionReference entriesCollection = db.collection("users");
+
+    await entriesCollection
+        .where("id", isEqualTo: id)
+        .snapshots()
+        .listen((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((DocumentSnapshot document) {
+        entriesCollection.doc(document.id).update({"isUnderMonitoring": false});
+      });
+    });
+
+    return 'successfully removed student from monitoring';
+  }
+
   Future<String> replacePendingEntries(String id1, String id2) async {
     CollectionReference entriesCollection = db.collection("entries");
 
