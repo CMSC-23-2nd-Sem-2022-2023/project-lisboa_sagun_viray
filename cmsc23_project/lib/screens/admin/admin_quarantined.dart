@@ -22,9 +22,8 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
   Widget build(BuildContext context) {
     context.read<AuthProvider>().fetchAuthentication();
     Stream<User?> userStream = context.watch<AuthProvider>().uStream;
-    Future<int> quarantineCount =
-        context.read<EntryListProvider>().getQuarantineCount();
-    print('this is the qc $quarantineCount');
+    Stream<QuerySnapshot> studentStream =
+        context.read<EntryListProvider>().getAllQuarantinedStudents();
     // Stream<QuerySnapshot> entriesStream =
     //     context.watch<EntryListProvider>()._myEntriesStream;
     return StreamBuilder(
@@ -42,13 +41,7 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
           print("snapshot has no data");
           return const AdminLoginPage();
         }
-        print("user currently logged in: ${snapshot.data!.uid}");
-        // String crrntlogged = snapshot.data!.uid;
-
-        Stream<QuerySnapshot> studentStream =
-            context.read<EntryListProvider>().getAllQuarantinedStudents();
-
-        return displayScaffold(context, studentStream, quarantineCount);
+        return displayScaffold(context, studentStream);
       },
     );
   }
@@ -70,7 +63,7 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
               child: Text("No Entries Found"),
             );
           }
-
+          int numberOfStudents = snapshot.data!.docs.length;
           return ListView.builder(
             itemCount: snapshot.data?.docs.length,
             itemBuilder: (context, index) {
@@ -98,10 +91,10 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
-                                  context
-                                      .read<EntryListProvider>()
-                                      .removeFromQuarantine(
-                                          user.id); // Close the dialog
+                                  // context
+                                  //     .read<EntryListProvider>()
+                                  //     .removeFromQuarantine(
+                                  //         user.id); // Close the dialog
                                   // Perform the promotion logic here
                                 },
                                 child: Text('proceed'),
@@ -129,23 +122,11 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
     // return Center();
   }
 
-  Scaffold displayScaffold(BuildContext context,
-      Stream<QuerySnapshot<Object?>> studentStream, Future<int> count) {
+  Scaffold displayScaffold(
+      BuildContext context, Stream<QuerySnapshot<Object?>> studentStream) {
     return Scaffold(
       appBar: AppBar(
-        title: FutureBuilder<int>(
-          future: count,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text('quarantine count: Loading...');
-            } else if (snapshot.hasError) {
-              return Text('quarantine count: Error - ${snapshot.error}');
-            } else {
-              final countValue = snapshot.data ?? 0;
-              return Text('quarantine count: $countValue');
-            }
-          },
-        ),
+        title: Text("null"),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
           onPressed: () {
@@ -154,21 +135,26 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
         ),
         backgroundColor: Color.fromARGB(255, 0, 37, 67),
         automaticallyImplyLeading: false,
-        // actions: [
-        //   TextButton(
-        //     onPressed: () {
-        //       print('pressed logout');
-        //       context.read<AuthProvider>().signOut();
-        //       Navigator.pop(context);
-        //     },
-        //     child: Text('Logout'),
-        //     style: TextButton.styleFrom(
-        //       primary: Colors.white,
-        //       textStyle: TextStyle(fontSize: 16),
-        //     ),
-        //   ),
-        // ],
-        // title: Text("Admin Dashboard"),
+        actions: [
+          // Display the student count in the app bar
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: StreamBuilder(
+              stream: studentStream,
+              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasData) {
+                  int numberOfStudents = snapshot.data!.docs.length;
+                  return Text(
+                    '$numberOfStudents Students',
+                    style: TextStyle(fontSize: 18),
+                  );
+                } else {
+                  return Text('Loading...');
+                }
+              },
+            ),
+          ),
+        ],
       ),
       body: Container(
         decoration: BoxDecoration(

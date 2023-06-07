@@ -429,9 +429,8 @@ class _ViewStudentsState extends State<ViewStudents> {
                                                         context
                                                             .read<
                                                                 EntryListProvider>()
-                                                            .addToQuarantine(user
-                                                                .id); // Close the dialog
-                                                        // Perform the promotion logic here
+                                                            .addToQuarantine(
+                                                                user.id);
                                                       },
                                                       child: Text('QUARANTINE'),
                                                     ),
