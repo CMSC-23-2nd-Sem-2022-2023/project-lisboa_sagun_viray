@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
@@ -23,6 +24,9 @@ class _QRViewExampleState extends State<QRViewExample> {
   Barcode? result;
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+  Timer? timer;
+  bool isScanning = true;
+  String? lastScannedCode;
 
   // In order to get hot reload to work we need to pause the camera if the platform
   // is android, or resume the camera if the platform is iOS.
@@ -39,23 +43,19 @@ class _QRViewExampleState extends State<QRViewExample> {
     if (result != null) {
       print('${result!.code}');
       Log log;
-      //decode the qr first to a map instance then convert it to a log instance
+      // Decode the QR first to a map instance then convert it to a log instance
       try {
         Map<String, dynamic> jsonMessage = jsonDecode(result!.code);
         log = Log.fromJson(jsonMessage);
       } catch (e) {
-        return Text("Not a valid qr code");
+        return Text("Not a valid QR code");
       }
 
       context.watch<EntryListProvider>().addLog(log);
-      reassemble();
 
-      //add the log to the entrance_monitor collection
+      // Add the log to the entrance_monitor collection
       return Text('QR Code Scanned!');
-    }
-    // Text(
-    //     'Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}')
-    else {
+    } else {
       return const Text('Scan a code');
     }
   }
@@ -173,10 +173,21 @@ class _QRViewExampleState extends State<QRViewExample> {
     setState(() {
       this.controller = controller;
     });
+
     controller.scannedDataStream.listen((scanData) {
-      setState(() {
-        result = scanData;
-      });
+      if (isScanning && scanData.code != lastScannedCode) {
+        setState(() {
+          result = scanData;
+          isScanning = false;
+        });
+        lastScannedCode = scanData.code;
+        timer = Timer(Duration(seconds: 5), () {
+          setState(() {
+            isScanning = true;
+            lastScannedCode = null;
+          });
+        });
+      }
     });
   }
 
@@ -184,7 +195,7 @@ class _QRViewExampleState extends State<QRViewExample> {
     log('${DateTime.now().toIso8601String()}_onPermissionSet $p');
     if (!p) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('no Permission')),
+        const SnackBar(content: Text('No permission')),
       );
     }
   }
@@ -192,6 +203,7 @@ class _QRViewExampleState extends State<QRViewExample> {
   @override
   void dispose() {
     controller?.dispose();
+    timer?.cancel(); // Cancel the timer
     super.dispose();
   }
 }
