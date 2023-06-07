@@ -1,6 +1,6 @@
 # Health monitoring app
 
-A Flutter project in our CMSC 23 class, this allows students and employees to make health entries each day.
+A Flutter project in our CMSC 23 - B5L class, this allows students and employees to make health entries each day.
 
 ### Dependencies:
 
