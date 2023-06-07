@@ -5,6 +5,15 @@ class FirebaseEntryAPI {
   static final FirebaseFirestore db = FirebaseFirestore.instance;
   static final FirebaseAuth auth = FirebaseAuth.instance;
 
+  Future<String> addLog(Map<String, dynamic> log) async {
+    try {
+      await db.collection('entrance_monitor').add(log);
+      return "Successfully added log";
+    } on FirebaseException catch (e) {
+      return "Failed with error '${e.code}: ${e.message}";
+    }
+  }
+
   Future<String> addEntry(Map<String, dynamic> entry) async {
     try {
       final docRef = await db.collection("entries").add(entry);

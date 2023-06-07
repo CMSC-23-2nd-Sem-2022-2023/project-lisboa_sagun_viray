@@ -3,6 +3,7 @@ import '../api/firebase_entry_api.dart';
 // import '../api/firebase_todo_api.dart';
 import '../models/entry_model.dart';
 import '../models/user_model.dart';
+import '../models/log_model.dart';
 // import '../models/todo_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -52,6 +53,12 @@ class EntryListProvider with ChangeNotifier {
     Stream<QuerySnapshot> uEntries = firebaseService.getEntries(UID);
     notifyListeners();
     return uEntries;
+  }
+
+  void addLog(Log log) async {
+    String message = await firebaseService.addLog(log.toJson(log));
+    print(message);
+    notifyListeners();
   }
 
   void addEntry(Entry entry) async {

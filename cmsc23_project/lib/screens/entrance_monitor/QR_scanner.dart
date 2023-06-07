@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'dart:convert';
 
@@ -34,12 +35,19 @@ class _QRViewExampleState extends State<QRViewExample> {
     controller!.resumeCamera();
   }
 
-  Widget checkResult(result) {
+  Widget checkResult(BuildContext context, result) {
     if (result != null) {
       print('${result!.code}');
+      Log log;
       //decode the qr first to a map instance then convert it to a log instance
-      Map<String, dynamic> jsonMessage = jsonDecode(result!.code);
-      Log log = Log.fromJson(jsonMessage);
+      try {
+        Map<String, dynamic> jsonMessage = jsonDecode(result!.code);
+        log = Log.fromJson(jsonMessage);
+      } catch (e) {
+        return Text("Not a valid qr code");
+      }
+
+      context.watch<EntryListProvider>().addLog(log);
 
       //add the log to the entrance_monitor collection
       return Text('QR Code Scanned!');
@@ -64,7 +72,7 @@ class _QRViewExampleState extends State<QRViewExample> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  checkResult(result),
+                  checkResult(context, result),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
