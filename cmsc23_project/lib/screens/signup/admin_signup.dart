@@ -115,7 +115,7 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
 
     final homeUnit = TextFormField(
       controller: homeUnitController,
-      keyboardType: TextInputType.number,
+      // keyboardType: TextInputType.number,
       decoration: InputDecoration(
         hintText: 'Home Unit',
         border: OutlineInputBorder(
