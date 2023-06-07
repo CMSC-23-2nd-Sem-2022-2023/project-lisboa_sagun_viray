@@ -6,6 +6,7 @@ import '../../providers/entry_provider.dart';
 import '../../providers/auth_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cmsc23_project/screens/user/entryform.dart';
 
 class AdminRequests extends StatefulWidget {
   const AdminRequests({super.key});
@@ -548,7 +549,8 @@ class _AdminRequestsState extends State<AdminRequests> {
         backgroundColor: Color.fromARGB(255, 0, 37, 67),
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.pushNamed(context, '/entryform');
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => EntryForm()));
         },
       ),
     );

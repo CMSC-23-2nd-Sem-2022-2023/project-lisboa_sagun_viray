@@ -7,6 +7,8 @@ import '../../providers/entry_provider.dart';
 import '../../providers/auth_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
+import 'package:cmsc23_project/screens/user/entryform.dart';
 
 class ViewStudents extends StatefulWidget {
   const ViewStudents({super.key});
@@ -16,9 +18,10 @@ class ViewStudents extends StatefulWidget {
 }
 
 class _ViewStudentsState extends State<ViewStudents> {
+  Timer? _debounce;
   TextEditingController _searchQueryController = TextEditingController();
   bool _isSearching = false;
-  String searchQuery = "Search query";
+  String searchQuery = "";
   @override
   Widget build(BuildContext context) {
     context.read<AuthProvider>().fetchAuthentication();
@@ -73,9 +76,14 @@ class _ViewStudentsState extends State<ViewStudents> {
           List<UserRecord>? filteredUsers = snapshot.data?.docs
               .map((doc) =>
                   UserRecord.fromJson(doc.data() as Map<String, dynamic>))
-              .where((user) =>
-                  user.name.toLowerCase().contains(searchQuery!.toLowerCase()))
-              .toList();
+              .where((user) {
+            final lowerCaseQuery = searchQuery!.toLowerCase();
+            final lowerCaseName = user.name.toLowerCase();
+            final lowerCaseCourse = user.course!.toLowerCase();
+
+            return lowerCaseName.contains(lowerCaseQuery) ||
+                lowerCaseCourse.contains(lowerCaseQuery);
+          }).toList();
 
           return Padding(
             padding: const EdgeInsets.all(8),
@@ -197,7 +205,8 @@ class _ViewStudentsState extends State<ViewStudents> {
 
                                             showDialog(
                                               context: context,
-                                              builder: (BuildContext context) {
+                                              builder:
+                                                  (BuildContext innerContext) {
                                                 return AlertDialog(
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius:
@@ -232,7 +241,8 @@ class _ViewStudentsState extends State<ViewStudents> {
                                                           ),
                                                         ),
                                                         onPressed: () {
-                                                          Navigator.of(context)
+                                                          Navigator.of(
+                                                                  innerContext)
                                                               .pop();
                                                           context
                                                               .read<
@@ -419,9 +429,8 @@ class _ViewStudentsState extends State<ViewStudents> {
                                                         context
                                                             .read<
                                                                 EntryListProvider>()
-                                                            .addToQuarantine(user
-                                                                .id); // Close the dialog
-                                                        // Perform the promotion logic here
+                                                            .addToQuarantine(
+                                                                user.id);
                                                       },
                                                       child: Text('QUARANTINE'),
                                                     ),
@@ -559,15 +568,12 @@ class _ViewStudentsState extends State<ViewStudents> {
   }
 
   void updateSearchQuery(String newQuery) async {
-    try {
-      await Future.delayed(Duration(milliseconds: 1000));
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
       setState(() {
         searchQuery = newQuery;
       });
-    } catch (e) {
-      // Handle any potential errors here
-      print(e);
-    }
+    });
   }
 
   void _stopSearching() {
@@ -610,7 +616,8 @@ class _ViewStudentsState extends State<ViewStudents> {
         backgroundColor: Color.fromARGB(255, 0, 37, 67),
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.pushNamed(context, '/entryform');
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => EntryForm()));
         },
       ),
     );

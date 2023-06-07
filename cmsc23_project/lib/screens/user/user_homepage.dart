@@ -577,7 +577,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     String? uid = context.read<AuthProvider>().getCurrentUser()?.uid;
-    print('this is the uid: $uid');
 
     return FutureBuilder<bool>(
       future: context.read<EntryListProvider>().isQuarantined(uid),
@@ -623,7 +622,6 @@ class _HomePageState extends State<HomePage> {
         } else {
           // Future completed successfully
           bool isQuarantined = snapshot.data ?? false;
-          print('THIS IS THE BOOLEAN $isQuarantined');
 
           return Scaffold(
             // drawer: Drawer(child: Text('Drawer')),

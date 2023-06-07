@@ -13,6 +13,7 @@ class EntryListProvider with ChangeNotifier {
   late Stream<QuerySnapshot> _myEntriesStream;
   Future<List<DocumentSnapshot>>? _userEntryStream;
   late bool _quarantined = false;
+  int _quarantineCount = 0;
 
   Entry? _selectedEntry;
   String? _toEdit;
@@ -20,6 +21,7 @@ class EntryListProvider with ChangeNotifier {
   EntryListProvider() {
     firebaseService = FirebaseEntryAPI();
     fetchEntries();
+    updateQuarantineCount();
   }
 
   // getter
@@ -29,6 +31,7 @@ class EntryListProvider with ChangeNotifier {
   Entry get selected => _selectedEntry!;
   String? get replacement => _toEdit;
   bool get quarantineStatus => _quarantined;
+  int get quarantineCount => _quarantineCount;
 
   changeSelectedEntry(Entry entry) {
     _selectedEntry = entry;
@@ -145,8 +148,16 @@ class EntryListProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<int> getQuarantineCount() {
-    return firebaseService.getQuarantineCount();
+  void removeFromUnderMonitoring(String? id) async {
+    String message = await firebaseService.removeFromUnderMonitoring(id!);
+    print(message);
+    notifyListeners();
+  }
+
+  Future<int> getQuarantineCount() async {
+    int count = await firebaseService.getQuarantineCount();
+    notifyListeners();
+    return count;
   }
 
   Stream<QuerySnapshot> getPendingEditEntries() {
@@ -186,6 +197,14 @@ class EntryListProvider with ChangeNotifier {
     return quarantinedStudents;
   }
 
+  Stream<QuerySnapshot> getAllUnderMonitoring() {
+    Stream<QuerySnapshot> UnderMonitoringStudents =
+        firebaseService.getUnderMonitoringStudents();
+    print("successfully got all Under Mornitoring students");
+    // notifyListeners();
+    return UnderMonitoringStudents;
+  }
+
   Future<bool> isQuarantined(String? id) async {
     bool isQuarantined = await firebaseService.isQuarantined(id!);
     notifyListeners();
@@ -193,8 +212,16 @@ class EntryListProvider with ChangeNotifier {
   }
 
   Future<bool> isUnderMonitoring(String? id) async {
-    bool isQuarantined = await firebaseService.isUnderMonitoring(id!);
+    bool isUnderMonitoring = await firebaseService.isUnderMonitoring(id!);
     notifyListeners();
-    return isQuarantined;
+    return isUnderMonitoring;
+  }
+
+  Future<void> updateQuarantineCount() async {
+    // Fetch and set the quarantine count
+    int count = await getQuarantineCount();
+    _quarantineCount = count;
+
+    notifyListeners();
   }
 }

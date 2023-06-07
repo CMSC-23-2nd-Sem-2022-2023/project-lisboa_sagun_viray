@@ -169,11 +169,14 @@ class FirebaseEntryAPI {
   Future<int> getQuarantineCount() async {
     CollectionReference usersCollection = db.collection("users");
 
-    QuerySnapshot snapshot =
-        await usersCollection.where("isQuarantined", isEqualTo: true).get();
+    QuerySnapshot snapshot = await usersCollection
+        .where("isQuarantined", isEqualTo: true)
+        .where("userType", isEqualTo: "student")
+        .get();
 
     int count = snapshot.docs.length;
     print('successfully got quarantine count');
+    print("this is the count: $count");
     return count;
   }
 
@@ -214,6 +217,21 @@ class FirebaseEntryAPI {
     });
 
     return 'successfully removed student from quarantine';
+  }
+
+  Future<String> removeFromUnderMonitoring(String id) async {
+    CollectionReference entriesCollection = db.collection("users");
+
+    await entriesCollection
+        .where("id", isEqualTo: id)
+        .snapshots()
+        .listen((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((DocumentSnapshot document) {
+        entriesCollection.doc(document.id).update({"isUnderMonitoring": false});
+      });
+    });
+
+    return 'successfully removed student from monitoring';
   }
 
   Future<String> replacePendingEntries(String id1, String id2) async {

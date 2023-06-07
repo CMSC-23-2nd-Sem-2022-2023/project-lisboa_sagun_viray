@@ -1,3 +1,7 @@
+import 'package:cmsc23_project/screens/admin/admin_quarantined.dart';
+import 'package:cmsc23_project/screens/admin/admin_monitoring.dart';
+import 'package:cmsc23_project/screens/admin/admin_requests.dart';
+import 'package:cmsc23_project/screens/admin/admin_students.dart';
 import 'package:cmsc23_project/screens/login/admin_login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +14,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:cmsc23_project/screens/user/entryform.dart';
 import 'dart:convert';
 
 class AdminPage extends StatefulWidget {
@@ -32,7 +37,8 @@ class _AdminPageState extends State<AdminPage> {
         children: [
           GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, '/monitor_requests');
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => AdminRequests()));
             },
             child: SizedBox(
               width: 160,
@@ -72,7 +78,8 @@ class _AdminPageState extends State<AdminPage> {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, '/monitor_students');
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ViewStudents()));
             },
             child: SizedBox(
               width: 160,
@@ -112,7 +119,10 @@ class _AdminPageState extends State<AdminPage> {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, '/quarantined_students');
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => QuarantinedStudents()));
             },
             child: SizedBox(
               width: 160,
@@ -152,7 +162,10 @@ class _AdminPageState extends State<AdminPage> {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, '/monitor_students');
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MonitoringStudents()));
             },
             child: SizedBox(
               width: 160,
@@ -479,9 +492,7 @@ class _AdminPageState extends State<AdminPage> {
               child: Text("Error encountered! ${snapshot.error}"),
             );
           } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: Text('this is causing an error'));
           } else if (!snapshot.hasData) {
             return const Center(
               child: Text("No Entries Found"),
@@ -665,8 +676,9 @@ class _AdminPageState extends State<AdminPage> {
   @override
   Widget build(BuildContext context) {
     //keep watching userStream
+    context.watch<AuthProvider>().fetchAuthentication();
     Stream<User?> userStream = context.watch<AuthProvider>().uStream;
-
+    print('you are at homepage');
     return StreamBuilder(
       stream: userStream,
       builder: (context, AsyncSnapshot<User?> snapshot) {
@@ -707,23 +719,6 @@ class _AdminPageState extends State<AdminPage> {
         ),
         backgroundColor: Color.fromARGB(255, 0, 37, 67),
         automaticallyImplyLeading: false,
-        // actions: [
-        //   TextButton(
-        //     onPressed: () {
-        //       print('pressed logout');
-        //       context.read<AuthProvider>().signOut();
-        //       Navigator.pop(context);
-        //     },
-        //     child: Text('Logout'),
-        //     style: TextButton.styleFrom(
-        //       primary: Colors.white,
-        //       textStyle: TextStyle(fontSize: 16),
-        //     ),
-        //   ),
-        // ],
-        // title: Center(
-        //     child: Text("ADMIN VIEW",
-        //         style: TextStyle(fontWeight: FontWeight.bold))),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -765,7 +760,8 @@ class _AdminPageState extends State<AdminPage> {
         backgroundColor: Color.fromARGB(255, 0, 37, 67),
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.pushNamed(context, '/entryform');
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => EntryForm()));
         },
       ),
     );

@@ -44,40 +44,40 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDt-NJw1NmU3BR2l4-dp4ibMpAeUxgHhVQ',
-    appId: '1:199644663898:web:f8154391eb489625a10863',
-    messagingSenderId: '199644663898',
-    projectId: 'health-monitoring-app-4ddf0',
-    authDomain: 'health-monitoring-app-4ddf0.firebaseapp.com',
-    storageBucket: 'health-monitoring-app-4ddf0.appspot.com',
-    measurementId: 'G-YY7BQJHRN1',
+    apiKey: 'AIzaSyBbavVuC2rh59wvLBeupSteUMoDlvmlprs',
+    appId: '1:748132747775:web:7eb87b3b8b99fa7116ffca',
+    messagingSenderId: '748132747775',
+    projectId: 'health-monitoring-app-92d67',
+    authDomain: 'health-monitoring-app-92d67.firebaseapp.com',
+    storageBucket: 'health-monitoring-app-92d67.appspot.com',
+    measurementId: 'G-FN3EYWL92B',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAQ6EuX_qaV1G6JdXck1AyUMA6eNP8xT6E',
-    appId: '1:199644663898:android:df4186e3548dfc85a10863',
-    messagingSenderId: '199644663898',
-    projectId: 'health-monitoring-app-4ddf0',
-    storageBucket: 'health-monitoring-app-4ddf0.appspot.com',
+    apiKey: 'AIzaSyCB8Cdn8o2ZKqm9wLVI9tN-L97qgz65mPI',
+    appId: '1:748132747775:android:81a9b829993987ef16ffca',
+    messagingSenderId: '748132747775',
+    projectId: 'health-monitoring-app-92d67',
+    storageBucket: 'health-monitoring-app-92d67.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBviZB5cEAOord8BM0a1OUCs-aE2ax0jEA',
-    appId: '1:199644663898:ios:ae9e830da7f25b8ba10863',
-    messagingSenderId: '199644663898',
-    projectId: 'health-monitoring-app-4ddf0',
-    storageBucket: 'health-monitoring-app-4ddf0.appspot.com',
-    iosClientId: '199644663898-t7ljr3l07vrrjkf3ru9o3vfgc98udl2q.apps.googleusercontent.com',
+    apiKey: 'AIzaSyCGh3piHOsgdceU6QsWerQJrUhEzY8zzT8',
+    appId: '1:748132747775:ios:c01e1c8f0f998a9816ffca',
+    messagingSenderId: '748132747775',
+    projectId: 'health-monitoring-app-92d67',
+    storageBucket: 'health-monitoring-app-92d67.appspot.com',
+    iosClientId: '748132747775-b0cvt8l9rcp6knri3e3v9b40e4gpnjuq.apps.googleusercontent.com',
     iosBundleId: 'com.example.cmsc23Project',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBviZB5cEAOord8BM0a1OUCs-aE2ax0jEA',
-    appId: '1:199644663898:ios:ae9e830da7f25b8ba10863',
-    messagingSenderId: '199644663898',
-    projectId: 'health-monitoring-app-4ddf0',
-    storageBucket: 'health-monitoring-app-4ddf0.appspot.com',
-    iosClientId: '199644663898-t7ljr3l07vrrjkf3ru9o3vfgc98udl2q.apps.googleusercontent.com',
+    apiKey: 'AIzaSyCGh3piHOsgdceU6QsWerQJrUhEzY8zzT8',
+    appId: '1:748132747775:ios:c01e1c8f0f998a9816ffca',
+    messagingSenderId: '748132747775',
+    projectId: 'health-monitoring-app-92d67',
+    storageBucket: 'health-monitoring-app-92d67.appspot.com',
+    iosClientId: '748132747775-b0cvt8l9rcp6knri3e3v9b40e4gpnjuq.apps.googleusercontent.com',
     iosBundleId: 'com.example.cmsc23Project',
   );
 }
