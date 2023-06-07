@@ -242,7 +242,9 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
                           Log log = Log(
                               date: formattedDate,
                               name: user.name,
-                              location: 'Physci');
+                              location: 'Physci',
+                              studno: user.studno,
+                              empno: user.empno);
                           Map<String, dynamic> message = log.toJson(log);
                           String jsonMessage = jsonEncode(message);
                           showDialog(

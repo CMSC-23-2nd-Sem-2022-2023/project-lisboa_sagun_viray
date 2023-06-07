@@ -10,6 +10,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../../models/user_model.dart';
+import 'dart:convert';
+import '../../models/log_model.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -257,11 +259,14 @@ class _HomePageState extends State<HomePage> {
                       setState(() async {
                         bool able = await checkConditions(UID);
                         if (able) {
-                          Map<String, dynamic> message = {
-                            'date': formattedDate,
-                            'name': user.name,
-                            'location': 'Physci'
-                          };
+                          Log log = Log(
+                              date: formattedDate,
+                              name: user.name,
+                              location: 'Physci',
+                              studno: user.studno,
+                              empno: user.empno);
+                          Map<String, dynamic> message = log.toJson(log);
+                          String jsonMessage = jsonEncode(message);
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -280,7 +285,7 @@ class _HomePageState extends State<HomePage> {
                                     child: QrImage(
                                       // TODO change the data to an instance of entry, but for that to work
                                       // need to implement getting of entries from stream first
-                                      data: message.toString(),
+                                      data: jsonMessage,
                                       version: QrVersions.auto,
                                       size: 200.0,
                                     ),

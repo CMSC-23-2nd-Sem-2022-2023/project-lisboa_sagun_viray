@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/user_model.dart';
 import '../../models/entry_model.dart';
+import '../../models/log_model.dart';
 import '../../providers/entry_provider.dart';
 import '../../providers/auth_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'dart:convert';
 
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
@@ -287,11 +289,14 @@ class _AdminPageState extends State<AdminPage> {
                       setState(() async {
                         bool able = await checkConditions(UID);
                         if (able) {
-                          Map<String, dynamic> message = {
-                            'date': formattedDate,
-                            'name': user.name,
-                            'location': 'Physci'
-                          };
+                          Log log = Log(
+                              date: formattedDate,
+                              name: user.name,
+                              location: 'Physci',
+                              studno: user.studno,
+                              empno: user.empno);
+                          Map<String, dynamic> message = log.toJson(log);
+                          String jsonMessage = jsonEncode(message);
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -310,7 +315,7 @@ class _AdminPageState extends State<AdminPage> {
                                     child: QrImage(
                                       // TODO change the data to an instance of entry, but for that to work
                                       // need to implement getting of entries from stream first
-                                      data: message.toString(),
+                                      data: jsonMessage,
                                       version: QrVersions.auto,
                                       size: 200.0,
                                     ),
