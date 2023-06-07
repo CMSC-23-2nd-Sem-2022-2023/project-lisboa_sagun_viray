@@ -48,6 +48,7 @@ class _QRViewExampleState extends State<QRViewExample> {
       }
 
       context.watch<EntryListProvider>().addLog(log);
+      reassemble();
 
       //add the log to the entrance_monitor collection
       return Text('QR Code Scanned!');
