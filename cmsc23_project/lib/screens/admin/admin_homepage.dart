@@ -236,13 +236,10 @@ class _AdminPageState extends State<AdminPage> {
     }
   }
 
-  Widget profileBuilder(String UID) {
+  Widget profileBuilder(Stream<QuerySnapshot<Object?>> userDocs, UID) {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
     print('###################$formattedDate');
-    Stream<QuerySnapshot> userDocs =
-        context.watch<AuthProvider>().getUserDocs(UID);
-
     return StreamBuilder(
         stream: userDocs,
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -705,13 +702,14 @@ class _AdminPageState extends State<AdminPage> {
 
   //this function returns a different widget depending on the index of the
   //bottomnav bar
-  body(int index, Stream<QuerySnapshot> entriesStream, String UID) {
+  body(int index, Stream<QuerySnapshot> entriesStream,
+      Stream<QuerySnapshot<Object?>> userDocs, String UID) {
     if (index == 0) {
       return students_buttons();
     } else if (index == 1) {
       return entriesBuilder(entriesStream, UID);
     } else if (index == 2) {
-      return profileBuilder(UID);
+      return profileBuilder(userDocs, UID);
     }
   }
 
@@ -754,15 +752,19 @@ class _AdminPageState extends State<AdminPage> {
         //get the UID of currently logged in user and use it to get stream of their entries
         String UID = snapshot.data!.uid;
         Stream<QuerySnapshot> entriesStream = getEntriesStream(UID);
-
-        return displayScaffold(context, entriesStream, UID);
+        Stream<QuerySnapshot> userDocs =
+            context.read<AuthProvider>().getUserDocs(UID);
+        return displayScaffold(context, entriesStream, userDocs, UID);
       },
     );
   }
 
   //if a user succesfully logs in, return this scaffold
-  Scaffold displayScaffold(BuildContext context,
-      Stream<QuerySnapshot<Object?>> entriesStream, String UID) {
+  Scaffold displayScaffold(
+      BuildContext context,
+      Stream<QuerySnapshot<Object?>> entriesStream,
+      Stream<QuerySnapshot<Object?>> userDocs,
+      String UID) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -785,7 +787,7 @@ class _AdminPageState extends State<AdminPage> {
             ],
           ),
         ),
-        child: body(_selectedIndex, entriesStream, UID),
+        child: body(_selectedIndex, entriesStream, userDocs, UID),
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.shifting,

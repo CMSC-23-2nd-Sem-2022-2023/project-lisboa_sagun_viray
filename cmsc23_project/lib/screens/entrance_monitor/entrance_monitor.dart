@@ -25,7 +25,7 @@ class EntranceMonitor extends StatefulWidget {
 
 class _EntranceMonitorState extends State<EntranceMonitor> {
   List<Entry> entries = [];
-  List<dynamic> student_logs = ["maria", "Jason", "louie"];
+  List<dynamic> student_logs = [];
   int _selectedIndex = 0;
   TextEditingController _searchController = TextEditingController();
 
@@ -389,193 +389,187 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
         context.watch<AuthProvider>().getUserDocs(UID);
 
     return StreamBuilder(
-        stream: userDocs,
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text("Error encountered! ${snapshot.error}"),
-            );
-          } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (!snapshot.hasData) {
-            return const Center(
-              child: Text("No Entries Found"),
-            );
-          }
-
-          UserRecord user = UserRecord.fromJson(
-              snapshot.data?.docs[0].data() as Map<String, dynamic>);
-
+      stream: userDocs,
+      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError) {
           return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Color.fromARGB(255, 0, 13, 47),
-                  ),
-                  child: Icon(
-                    Icons.person,
-                    size: 50,
-                    color: Color.fromARGB(255, 252, 253, 255),
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  "${user.name}",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.white),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  width: 200,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() async {
-                        bool able = await checkConditions(UID);
-                        if (able) {
-                          //if user is able to generate a qr code, make a log instance and generate a qr with it as a json string
-                          Log log = Log(
-                              date: formattedDate,
-                              name: user.name,
-                              location: 'Physci',
-                              studno: user.studno,
-                              empno: user.empno);
-                          Map<String, dynamic> message = log.toJson(log);
-                          String jsonMessage = jsonEncode(message);
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Center(
-                                  child: Text(
-                                    'QR CODE GENERATED.',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                content: Container(
-                                  width: 200,
-                                  height: 200,
-                                  child: Center(
-                                    child: QrImage(
-                                      // TODO change the data to an instance of entry, but for that to work
-                                      // need to implement getting of entries from stream first
-                                      data: jsonMessage,
-                                      version: QrVersions.auto,
-                                      size: 200.0,
-                                    ),
-                                  ),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    child: Text('OK'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        } else {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Center(
-                                  child: Text(
-                                    'QR CODE CANT BE GENERATED.',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                content: Container(
-                                  width: 200,
-                                  height: 200,
-                                  child: Text(
-                                    'Either: You dont\'t have an entry for today\nYou are under quarantine\n You are under monitoring',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    child: Text('OK'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        }
-                        // _isVisible = !_isVisible;
-                      });
-                    },
-                    child: Text("VIEW BUILDING PASS"),
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color.fromARGB(255, 0, 37, 67),
-                      ),
-                      foregroundColor:
-                          MaterialStateProperty.all<Color>(Colors.white),
-                      shape: MaterialStateProperty.all<StadiumBorder>(
-                        const StadiumBorder(),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  width: 200,
-                  height: 50,
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color.fromARGB(255, 67, 0, 0),
-                      ),
-                      foregroundColor:
-                          MaterialStateProperty.all<Color>(Colors.white),
-                      shape: MaterialStateProperty.all<StadiumBorder>(
-                        const StadiumBorder(),
-                      ),
-                    ),
-                    onPressed: () {
-                      context.read<AuthProvider>().signOut();
-                      Navigator.pop(context);
-                    },
-                    child: Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [Icon(Icons.exit_to_app), Text("LOGOUT")],
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
+            child: Text("Error encountered! ${snapshot.error}"),
           );
-          // return Center();
-        });
+        } else if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (!snapshot.hasData) {
+          return const Center(
+            child: Text("No Entries Found"),
+          );
+        }
+
+        UserRecord user = UserRecord.fromJson(
+            snapshot.data?.docs[0].data() as Map<String, dynamic>);
+
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color.fromARGB(255, 0, 13, 47),
+                ),
+                child: Icon(
+                  Icons.person,
+                  size: 50,
+                  color: Color.fromARGB(255, 252, 253, 255),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                "${user.name}",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              SizedBox(
+                width: 200,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    bool able = await checkConditions(UID);
+                    if (able) {
+                      //if user is able to generate a qr code, make a log instance and generate a qr with it as a json string
+                      Log log = Log(
+                        date: formattedDate,
+                        name: user.name,
+                        location: 'Physci',
+                        studno: user.studno,
+                        empno: user.empno,
+                      );
+                      Map<String, dynamic> message = log.toJson(log);
+                      String jsonMessage = jsonEncode(message);
+                      showDialog(
+                        context: context!,
+                        builder: (BuildContext dialogContext) {
+                          return AlertDialog(
+                            title: Center(
+                              child: Text(
+                                'QR CODE GENERATED.',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            content: Container(
+                              width: 200,
+                              height: 200,
+                              child: Center(
+                                child: QrImage(
+                                  data: jsonMessage,
+                                  version: QrVersions.auto,
+                                  size: 200.0,
+                                ),
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                child: Text('OK'),
+                                onPressed: () {
+                                  Navigator.of(dialogContext).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else {
+                      showDialog(
+                        context: context!,
+                        builder: (BuildContext dialogContext) {
+                          return AlertDialog(
+                            title: Center(
+                              child: Text(
+                                'QR CODE CANT BE GENERATED.',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            content: Container(
+                              width: 200,
+                              height: 200,
+                              child: Text(
+                                'Either: You dont\'t have an entry for today\nYou are under quarantine\n You are under monitoring',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                child: Text('OK'),
+                                onPressed: () {
+                                  Navigator.of(dialogContext).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  },
+                  child: Text("VIEW BUILDING PASS"),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      const Color.fromARGB(255, 0, 37, 67),
+                    ),
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
+                    shape: MaterialStateProperty.all<StadiumBorder>(
+                      const StadiumBorder(),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              SizedBox(
+                width: 200,
+                height: 50,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      const Color.fromARGB(255, 67, 0, 0),
+                    ),
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
+                    shape: MaterialStateProperty.all<StadiumBorder>(
+                      const StadiumBorder(),
+                    ),
+                  ),
+                  onPressed: () {
+                    context.read<AuthProvider>().signOut();
+                    Navigator.pop(context);
+                  },
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [Icon(Icons.exit_to_app), Text("LOGOUT")],
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      },
+    );
   }
 
   body(int index, Stream<QuerySnapshot> entriesStream, String UID) {
@@ -612,6 +606,7 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
   @override
   Widget build(BuildContext context) {
     //keep watching userStream
+    context.read<AuthProvider>().fetchAuthentication();
     Stream<User?> userStream = context.watch<AuthProvider>().uStream;
 
     return StreamBuilder(
