@@ -160,11 +160,14 @@ class FirebaseEntryAPI {
   Future<int> getQuarantineCount() async {
     CollectionReference usersCollection = db.collection("users");
 
-    QuerySnapshot snapshot =
-        await usersCollection.where("isQuarantined", isEqualTo: true).get();
+    QuerySnapshot snapshot = await usersCollection
+        .where("isQuarantined", isEqualTo: true)
+        .where("userType", isEqualTo: "student")
+        .get();
 
     int count = snapshot.docs.length;
     print('successfully got quarantine count');
+    print("this is the count: $count");
     return count;
   }
 

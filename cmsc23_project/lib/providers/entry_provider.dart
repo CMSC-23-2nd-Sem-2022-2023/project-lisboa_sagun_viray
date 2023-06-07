@@ -137,8 +137,10 @@ class EntryListProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<int> getQuarantineCount() {
-    return firebaseService.getQuarantineCount();
+  Future<int> getQuarantineCount() async {
+    int count = await firebaseService.getQuarantineCount();
+    notifyListeners();
+    return count;
   }
 
   Stream<QuerySnapshot> getPendingEditEntries() {

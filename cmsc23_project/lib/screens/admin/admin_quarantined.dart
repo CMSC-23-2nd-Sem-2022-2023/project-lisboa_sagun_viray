@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cmsc23_project/models/user_model.dart';
 import 'package:cmsc23_project/screens/login/admin_login.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +22,9 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
   Widget build(BuildContext context) {
     context.read<AuthProvider>().fetchAuthentication();
     Stream<User?> userStream = context.watch<AuthProvider>().uStream;
-    print(userStream);
+    Future<int> quarantineCount =
+        context.read<EntryListProvider>().getQuarantineCount();
+    print('this is the qc $quarantineCount');
     // Stream<QuerySnapshot> entriesStream =
     //     context.watch<EntryListProvider>()._myEntriesStream;
     return StreamBuilder(
@@ -44,7 +48,7 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
         Stream<QuerySnapshot> studentStream =
             context.read<EntryListProvider>().getAllQuarantinedStudents();
 
-        return displayScaffold(context, studentStream);
+        return displayScaffold(context, studentStream, quarantineCount);
       },
     );
   }
@@ -125,10 +129,23 @@ class _QuarantinedStudents extends State<QuarantinedStudents> {
     // return Center();
   }
 
-  Scaffold displayScaffold(
-      BuildContext context, Stream<QuerySnapshot<Object?>> studentStream) {
+  Scaffold displayScaffold(BuildContext context,
+      Stream<QuerySnapshot<Object?>> studentStream, Future<int> count) {
     return Scaffold(
       appBar: AppBar(
+        title: FutureBuilder<int>(
+          future: count,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Text('quarantine count: Loading...');
+            } else if (snapshot.hasError) {
+              return Text('quarantine count: Error - ${snapshot.error}');
+            } else {
+              final countValue = snapshot.data ?? 0;
+              return Text('quarantine count: $countValue');
+            }
+          },
+        ),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
           onPressed: () {

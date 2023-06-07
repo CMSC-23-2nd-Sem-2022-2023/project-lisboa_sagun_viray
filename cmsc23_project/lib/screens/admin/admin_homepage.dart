@@ -1,3 +1,6 @@
+import 'package:cmsc23_project/screens/admin/admin_quarantined.dart';
+import 'package:cmsc23_project/screens/admin/admin_requests.dart';
+import 'package:cmsc23_project/screens/admin/admin_students.dart';
 import 'package:cmsc23_project/screens/login/admin_login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +32,8 @@ class _AdminPageState extends State<AdminPage> {
         children: [
           GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, '/monitor_requests');
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => AdminRequests()));
             },
             child: SizedBox(
               width: 160,
@@ -69,7 +73,10 @@ class _AdminPageState extends State<AdminPage> {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, '/monitor_students');
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => QuarantinedStudents()));
             },
             child: SizedBox(
               width: 160,
@@ -109,7 +116,10 @@ class _AdminPageState extends State<AdminPage> {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, '/quarantined_students');
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => QuarantinedStudents()));
             },
             child: SizedBox(
               width: 160,
