@@ -1,3 +1,4 @@
+import 'package:cmsc23_project/models/log_model.dart';
 import 'package:cmsc23_project/screens/entrance_monitor/QR_scanner.dart';
 import 'package:cmsc23_project/screens/login/monitor_login.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:intl/intl.dart';
+import 'dart:convert';
 
 class EntranceMonitor extends StatefulWidget {
   const EntranceMonitor({super.key});
@@ -192,6 +194,9 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
             );
           }
 
+          UserRecord user = UserRecord.fromJson(
+              snapshot.data?.docs[0].data() as Map<String, dynamic>);
+
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -216,7 +221,7 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
                   height: 10,
                 ),
                 Text(
-                  "LASTNAME, FIRSTNAME MIDDLENAME",
+                  "${user.name}",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
@@ -233,14 +238,13 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
                       setState(() async {
                         bool able = await checkConditions(UID);
                         if (able) {
-                          UserRecord user = UserRecord.fromJson(
-                              snapshot.data?.docs[0].data()
-                                  as Map<String, dynamic>);
-                          Map<String, dynamic> message = {
-                            'date': formattedDate,
-                            'name': user.name,
-                            'location': 'Physci'
-                          };
+                          //if user is able to generate a qr code, make a log instance and generate a qr with it as a json string
+                          Log log = Log(
+                              date: formattedDate,
+                              name: user.name,
+                              location: 'Physci');
+                          Map<String, dynamic> message = log.toJson(log);
+                          String jsonMessage = jsonEncode(message);
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -259,7 +263,7 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
                                     child: QrImage(
                                       // TODO change the data to an instance of entry, but for that to work
                                       // need to implement getting of entries from stream first
-                                      data: message.toString(),
+                                      data: jsonMessage,
                                       version: QrVersions.auto,
                                       size: 200.0,
                                     ),

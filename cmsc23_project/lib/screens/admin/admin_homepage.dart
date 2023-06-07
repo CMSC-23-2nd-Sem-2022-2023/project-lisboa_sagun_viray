@@ -243,6 +243,9 @@ class _AdminPageState extends State<AdminPage> {
             );
           }
 
+          UserRecord user = UserRecord.fromJson(
+              snapshot.data?.docs[0].data() as Map<String, dynamic>);
+
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -267,7 +270,7 @@ class _AdminPageState extends State<AdminPage> {
                   height: 10,
                 ),
                 Text(
-                  "LASTNAME, FIRSTNAME MIDDLENAME",
+                  "${user.name}",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
@@ -284,9 +287,6 @@ class _AdminPageState extends State<AdminPage> {
                       setState(() async {
                         bool able = await checkConditions(UID);
                         if (able) {
-                          UserRecord user = UserRecord.fromJson(
-                              snapshot.data?.docs[0].data()
-                                  as Map<String, dynamic>);
                           Map<String, dynamic> message = {
                             'date': formattedDate,
                             'name': user.name,
