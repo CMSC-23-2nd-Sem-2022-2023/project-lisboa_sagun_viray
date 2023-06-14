@@ -446,82 +446,108 @@ class _EntranceMonitorState extends State<EntranceMonitor> {
                 width: 200,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () async {
-                    bool able = await checkConditions(UID);
-                    if (able) {
-                      //if user is able to generate a qr code, make a log instance and generate a qr with it as a json string
-                      Log log = Log(
-                        date: formattedDate,
-                        name: user.name,
-                        location: 'Physci',
-                        studno: user.studno,
-                        empno: user.empno,
-                      );
-                      Map<String, dynamic> message = log.toJson(log);
-                      String jsonMessage = jsonEncode(message);
-                      showDialog(
-                        context: context!,
-                        builder: (BuildContext dialogContext) {
-                          return AlertDialog(
-                            title: Center(
-                              child: Text(
-                                'QR CODE GENERATED.',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            content: Container(
-                              width: 200,
-                              height: 200,
-                              child: Center(
-                                child: QrImage(
-                                  data: jsonMessage,
-                                  version: QrVersions.auto,
-                                  size: 200.0,
-                                ),
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                child: Text('OK'),
-                                onPressed: () {
-                                  Navigator.of(dialogContext).pop();
-                                },
-                              ),
-                            ],
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return FutureBuilder<bool>(
+                            future: checkConditions(UID),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<bool> snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return AlertDialog(
+                                  title: Center(
+                                    child: Text(
+                                      'Loading...',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                );
+                              } else if (snapshot.hasError) {
+                                return AlertDialog(
+                                  title: Center(
+                                    child: Text(
+                                      'Error: ${snapshot.error}',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                bool able = snapshot.data ?? false;
+                                if (able) {
+                                  Log log = Log(
+                                    date: formattedDate,
+                                    name: user.name,
+                                    location: 'Physci',
+                                    studno: user.studno,
+                                    empno: user.empno,
+                                  );
+                                  Map<String, dynamic> message =
+                                      log.toJson(log);
+                                  String jsonMessage = jsonEncode(message);
+                                  return AlertDialog(
+                                    title: Center(
+                                      child: Text(
+                                        'QR CODE GENERATED.',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    content: Container(
+                                      width: 200,
+                                      height: 200,
+                                      child: Center(
+                                        child: QrImage(
+                                          data: jsonMessage,
+                                          version: QrVersions.auto,
+                                          size: 200.0,
+                                        ),
+                                      ),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        child: Text('OK'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                } else {
+                                  return AlertDialog(
+                                    title: Center(
+                                      child: Text(
+                                        'QR CODE CANT BE GENERATED.',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    content: Container(
+                                      width: 200,
+                                      height: 200,
+                                      child: Text(
+                                        'Either: You don\'t have an entry for today\nYou are under quarantine\nYou are under monitoring',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        child: Text('OK'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                }
+                              }
+                            },
                           );
-                        },
-                      );
-                    } else {
-                      showDialog(
-                        context: context!,
-                        builder: (BuildContext dialogContext) {
-                          return AlertDialog(
-                            title: Center(
-                              child: Text(
-                                'QR CODE CANT BE GENERATED.',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            content: Container(
-                              width: 200,
-                              height: 200,
-                              child: Text(
-                                'Either: You dont\'t have an entry for today\nYou are under quarantine\n You are under monitoring',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                child: Text('OK'),
-                                onPressed: () {
-                                  Navigator.of(dialogContext).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }
+                        });
                   },
                   child: Text("VIEW BUILDING PASS"),
                   style: ButtonStyle(

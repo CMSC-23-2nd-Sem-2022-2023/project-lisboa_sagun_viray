@@ -140,7 +140,6 @@ class _AdminSignupPageState extends State<AdminSignupPage> {
     //textformfield that will get the email
     final email = TextFormField(
       controller: emailController,
-      keyboardType: TextInputType.number,
       decoration: InputDecoration(
         hintText: 'Email',
         border: OutlineInputBorder(

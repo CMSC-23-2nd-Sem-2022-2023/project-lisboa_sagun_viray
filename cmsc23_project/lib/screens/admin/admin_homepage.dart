@@ -236,197 +236,219 @@ class _AdminPageState extends State<AdminPage> {
     }
   }
 
-  Widget profileBuilder(Stream<QuerySnapshot<Object?>> userDocs, UID) {
+  Widget profileBuilder(
+      Stream<QuerySnapshot<Object?>> userDocs, UID, BuildContext context) {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
-    print('###################$formattedDate');
     return StreamBuilder(
-        stream: userDocs,
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text("Error encountered! ${snapshot.error}"),
-            );
-          } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (!snapshot.hasData) {
-            return const Center(
-              child: Text("No Entries Found"),
-            );
-          }
-
-          UserRecord user = UserRecord.fromJson(
-              snapshot.data?.docs[0].data() as Map<String, dynamic>);
-
+      stream: userDocs,
+      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError) {
           return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 20,
+            child: Text("Error encountered! ${snapshot.error}"),
+          );
+        } else if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (!snapshot.hasData) {
+          return const Center(
+            child: Text("No Entries Found"),
+          );
+        }
+
+        UserRecord user = UserRecord.fromJson(
+          snapshot.data?.docs[0].data() as Map<String, dynamic>,
+        );
+
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color.fromARGB(255, 0, 13, 47),
                 ),
-                Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Color.fromARGB(255, 0, 13, 47),
-                  ),
-                  child: Icon(
-                    Icons.person,
-                    size: 50,
-                    color: Color.fromARGB(255, 252, 253, 255),
-                  ),
+                child: Icon(
+                  Icons.person,
+                  size: 50,
+                  color: Color.fromARGB(255, 252, 253, 255),
                 ),
-                SizedBox(
-                  height: 10,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                "${user.name}",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.white,
                 ),
-                Text(
-                  "${user.name}",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.white),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  width: 200,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() async {
-                        bool able = await checkConditions(UID);
-                        if (able) {
-                          Log log = Log(
-                              date: formattedDate,
-                              name: user.name,
-                              location: 'Physci',
-                              studno: user.studno,
-                              empno: user.empno);
-                          Map<String, dynamic> message = log.toJson(log);
-                          String jsonMessage = jsonEncode(message);
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              SizedBox(
+                width: 200,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return FutureBuilder<bool>(
+                          future: checkConditions(UID),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<bool> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
                               return AlertDialog(
                                 title: Center(
                                   child: Text(
-                                    'QR CODE GENERATED.',
+                                    'Loading...',
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold),
                                   ),
                                 ),
-                                content: Container(
-                                  width: 200,
-                                  height: 200,
-                                  child: Center(
-                                    child: QrImage(
-                                      // TODO change the data to an instance of entry, but for that to work
-                                      // need to implement getting of entries from stream first
-                                      data: jsonMessage,
-                                      version: QrVersions.auto,
-                                      size: 200.0,
+                              );
+                            } else if (snapshot.hasError) {
+                              return AlertDialog(
+                                title: Center(
+                                  child: Text(
+                                    'Error: ${snapshot.error}',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              );
+                            } else {
+                              bool able = snapshot.data ?? false;
+                              if (able) {
+                                Log log = Log(
+                                  date: formattedDate,
+                                  name: user.name,
+                                  location: 'Physci',
+                                  studno: user.studno,
+                                  empno: user.empno,
+                                );
+                                Map<String, dynamic> message = log.toJson(log);
+                                String jsonMessage = jsonEncode(message);
+                                return AlertDialog(
+                                  title: Center(
+                                    child: Text(
+                                      'QR CODE GENERATED.',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   ),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    child: Text('OK'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
+                                  content: Container(
+                                    width: 200,
+                                    height: 200,
+                                    child: Center(
+                                      child: QrImage(
+                                        data: jsonMessage,
+                                        version: QrVersions.auto,
+                                        size: 200.0,
+                                      ),
+                                    ),
                                   ),
-                                ],
-                              );
-                            },
-                          );
-                        } else {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Center(
-                                  child: Text(
-                                    'QR CODE CANT BE GENERATED.',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
+                                  actions: [
+                                    TextButton(
+                                      child: Text('OK'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              } else {
+                                return AlertDialog(
+                                  title: Center(
+                                    child: Text(
+                                      'QR CODE CANT BE GENERATED.',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
-                                ),
-                                content: Container(
-                                  width: 200,
-                                  height: 200,
-                                  child: Text(
-                                    'Either: You dont\'t have an entry for today\nYou are under quarantine\n You are under monitoring',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
+                                  content: Container(
+                                    width: 200,
+                                    height: 200,
+                                    child: Text(
+                                      'Either: You don\'t have an entry for today\nYou are under quarantine\nYou are under monitoring',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    child: Text('OK'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        }
-                        // _isVisible = !_isVisible;
-                      });
-                    },
-                    child: Text("VIEW BUILDING PASS"),
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color.fromARGB(255, 0, 37, 67),
-                      ),
-                      foregroundColor:
-                          MaterialStateProperty.all<Color>(Colors.white),
-                      shape: MaterialStateProperty.all<StadiumBorder>(
-                        const StadiumBorder(),
-                      ),
+                                  actions: [
+                                    TextButton(
+                                      child: Text('OK'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              }
+                            }
+                          },
+                        );
+                      },
+                    );
+                  },
+                  child: Text("VIEW BUILDING PASS"),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      Color.fromARGB(255, 12, 26, 37),
+                    ),
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
+                    shape: MaterialStateProperty.all<StadiumBorder>(
+                      const StadiumBorder(),
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  width: 200,
-                  height: 50,
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color.fromARGB(255, 67, 0, 0),
-                      ),
-                      foregroundColor:
-                          MaterialStateProperty.all<Color>(Colors.white),
-                      shape: MaterialStateProperty.all<StadiumBorder>(
-                        const StadiumBorder(),
-                      ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              SizedBox(
+                width: 200,
+                height: 50,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      const Color.fromARGB(255, 67, 0, 0),
                     ),
-                    onPressed: () {
-                      context.read<AuthProvider>().signOut();
-                      Navigator.pop(context);
-                    },
-                    child: Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [Icon(Icons.exit_to_app), Text("LOGOUT")],
-                      ),
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
+                    shape: MaterialStateProperty.all<StadiumBorder>(
+                      const StadiumBorder(),
                     ),
                   ),
-                )
-              ],
-            ),
-          );
-          // return Center();
-        });
+                  onPressed: () {
+                    context.read<AuthProvider>().signOut();
+                    Navigator.pop(context);
+                  },
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [Icon(Icons.exit_to_app), Text("LOGOUT")],
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget hasContactWidget(entry) {
@@ -696,20 +718,19 @@ class _AdminPageState extends State<AdminPage> {
               },
             ),
           );
-// return Center();
         });
   }
 
   //this function returns a different widget depending on the index of the
   //bottomnav bar
   body(int index, Stream<QuerySnapshot> entriesStream,
-      Stream<QuerySnapshot<Object?>> userDocs, String UID) {
+      Stream<QuerySnapshot<Object?>> userDocs, String UID, context) {
     if (index == 0) {
       return students_buttons();
     } else if (index == 1) {
       return entriesBuilder(entriesStream, UID);
     } else if (index == 2) {
-      return profileBuilder(userDocs, UID);
+      return profileBuilder(userDocs, UID, context);
     }
   }
 
@@ -787,7 +808,7 @@ class _AdminPageState extends State<AdminPage> {
             ],
           ),
         ),
-        child: body(_selectedIndex, entriesStream, userDocs, UID),
+        child: body(_selectedIndex, entriesStream, userDocs, UID, context),
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.shifting,
